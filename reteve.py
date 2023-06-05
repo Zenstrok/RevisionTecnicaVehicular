@@ -17,7 +17,6 @@ def ventana_configuracion_sistema():
     ventana_config.geometry("500x500")
     ventana_config.resizable(False, False)
     ventana_config.title("Configuración del sistema")
-    print("Hola")
 
     # Crear un frame principal.
     frame_config = Frame(ventana_config)
