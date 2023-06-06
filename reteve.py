@@ -40,7 +40,7 @@ def ventana_configuracion_sistema():
     # Agregar el nuevo frame a una ventana en el canvas.
     canvas_config.create_window((0, 0), window= segundo_frame_config, anchor= "nw")
 
-    """ Opciones de configuración """
+    """ Opciones de configuración. """
     # Título.
     Label(segundo_frame_config, text="").pack()
     Label(segundo_frame_config, text="Configuración del sistema", font=("Franklin Gothic Demi", 14)).pack()
