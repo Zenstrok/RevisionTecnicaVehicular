@@ -12,6 +12,18 @@ from tkinter import messagebox as MessageBox
 # ENTRADAS: Lee las opciones seleccionadas por el usuario.
 # SALIDAS: Guarda los cambios en un archivo predefinido. """
 def ventana_configuracion_sistema():
+
+    def guardar_general(dato, indice):
+        archivo = open("configuración_reteve.dat", "r")
+        datos_originales = archivo.read()
+        datos_originales = eval(datos_originales)
+        archivo.close()
+        archivo = open("configuración_reteve.dat", "w")
+        datos_originales[indice] = dato
+        archivo.write(datos_originales)
+        archivo.close()
+        return
+    
     # Crear la ventana de configuración.
     ventana_config = Toplevel()
     ventana_config.geometry("500x500")
@@ -51,6 +63,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Cantidad de líneas de trabajo en la estación:", font=("Arial", 12)).pack()
     combo_lineas = ttk.Combobox(segundo_frame_config, values= opciones_lineas_trabajo, state="readonly")
     combo_lineas.pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(int(combo_lineas.get()), 0)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Horario de la estación.
@@ -80,6 +93,10 @@ def ventana_configuracion_sistema():
 
     # Cantidad de fallas graves para sacar vehículo de circulación.
     Label(segundo_frame_config, text="Cantidad de fallas graves para sacar vehículo de circulación:", font=("Arial", 12)).pack()
+    entrada_fallas_graves = Entry(segundo_frame_config, width= 3, border= 4)
+    entrada_fallas_graves.pack()
+    indicador_fallas_graves = Label(segundo_frame_config, text= "Actual: Ninguno")
+    indicador_fallas_graves.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Cantidad de meses.
@@ -91,6 +108,10 @@ def ventana_configuracion_sistema():
 
     # Porcentaje de Impuesto al Valor Agregado (IVA) sobre la tarifa.
     Label(segundo_frame_config, text="Porcentaje de Impuesto al Valor Agregado (IVA) sobre la tarifa:", font=("Arial", 12)).pack()
+    entrada_impuesto_iva = Entry(segundo_frame_config, width= 3, border= 4)
+    entrada_impuesto_iva.pack()
+    indicador_impuesto_iva = Label(segundo_frame_config, text= "Actual: Ninguno")
+    indicador_impuesto_iva.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Tabla de Tarifas.
