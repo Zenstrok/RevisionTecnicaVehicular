@@ -16,20 +16,30 @@ def boton_programar_citas():
 # SALIDAS: Guarda los cambios en un archivo predefinido. """
 def ventana_configuracion_sistema():
 
+    def guardar_lineas_trabajo():
+        return
+    
+    def guardar_fechas():
+        return
+
     def guardar_general(dato, indice):
+        if dato != "":
+            dato = int(dato)
         archivo = open("configuración_reteve.dat", "r")
         datos_originales = archivo.read()
         datos_originales = eval(datos_originales)
         archivo.close()
+
+        """
         archivo = open("configuración_reteve.dat", "w")
         datos_originales[indice] = dato
         archivo.write(datos_originales)
-        archivo.close()
+        archivo.close()"""
         return
     
     # Crear la ventana de configuración.
     ventana_config = Toplevel()
-    ventana_config.geometry("500x500")
+    ventana_config.geometry("500x700")
     ventana_config.resizable(False, False)
     ventana_config.title("Configuración del sistema")
 
@@ -66,11 +76,11 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Cantidad de líneas de trabajo en la estación:", font=("Arial", 12)).pack()
     combo_lineas = ttk.Combobox(segundo_frame_config, values= opciones_lineas_trabajo, state="readonly")
     combo_lineas.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(int(combo_lineas.get()), 0)).pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(combo_lineas.get(), 0)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Horario de la estación.
-    opciones_horario = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    opciones_horario = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
     Label(segundo_frame_config, text="Horario de la estación:", font=("Arial", 12)).pack()
     Label(segundo_frame_config, text="Hora inicial:", font=("Arial", 8)).pack()
     combo_hora_inicial = ttk.Combobox(segundo_frame_config, values= opciones_horario, state="readonly")
@@ -96,7 +106,7 @@ def ventana_configuracion_sistema():
 
     # Cantidad de fallas graves para sacar vehículo de circulación.
     Label(segundo_frame_config, text="Cantidad de fallas graves para sacar vehículo de circulación:", font=("Arial", 12)).pack()
-    entrada_fallas_graves = Entry(segundo_frame_config, width= 3, border= 4)
+    entrada_fallas_graves = Entry(segundo_frame_config, width= 5, border= 4)
     entrada_fallas_graves.pack()
     indicador_fallas_graves = Label(segundo_frame_config, text= "Actual: Ninguno")
     indicador_fallas_graves.pack()
@@ -111,14 +121,107 @@ def ventana_configuracion_sistema():
 
     # Porcentaje de Impuesto al Valor Agregado (IVA) sobre la tarifa.
     Label(segundo_frame_config, text="Porcentaje de Impuesto al Valor Agregado (IVA) sobre la tarifa:", font=("Arial", 12)).pack()
-    entrada_impuesto_iva = Entry(segundo_frame_config, width= 3, border= 4)
+    entrada_impuesto_iva = Entry(segundo_frame_config, width= 5, border= 4)
     entrada_impuesto_iva.pack()
     indicador_impuesto_iva = Label(segundo_frame_config, text= "Actual: Ninguno")
     indicador_impuesto_iva.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Tabla de Tarifas.
-    Label(segundo_frame_config, text="Tabla de Tarifas:", font=("Arial", 12)).pack()
+    Label(segundo_frame_config, text="").pack()
+    Label(segundo_frame_config, text="Tabla de Tarifas:", font=("Franklin Gothic Demi", 14)).pack()
+    Label(segundo_frame_config, text="").pack()
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+    
+    Label(segundo_frame_config, text="Vehículo:").pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
+    Label(segundo_frame_config, text="Tarifa:").pack()
+    entrada_tarifa_1 = Entry(segundo_frame_config, width= 5, border= 4)
+    entrada_tarifa_1.pack()
+    indicador_tarifa_1 = Label(segundo_frame_config, text="Actual: Ninguno")
+    indicador_tarifa_1.pack()
+
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+    Label(segundo_frame_config, text="Vehículo:").pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
+    Label(segundo_frame_config, text="Tarifa:").pack()
+    entrada_tarifa_2 = Entry(segundo_frame_config, width= 5, border= 4)
+    entrada_tarifa_2.pack()
+    indicador_tarifa_2 = Label(segundo_frame_config, text="Actual: Ninguno")
+    indicador_tarifa_2.pack()
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+
+    Label(segundo_frame_config, text="Vehículo:").pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
+    Label(segundo_frame_config, text="Tarifa:").pack()
+    entrada_tarifa_3 = Entry(segundo_frame_config, width= 5, border= 4)
+    entrada_tarifa_3.pack()
+    indicador_tarifa_3 = Label(segundo_frame_config, text="Actual: Ninguno")
+    indicador_tarifa_3.pack()
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+
+    Label(segundo_frame_config, text="Vehículo:").pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
+    Label(segundo_frame_config, text="Tarifa:").pack()
+    entrada_tarifa_4 = Entry(segundo_frame_config, width= 5, border= 4)
+    entrada_tarifa_4.pack()
+    indicador_tarifa_4 = Label(segundo_frame_config, text="Actual: Ninguno")
+    indicador_tarifa_4.pack()
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+
+    Label(segundo_frame_config, text="Vehículo:").pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
+    Label(segundo_frame_config, text="Tarifa:").pack()
+    entrada_tarifa_5 = Entry(segundo_frame_config, width= 5, border= 4)
+    entrada_tarifa_5.pack()
+    indicador_tarifa_5 = Label(segundo_frame_config, text="Actual: Ninguno")
+    indicador_tarifa_5.pack()
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+
+    Label(segundo_frame_config, text="Vehículo:").pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
+    Label(segundo_frame_config, text="Tarifa:").pack()
+    entrada_tarifa_6 = Entry(segundo_frame_config, width= 5, border= 4)
+    entrada_tarifa_6.pack()
+    indicador_tarifa_6 = Label(segundo_frame_config, text="Actual: Ninguno")
+    indicador_tarifa_6.pack()
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+
+    Label(segundo_frame_config, text="Vehículo:").pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
+    Label(segundo_frame_config, text="Tarifa:").pack()
+    entrada_tarifa_7 = Entry(segundo_frame_config, width= 5, border= 4)
+    entrada_tarifa_7.pack()
+    indicador_tarifa_7 = Label(segundo_frame_config, text="Actual: Ninguno")
+    indicador_tarifa_7.pack()
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+
+    Label(segundo_frame_config, text="Vehículo:").pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
+    Label(segundo_frame_config, text="Tarifa:").pack()
+    entrada_tarifa_8 = Entry(segundo_frame_config, width= 5, border= 4)
+    entrada_tarifa_8.pack()
+    indicador_tarifa_8 = Label(segundo_frame_config, text="Actual: Ninguno")
+    indicador_tarifa_8.pack()
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+
+    # Abrir el archivo de configuración.
+    archivo = open("configuración_reteve.dat", "r")
+    datos_totales = archivo.read()
+    datos_totales = eval(datos_totales)
+    archivo.close()
+
+    # Asignar los valores actuales de configuración a las opciones.
+    combo_lineas.set(datos_totales[0])
+    combo_hora_inicial.set(datos_totales[1])
+    combo_hora_final.set(datos_totales[2])
+    combo_minutos_cita.set(datos_totales[3])
+    combo_dias_reinspeccion.set(datos_totales[4])
+    combo_meses.set(datos_totales[6])
+    texto_nuevo_1 = "Actual: " + str(datos_totales[5])
+    indicador_fallas_graves.config(text= texto_nuevo_1)
+    texto_nuevo_2 = "Actual: " + str(datos_totales[7])
+    indicador_impuesto_iva.config(text= texto_nuevo_2)
 
     # Loop de la ventana.
     ventana_config.mainloop()
@@ -168,7 +271,7 @@ def salir_del_programa():
 
 # Ventana principal.
 ventana_principal = Tk()
-ventana_principal.geometry("500x600")
+ventana_principal.geometry("600x700")
 ventana_principal.resizable(False, False)
 ventana_principal.title("ReTeVe")
 
