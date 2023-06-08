@@ -8,6 +8,9 @@ from tkinter import messagebox as MessageBox
 
 """ FUNCIONES """
 
+def boton_programar_citas():
+    return
+
 """ FUNCION PARA ABRIR LA VENTANA DE CONFIGURACION DEL SISTEMA
 # ENTRADAS: Lee las opciones seleccionadas por el usuario.
 # SALIDAS: Guarda los cambios en un archivo predefinido. """
@@ -172,7 +175,7 @@ ventana_principal.title("ReTeVe")
 # Opciones de citas.
 Label(ventana_principal, text="").pack()
 Label(ventana_principal, text="Citas", font=("Comic Sans MS", 16)).pack()
-boton_a = Button(ventana_principal, text="Programar citas", font=("Arial", 12), command= None)
+boton_a = Button(ventana_principal, text="Programar citas", font=("Arial", 12), command= lambda: boton_programar_citas())
 boton_a.pack()
 boton_b = Button(ventana_principal, text="Cancelar citas", font=("Arial", 12), command= None)
 boton_b.pack()
