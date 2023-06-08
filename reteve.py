@@ -30,11 +30,11 @@ def ventana_configuracion_sistema():
         datos_originales = eval(datos_originales)
         archivo.close()
 
-        """
         archivo = open("configuración_reteve.dat", "w")
         datos_originales[indice] = dato
-        archivo.write(datos_originales)
-        archivo.close()"""
+        print(datos_originales)
+        archivo.write(str(datos_originales))
+        archivo.close()
         return
     
     # Crear la ventana de configuración.
@@ -76,7 +76,8 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Cantidad de líneas de trabajo en la estación:", font=("Arial", 12)).pack()
     combo_lineas = ttk.Combobox(segundo_frame_config, values= opciones_lineas_trabajo, state="readonly")
     combo_lineas.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(combo_lineas.get(), 0)).pack()
+    Label(segundo_frame_config, text="").pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_lineas_trabajo()).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Horario de la estación.
@@ -88,6 +89,8 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Hora final:", font=("Arial", 8)).pack()
     combo_hora_final = ttk.Combobox(segundo_frame_config, values= opciones_horario, state="readonly")
     combo_hora_final.pack()
+    Label(segundo_frame_config, text="").pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_fechas(combo_hora_inicial.get(), combo_hora_final.get())).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Minutos por cada cita de revisión.
@@ -95,6 +98,8 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Minutos por cada cita de revisión:", font=("Arial", 12)).pack()
     combo_minutos_cita = ttk.Combobox(segundo_frame_config, values= opciones_minutos_cita, state="readonly")
     combo_minutos_cita.pack()
+    Label(segundo_frame_config, text="").pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(combo_minutos_cita.get(), 3)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Cantidad máxima de días naturales para reinspección.
@@ -102,6 +107,8 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Cantidad máxima de días naturales para reinspección:", font=("Arial", 12)).pack()
     combo_dias_reinspeccion = ttk.Combobox(segundo_frame_config, values= opciones_dias_reinspeccion, state= "readonly")
     combo_dias_reinspeccion.pack()
+    Label(segundo_frame_config, text="").pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(combo_dias_reinspeccion.get(), 4)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Cantidad de fallas graves para sacar vehículo de circulación.
@@ -110,6 +117,8 @@ def ventana_configuracion_sistema():
     entrada_fallas_graves.pack()
     indicador_fallas_graves = Label(segundo_frame_config, text= "Actual: Ninguno")
     indicador_fallas_graves.pack()
+    Label(segundo_frame_config, text="").pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(entrada_fallas_graves.get(), 5)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Cantidad de meses.
@@ -117,6 +126,8 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Cantidad de meses que se van a considerar para desplegar todas \nlas citas disponibles en la asignación automática de citas:", font=("Arial", 12)).pack()
     combo_meses = ttk.Combobox(segundo_frame_config, values= opciones_meses, state= "readonly")
     combo_meses.pack()
+    Label(segundo_frame_config, text="").pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(combo_meses.get(), 6)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Porcentaje de Impuesto al Valor Agregado (IVA) sobre la tarifa.
@@ -125,6 +136,8 @@ def ventana_configuracion_sistema():
     entrada_impuesto_iva.pack()
     indicador_impuesto_iva = Label(segundo_frame_config, text= "Actual: Ninguno")
     indicador_impuesto_iva.pack()
+    Label(segundo_frame_config, text="").pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(entrada_impuesto_iva.get(), 7)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Tabla de Tarifas.
