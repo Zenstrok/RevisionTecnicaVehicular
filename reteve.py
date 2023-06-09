@@ -32,22 +32,51 @@ def ventana_configuracion_sistema():
         else:
             pass
     
-    def guardar_fechas():
+    def guardar_horas(inicial, final):
+        inicial = int(inicial)
+        final = int(final)
+
+        if final >= inicial:
+            archivo = open("configuración_reteve.dat", "r")
+            datos_originales = archivo.read()
+            datos_originales = eval(datos_originales)
+            archivo.close()
+
+            archivo = open("configuración_reteve.dat", "w")
+            datos_originales[1] = inicial
+            datos_originales[2] = final
+            archivo.write(str(datos_originales))
+            archivo.close()
+
+            MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
+        else:
+            MessageBox.showerror("ERROR", "No se pudo guardar \n(hora inicial mayor que la final).")
         return
 
     def guardar_general(dato, indice):
-        if dato != "":
-            dato = int(dato)
-        archivo = open("configuración_reteve.dat", "r")
-        datos_originales = archivo.read()
-        datos_originales = eval(datos_originales)
-        archivo.close()
+        if dato != "" or isinstance(dato, int) or isinstance(dato, float):
+            if indice == 7:
+                dato = float(dato)
+            else:
+                dato = int(dato)
 
-        archivo = open("configuración_reteve.dat", "w")
-        datos_originales[indice] = dato
-        print(datos_originales)
-        archivo.write(str(datos_originales))
-        archivo.close()
+            archivo = open("configuración_reteve.dat", "r")
+            datos_originales = archivo.read()
+            datos_originales = eval(datos_originales)
+            archivo.close()
+
+            archivo = open("configuración_reteve.dat", "w")
+            datos_originales[indice] = dato
+            print(datos_originales)
+            archivo.write(str(datos_originales))
+            archivo.close()
+
+            MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
+        else:
+            MessageBox.showerror("ERROR", "No hay ningún dato registrado o es un dato incorrecto.")
+        return
+    
+    def guardar_tarifas(dato, indice):
         return
     
     # Crear la ventana de configuración.
@@ -90,7 +119,7 @@ def ventana_configuracion_sistema():
     combo_lineas = ttk.Combobox(segundo_frame_config, values= opciones_lineas_trabajo, state="readonly")
     combo_lineas.pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_lineas_trabajo()).pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_lineas_trabajo(combo_lineas.get())).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Horario de la estación.
@@ -103,7 +132,7 @@ def ventana_configuracion_sistema():
     combo_hora_final = ttk.Combobox(segundo_frame_config, values= opciones_horario, state="readonly")
     combo_hora_final.pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_fechas(combo_hora_inicial.get(), combo_hora_final.get())).pack()
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_horas(combo_hora_inicial.get(), combo_hora_final.get())).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Minutos por cada cita de revisión.
@@ -159,75 +188,83 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="").pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
     
-    Label(segundo_frame_config, text="Vehículo:").pack()
-    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
-    Label(segundo_frame_config, text="Tarifa:").pack()
-    entrada_tarifa_1 = Entry(segundo_frame_config, width= 5, border= 4)
+    Label(segundo_frame_config, text="Vehículo:", font=("Arial", 10)).pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana \n(menor o igual a 3500 kg)", font=("Franklin Gothic Demi", 10)).pack()
+    Label(segundo_frame_config, text="Tarifa nueva:", font=("Arial", 10)).pack()
+    entrada_tarifa_1 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_1.pack()
-    indicador_tarifa_1 = Label(segundo_frame_config, text="Actual: Ninguno")
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_1.get(), 0)).pack()
+    indicador_tarifa_1 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_1.pack()
 
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
-    Label(segundo_frame_config, text="Vehículo:").pack()
-    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
-    Label(segundo_frame_config, text="Tarifa:").pack()
-    entrada_tarifa_2 = Entry(segundo_frame_config, width= 5, border= 4)
+    Label(segundo_frame_config, text="Vehículo:", font=("Arial", 10)).pack()
+    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana \n(mayor a 3500 kg pero menor a 8000 kg)", font=("Franklin Gothic Demi", 10)).pack()
+    Label(segundo_frame_config, text="Tarifa nueva:", font=("Arial", 10)).pack()
+    entrada_tarifa_2 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_2.pack()
-    indicador_tarifa_2 = Label(segundo_frame_config, text="Actual: Ninguno")
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_2.get(), 1)).pack()
+    indicador_tarifa_2 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_2.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
-    Label(segundo_frame_config, text="Vehículo:").pack()
-    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
-    Label(segundo_frame_config, text="Tarifa:").pack()
-    entrada_tarifa_3 = Entry(segundo_frame_config, width= 5, border= 4)
+    Label(segundo_frame_config, text="Vehículo:", font=("Arial", 10)).pack()
+    Label(segundo_frame_config, text="Vehículo de carga pesada y cabezales \n(mayor o igual a 8000 kg)", font=("Franklin Gothic Demi", 10)).pack()
+    Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
+    entrada_tarifa_3 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_3.pack()
-    indicador_tarifa_3 = Label(segundo_frame_config, text="Actual: Ninguno")
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_3.get(), 2)).pack()
+    indicador_tarifa_3 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_3.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
-    Label(segundo_frame_config, text="Vehículo:").pack()
-    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
-    Label(segundo_frame_config, text="Tarifa:").pack()
-    entrada_tarifa_4 = Entry(segundo_frame_config, width= 5, border= 4)
+    Label(segundo_frame_config, text="Vehículo:", font=("Arial", 10)).pack()
+    Label(segundo_frame_config, text="Taxis", font=("Franklin Gothic Demi", 10)).pack()
+    Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
+    entrada_tarifa_4 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_4.pack()
-    indicador_tarifa_4 = Label(segundo_frame_config, text="Actual: Ninguno")
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_4.get(), 3)).pack()
+    indicador_tarifa_4 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_4.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
-    Label(segundo_frame_config, text="Vehículo:").pack()
-    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
-    Label(segundo_frame_config, text="Tarifa:").pack()
-    entrada_tarifa_5 = Entry(segundo_frame_config, width= 5, border= 4)
+    Label(segundo_frame_config, text="Vehículo:", font=("Arial", 10)).pack()
+    Label(segundo_frame_config, text="Autobuses, buses y microbuses", font=("Franklin Gothic Demi", 10)).pack()
+    Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
+    entrada_tarifa_5 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_5.pack()
-    indicador_tarifa_5 = Label(segundo_frame_config, text="Actual: Ninguno")
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_5.get(), 4)).pack()
+    indicador_tarifa_5 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_5.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
-    Label(segundo_frame_config, text="Vehículo:").pack()
-    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
-    Label(segundo_frame_config, text="Tarifa:").pack()
-    entrada_tarifa_6 = Entry(segundo_frame_config, width= 5, border= 4)
+    Label(segundo_frame_config, text="Vehículo:", font=("Arial", 10)).pack()
+    Label(segundo_frame_config, text="Motocicletas", font=("Franklin Gothic Demi", 10)).pack()
+    Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
+    entrada_tarifa_6 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_6.pack()
-    indicador_tarifa_6 = Label(segundo_frame_config, text="Actual: Ninguno")
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_6.get(), 5)).pack()
+    indicador_tarifa_6 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_6.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
-    Label(segundo_frame_config, text="Vehículo:").pack()
-    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
-    Label(segundo_frame_config, text="Tarifa:").pack()
-    entrada_tarifa_7 = Entry(segundo_frame_config, width= 5, border= 4)
+    Label(segundo_frame_config, text="Vehículo:", font=("Arial", 10)).pack()
+    Label(segundo_frame_config, text="Equipo especial de obras", font=("Franklin Gothic Demi", 10)).pack()
+    Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
+    entrada_tarifa_7 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_7.pack()
-    indicador_tarifa_7 = Label(segundo_frame_config, text="Actual: Ninguno")
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_7.get(), 6)).pack()
+    indicador_tarifa_7 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_7.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
-    Label(segundo_frame_config, text="Vehículo:").pack()
-    Label(segundo_frame_config, text="Automóvil particular y vehículo de carga liviana", font=("Franklin Gothic Demi", 9)).pack()
-    Label(segundo_frame_config, text="Tarifa:").pack()
-    entrada_tarifa_8 = Entry(segundo_frame_config, width= 5, border= 4)
+    Label(segundo_frame_config, text="Vehículo:", font=("Arial", 10)).pack()
+    Label(segundo_frame_config, text="Equipo especial agrícola \n(maquinaria agrícola)", font=("Franklin Gothic Demi", 10)).pack()
+    Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
+    entrada_tarifa_8 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_8.pack()
-    indicador_tarifa_8 = Label(segundo_frame_config, text="Actual: Ninguno")
+    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_8.get(), 7)).pack()
+    indicador_tarifa_8 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_8.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
@@ -244,10 +281,13 @@ def ventana_configuracion_sistema():
     combo_minutos_cita.set(datos_totales[3])
     combo_dias_reinspeccion.set(datos_totales[4])
     combo_meses.set(datos_totales[6])
-    texto_nuevo_1 = "Actual: " + str(datos_totales[5])
-    indicador_fallas_graves.config(text= texto_nuevo_1)
-    texto_nuevo_2 = "Actual: " + str(datos_totales[7])
-    indicador_impuesto_iva.config(text= texto_nuevo_2)
+    texto_nuevo = "Actual: " + str(datos_totales[5])
+    indicador_fallas_graves.config(text= texto_nuevo)
+    texto_nuevo = "Actual: " + str(datos_totales[7])
+    indicador_impuesto_iva.config(text= texto_nuevo)
+
+    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][])
+    indicador_tarifa_1.config()
 
     # Loop de la ventana.
     ventana_config.mainloop()
