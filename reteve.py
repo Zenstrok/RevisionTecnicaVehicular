@@ -29,7 +29,9 @@ def ventana_configuracion_sistema():
             print(datos_originales)
             archivo.write(str(datos_originales))
             archivo.close()
+            MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
         else:
+            MessageBox.showerror("ERROR", "No se puede ejecutar la acción.")
             pass
     
     def guardar_horas(inicial, final):
@@ -54,11 +56,19 @@ def ventana_configuracion_sistema():
         return
 
     def guardar_general(dato, indice):
-        if dato != "" or isinstance(dato, int) or isinstance(dato, float):
+        if dato != "" and isinstance(dato, int) or isinstance(dato, float):
             if indice == 7:
-                dato = float(dato)
+                if dato >= 0 and dato <= 20:
+                    dato = float(dato)
+                else:
+                    MessageBox.showerror("ERROR", "El dato debe estar entre 0 y 20.")
+                    return
             else:
-                dato = int(dato)
+                if dato > 0:
+                    dato = int(dato)
+                else:
+                    MessageBox.showerror("ERROR", "El dato debe ser mayor a 0.")
+                    return
 
             archivo = open("configuración_reteve.dat", "r")
             datos_originales = archivo.read()
@@ -77,6 +87,31 @@ def ventana_configuracion_sistema():
         return
     
     def guardar_tarifas(dato, indice):
+        if dato == "":
+            MessageBox.showerror("ERROR", "No hay ningún dato registrado o es un dato incorrecto.")
+            return
+        try:
+            dato = int(dato)
+        except:
+            MessageBox.showerror("ERROR", "No hay ningún dato registrado o es un dato incorrecto.")
+            return
+        
+        if dato <= 0:
+            MessageBox.showerror("ERROR", "El dato debe ser mayor a 0.")
+            return
+        
+        archivo = open("configuración_reteve.dat", "r")
+        datos_originales = archivo.read()
+        datos_originales = eval(datos_originales)
+        archivo.close()
+
+        archivo = open("configuración_reteve.dat", "w")
+        datos_originales[8][indice] = dato
+        print(datos_originales)
+        archivo.write(str(datos_originales))
+        archivo.close()
+
+        MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
         return
     
     # Crear la ventana de configuración.
@@ -286,8 +321,23 @@ def ventana_configuracion_sistema():
     texto_nuevo = "Actual: " + str(datos_totales[7])
     indicador_impuesto_iva.config(text= texto_nuevo)
 
-    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][])
-    indicador_tarifa_1.config()
+    # Asignar los valores actuales a la tabla de tarifas.
+    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][0])
+    indicador_tarifa_1.config(text= texto_nuevo)
+    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][1])
+    indicador_tarifa_2.config(text= texto_nuevo)
+    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][2])
+    indicador_tarifa_3.config(text= texto_nuevo)
+    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][3])
+    indicador_tarifa_4.config(text= texto_nuevo)
+    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][4])
+    indicador_tarifa_5.config(text= texto_nuevo)
+    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][5])
+    indicador_tarifa_6.config(text= texto_nuevo)
+    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][6])
+    indicador_tarifa_7.config(text= texto_nuevo)
+    texto_nuevo = "Tarifa actual: " + str(datos_totales[8][7])
+    indicador_tarifa_8.config(text= texto_nuevo)
 
     # Loop de la ventana.
     ventana_config.mainloop()
@@ -297,7 +347,7 @@ def ventana_configuracion_sistema():
 # SALIDAS: Si el usuario responde 'sí', abre el manual de usuario. """
 def ayuda_de_programa():
     if MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea abrir el manual?"):
-        os.startfile("manual_de_usuario_reteve.docx") # Abrir el manual.
+        os.startfile("manual_de_usuario_reteve.pdf") # Abrir el manual.
     return
 
 """ FUNCION PARA MOSTRAR LA INFORMACION DEL PROGRAMA EN UNA VENTANA
