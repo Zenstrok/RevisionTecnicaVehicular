@@ -16,8 +16,21 @@ def boton_programar_citas():
 # SALIDAS: Guarda los cambios en un archivo predefinido. """
 def ventana_configuracion_sistema():
 
-    def guardar_lineas_trabajo():
-        return
+    def guardar_lineas_trabajo(dato):
+        archivo = open("configuración_reteve.dat", "r")
+        datos_originales = archivo.read()
+        datos_originales = eval(datos_originales)
+        dato_comparar = datos_originales[0]
+        archivo.close()
+
+        if dato >= dato_comparar:
+            archivo = open("configuración_reteve.dat", "w")
+            datos_originales[0] = dato
+            print(datos_originales)
+            archivo.write(str(datos_originales))
+            archivo.close()
+        else:
+            pass
     
     def guardar_fechas():
         return
