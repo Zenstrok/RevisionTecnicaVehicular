@@ -23,9 +23,9 @@ def ventana_configuracion_sistema():
         dato_comparar = datos_originales[0]
         archivo.close()
 
-        if dato >= dato_comparar:
+        if int(dato) >= dato_comparar:
             archivo = open("configuración_reteve.dat", "w")
-            datos_originales[0] = dato
+            datos_originales[0] = int(dato)
             print(datos_originales)
             archivo.write(str(datos_originales))
             archivo.close()
