@@ -5,15 +5,35 @@ import os
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as MessageBox
+from validate_email_address import validate_email #libreria para validar email
+from fpdf import FPDF #libreria para crear pdf
+import smtplib # librerias para el envio de archivos por correo
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+from email.mime.image import MIMEImage
+import base64 # libreria para codificar objetos
 
 """ FUNCIONES """
 
+#Validar correos.
+"""Entradas: Correo electronico.
+Salidas: True si es valido y existe
+False si no es valido
+None si no existe
+"""
+def validar_existencia_correo(correo):
+     es_valido = validate_email(correo) # seccion que valida solo el formato
+     if es_valido == True:
+         existe = validate_email(correo,verify = True) # valida existencia gracias a verify
+         return existe
+     return False
+
+def programar_cita_nueva():
+    print("Hola")
+    return
+
 def programar_citas():
-
-    def programar_cita_nueva():
-        print("Hola")
-        return
-
     def validar_datos_cita():
         # Validar el número de placa.
         dato = entry2.get()
@@ -65,8 +85,22 @@ def programar_citas():
         if dato == "":
             MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
             return
-        #FALTA
-
+        else:
+            try:
+                resultado = validar_existencia_correo(dato)
+                if resultado == None:
+                    MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
+                    return
+                if resultado == False:
+                    MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
+                    return
+                if resultado == True:
+                    pass
+            except:
+                 MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
+                 return
+                    
+            
         # Validar dirección física.
         dato = entry9.get()
         if dato == "":
@@ -105,40 +139,42 @@ def programar_citas():
     p_v = Radiobutton(ventana_programar_citas, text="Primera Vez", variable=tipo_c, value="Primera Vez").place(x= 110, y= 53)
     r_i = Radiobutton(ventana_programar_citas, text="Reinspeccion", variable=tipo_c, value="Reinspeccion").place(x= 200, y= 53)
     
-
-
-
+    def validar_texto(texto):
+        return len(texto) <= 40
     
-    Label(ventana_programar_citas, text= "Número de placa: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 100)
-    entry2 = Entry(ventana_programar_citas, width=40)
+    texto = (ventana_programar_citas.register(validar_texto), "%P")
+
+    Label(ventana_programar_citas, text= "Número de placa: ",font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 100)
+    entry2 = Entry(ventana_programar_citas, width=40,validate="key", validatecommand=texto)
     entry2.place(x= 145, y= 105)
 
+
     Label(ventana_programar_citas, text= "Tipo de vehículo: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 150)
-    entry3 = ttk.Combobox(ventana_programar_citas, values= tipos_de_vehículos, width= 60, state= "readonly")
+    entry3 = ttk.Combobox(ventana_programar_citas, values= tipos_de_vehículos, width= 60, state= "readonly",validate="key", validatecommand=texto)
     entry3.place(x= 140, y= 155)
 
-    Label(ventana_programar_citas, text= "Marca del vehículo: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 200)
-    entry4 = Entry(ventana_programar_citas, width= 40)
+    Label(ventana_programar_citas, text= "Marca del vehículo: ",font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 200)
+    entry4 = Entry(ventana_programar_citas, width= 40,validate="key", validatecommand=texto)
     entry4.place(x= 160, y= 205)
 
     Label(ventana_programar_citas, text= "Modelo: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 250)
-    entry5 = Entry(ventana_programar_citas, width= 40)
+    entry5 = Entry(ventana_programar_citas, width= 40,validate="key", validatecommand=texto)
     entry5.place(x= 80, y= 255)
 
     Label(ventana_programar_citas, text= "Propietario: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 300)
-    entry6 = Entry(ventana_programar_citas, width= 40)
+    entry6 = Entry(ventana_programar_citas, width= 40,validate="key", validatecommand=texto)
     entry6.place(x= 110, y= 305)
 
     Label(ventana_programar_citas, text= "Teléfono: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 350)
-    entry7 = Entry(ventana_programar_citas, width= 40)
+    entry7 = Entry(ventana_programar_citas, width= 40,validate="key", validatecommand=texto)
     entry7.place(x= 90, y= 355)
 
     Label(ventana_programar_citas, text= "Correo electrónico: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 400)
-    entry8 = Entry(ventana_programar_citas, width= 40)
+    entry8 = Entry(ventana_programar_citas, width= 40,validate="key", validatecommand=texto)
     entry8.place(x= 160, y= 405)
 
     Label(ventana_programar_citas, text= "Dirección física: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 450)
-    entry9 = Entry(ventana_programar_citas, width= 40)
+    entry9 = Entry(ventana_programar_citas, width= 40,validate="key", validatecommand=texto)
     entry9.place(x= 140, y= 455)
 
     Label(ventana_programar_citas, text= "Fecha y hora de la cita: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 500)
