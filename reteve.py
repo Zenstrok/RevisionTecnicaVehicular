@@ -5,7 +5,7 @@ import os
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as MessageBox
-from validate_email_address import validate_email #libreria para validar email
+from validate_email_address import validate_email as ValidarEmail #libreria para validar email
 from fpdf import FPDF #libreria para crear pdf
 import smtplib # librerias para el envio de archivos por correo
 from email.mime.text import MIMEText
@@ -23,9 +23,9 @@ False si no es valido
 None si no existe
 """
 def validar_existencia_correo(correo):
-     es_valido = validate_email(correo) # seccion que valida solo el formato
+     es_valido = ValidarEmail(correo) # seccion que valida solo el formato
      if es_valido == True:
-         existe = validate_email(correo,verify = True) # valida existencia gracias a verify
+         existe = ValidarEmail(correo,verify = True) # valida existencia gracias a verify
          return existe
      return False
 
