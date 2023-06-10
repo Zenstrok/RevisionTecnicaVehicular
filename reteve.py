@@ -8,7 +8,152 @@ from tkinter import messagebox as MessageBox
 
 """ FUNCIONES """
 
-def boton_programar_citas():
+def programar_citas():
+
+    def programar_cita_nueva():
+        print("Hola")
+        return
+
+    def validar_datos_cita():
+        # Validar el número de placa.
+        dato = entry2.get()
+        if dato == "":
+            MessageBox.showerror("ERROR", "Dato de placa inválido.")
+            return
+        if len(dato) > 8 or len(dato) < 1:
+            MessageBox.showerror("ERROR", "Dato de placa inválido.")
+            return
+        
+        # Validar la marca del vehículo.
+        dato = entry4.get()
+        if dato == "":
+            MessageBox.showerror("ERROR", "Marca de vehículo inválida.")
+            return
+        if len(dato) > 15 or len(dato) < 3:
+            MessageBox.showerror("ERROR", "Marca de vehiculo inválida.")
+            return
+
+        # Validar modelo del vehículo.
+        dato = entry5.get()
+        if dato == "":
+            MessageBox.showerror("ERROR", "Modelo del vehículo inválido.")
+            return
+        if len(dato) > 15 or len(dato) < 1:
+            MessageBox.showerror("ERROR", "Modelo del vehiculo inválido.")
+            return
+        
+        # Validar propietario del vehículo.
+        dato = entry6.get()
+        if dato == "":
+            MessageBox.showerror("ERROR", "Propietario del vehículo inválido.")
+            return
+        if len(dato) > 40 or len(dato) < 6:
+            MessageBox.showerror("ERROR", "Propietario del vehiculo inválido.")
+            return
+        
+        # Validar teléfono.
+        dato = entry7.get()
+        if dato == "":
+            MessageBox.showerror("ERROR", "Teléfono inválido.")
+            return
+        if len(dato) > 20 or len(dato) < 6:
+            MessageBox.showerror("ERROR", "Teléfono inválido.")
+            return
+        
+        # Validar correo electrónico.
+        dato = entry8.get()
+        if dato == "":
+            MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
+            return
+        #FALTA
+
+        # Validar dirección física.
+        dato = entry9.get()
+        if dato == "":
+            MessageBox.showerror("ERROR", "Dirección física inválida.")
+            return
+        if len(dato) > 40 or len(dato) < 10:
+            MessageBox.showerror("ERROR", "Dirección física inválida.")
+            return
+        
+        programar_cita_nueva()
+    
+    def fecha_hora_manual():
+
+        return
+    
+    def fecha_hora_automatico():
+
+        return
+    
+    tipos_de_vehículos = ["Automóvil particular y vehículo de carga liviana (<= 3500 kg)", \
+                          "Automóvil particular y vehículo de carga liviana (3500 kg > 8000 kg)", \
+                            "Vehículo de carga pesada y cabezales (>= 8000 kg)", "Taxis", \
+                                "Autobuses, buses y microbuses", "Motocicletas", "Equipo especial de obras", \
+                                    "Equipo especial agrícola (maquinaria agrícola)"]
+
+    ventana_programar_citas = Toplevel()
+    ventana_programar_citas.geometry("600x700")
+    ventana_programar_citas.resizable(False, False)
+    ventana_programar_citas.title("Programar Citas")
+
+    Label(ventana_programar_citas, text= "Programar Citas", font= ("Arial", 16)).place(x= 220, y= 10)
+    Label(ventana_programar_citas, text= "Tipo de cita: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 50)
+
+
+    tipo_c = StringVar(value = 0) 
+    p_v = Radiobutton(ventana_programar_citas, text="Primera Vez", variable=tipo_c, value="Primera Vez").place(x= 110, y= 53)
+    r_i = Radiobutton(ventana_programar_citas, text="Reinspeccion", variable=tipo_c, value="Reinspeccion").place(x= 200, y= 53)
+    
+
+
+
+    
+    Label(ventana_programar_citas, text= "Número de placa: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 100)
+    entry2 = Entry(ventana_programar_citas, width=40)
+    entry2.place(x= 145, y= 105)
+
+    Label(ventana_programar_citas, text= "Tipo de vehículo: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 150)
+    entry3 = ttk.Combobox(ventana_programar_citas, values= tipos_de_vehículos, width= 60, state= "readonly")
+    entry3.place(x= 140, y= 155)
+
+    Label(ventana_programar_citas, text= "Marca del vehículo: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 200)
+    entry4 = Entry(ventana_programar_citas, width= 40)
+    entry4.place(x= 160, y= 205)
+
+    Label(ventana_programar_citas, text= "Modelo: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 250)
+    entry5 = Entry(ventana_programar_citas, width= 40)
+    entry5.place(x= 80, y= 255)
+
+    Label(ventana_programar_citas, text= "Propietario: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 300)
+    entry6 = Entry(ventana_programar_citas, width= 40)
+    entry6.place(x= 110, y= 305)
+
+    Label(ventana_programar_citas, text= "Teléfono: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 350)
+    entry7 = Entry(ventana_programar_citas, width= 40)
+    entry7.place(x= 90, y= 355)
+
+    Label(ventana_programar_citas, text= "Correo electrónico: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 400)
+    entry8 = Entry(ventana_programar_citas, width= 40)
+    entry8.place(x= 160, y= 405)
+
+    Label(ventana_programar_citas, text= "Dirección física: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 450)
+    entry9 = Entry(ventana_programar_citas, width= 40)
+    entry9.place(x= 140, y= 455)
+
+    Label(ventana_programar_citas, text= "Fecha y hora de la cita: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 500)
+    boton_manual = Button(ventana_programar_citas, text= "Manual", command= None)
+    boton_manual.place(x= 190, y= 500)
+    boton_auto = Button(ventana_programar_citas, text= "Automático", command= None)
+    boton_auto.place(x= 250, y= 500)
+
+    Button(ventana_programar_citas, text= "Programar Cita", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: validar_datos_cita()).place(x= 140, y= 555)
+    Button(ventana_programar_citas, text= "Cerrar ventana", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: ventana_programar_citas.destroy()).place(x= 300, y= 555)
+
+    tipo_c.set("Primera Vez")
+    entry3.set("Automóvil particular y vehículo de carga liviana (<= 3500 kg)")
+
+    ventana_programar_citas.mainloop()
     return
 
 """ FUNCION PARA ABRIR LA VENTANA DE CONFIGURACION DEL SISTEMA
@@ -56,17 +201,25 @@ def ventana_configuracion_sistema():
         return
 
     def guardar_general(dato, indice):
-        if dato != "" and isinstance(dato, int) or isinstance(dato, float):
+        if dato != "":
             if indice == 7:
-                if dato >= 0 and dato <= 20:
+                try:
                     dato = float(dato)
-                else:
+                except:
+                    MessageBox.showerror("ERROR", "No hay ningún dato registrado o es un dato incorrecto.")
+                    return
+
+                if dato < 0 or dato > 20:
                     MessageBox.showerror("ERROR", "El dato debe estar entre 0 y 20.")
                     return
             else:
-                if dato > 0:
+                try:
                     dato = int(dato)
-                else:
+                except:
+                    MessageBox.showerror("ERROR", "No hay ningún dato registrado o es un dato incorrecto.")
+                    return
+
+                if dato <= 0:
                     MessageBox.showerror("ERROR", "El dato debe ser mayor a 0.")
                     return
 
@@ -302,6 +455,10 @@ def ventana_configuracion_sistema():
     indicador_tarifa_8 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_8.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
+    Label(segundo_frame_config, text="").pack()
+    Button(segundo_frame_config, text= "CERRAR VENTANA", command= lambda: ventana_config.destroy()).pack()
+    Label(segundo_frame_config, text="").pack()
+    Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Abrir el archivo de configuración.
     archivo = open("configuración_reteve.dat", "r")
@@ -394,7 +551,7 @@ ventana_principal.title("ReTeVe")
 # Opciones de citas.
 Label(ventana_principal, text="").pack()
 Label(ventana_principal, text="Citas", font=("Comic Sans MS", 16)).pack()
-boton_a = Button(ventana_principal, text="Programar citas", font=("Arial", 12), command= lambda: boton_programar_citas())
+boton_a = Button(ventana_principal, text="Programar citas", font=("Arial", 12), command= lambda: programar_citas())
 boton_a.pack()
 boton_b = Button(ventana_principal, text="Cancelar citas", font=("Arial", 12), command= None)
 boton_b.pack()
