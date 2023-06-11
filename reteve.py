@@ -13,6 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.mime.image import MIMEImage
 import base64 # libreria para codificar objetos
+import datetime
 
 """ FUNCIONES """
 
@@ -28,6 +29,23 @@ def validar_existencia_correo(correo):
          existe = validate_email(correo,verify = True) # valida existencia gracias a verify
          return existe
      return False
+
+#Validar fechas.
+"""Entradas: fecha.
+Salidas: True si es valido 
+False si no es valido
+"""
+def validar_fecha(fecha):
+    global fecha_v
+    try:
+        # Intentamos crear un objeto de fecha a partir de la cadena proporcionada
+        datetime.datetime.strptime(fecha, '%Y-%m-%d')
+        fecha_v = True
+    except ValueError:
+        fecha_v = False
+        MessageBox.showerror("Fecha","Fecha Invalida")
+    
+    
 
 def programar_cita_nueva():
     print("Hola")
@@ -87,9 +105,7 @@ def programar_citas():
             MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
             return
         else:
-            #try:
             resultado = validar_existencia_correo(dato)
-            print(resultado)
             if resultado == None:
                 MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
                 return
@@ -98,10 +114,6 @@ def programar_citas():
                 return
             if resultado == True:
                 pass
-            """except:
-                 print(resultado)
-                 MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
-                 return"""
                     
             
         # Validar dirección física.
@@ -116,6 +128,46 @@ def programar_citas():
         programar_cita_nueva()
     
     def fecha_hora_manual():
+        opciones_dia = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+        opciones_mes = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+        opciones_año = ["2023","2024","2025"]
+        opciones_hora = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+        opciones_minutos = [0,1,2,3,4,5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,46,47,47,49,50,51,52,53,54,55,56,57,58,59]
+        ventana_manual = Toplevel()
+        ventana_manual.geometry("300x350")
+        ventana_manual.resizable(False, False)
+        ventana_manual.title("Fecha Manual")
+        Label(ventana_manual, text= "FECHA MANUAL", font= ("Arial", 16)).place(x= 20, y= 10)
+
+        Label(ventana_manual, text= "DIA:", font= ("Arial", 16)).place(x= 95, y= 46)
+        dia = ttk.Combobox(ventana_manual, values= opciones_dia, state= "readonly")
+        dia.place(x= 140, y= 50)
+
+        mes = ttk.Combobox(ventana_manual, values= opciones_mes, state= "readonly")
+        mes.place(x= 140, y= 100)
+        Label(ventana_manual, text= "MES:", font= ("Arial", 16)).place(x= 80, y= 96)
+
+        año = ttk.Combobox(ventana_manual, values= opciones_año, state= "readonly")
+        año.place(x= 140, y= 150)
+        Label(ventana_manual, text= "AÑO:", font= ("Arial", 16)).place(x= 80, y= 146)
+
+        hora = ttk.Combobox(ventana_manual, values= opciones_hora, state= "readonly")
+        hora.place(x= 140, y= 200)
+        Label(ventana_manual, text= "HORA:", font= ("Arial", 16)).place(x= 70, y= 196)
+
+        minutos = ttk.Combobox(ventana_manual, values= opciones_minutos, state= "readonly")
+        minutos.place(x= 140, y= 250)
+        Label(ventana_manual, text= "MINUTOS:", font= ("Arial", 16)).place(x= 30, y= 246)
+
+        
+        Button(ventana_manual, text= "Guardar", command= lambda:  validar_fecha(fecha = (año.get() + "-" + mes.get() + "-" + dia.get()))).place(x = 70, y = 300 )
+        
+
+        dia.set("01")
+        mes.set("01")
+        año.set("2023")
+        hora.set("0")
+        minutos.set("0")
 
         return
     
@@ -153,7 +205,7 @@ def programar_citas():
 
 
     Label(ventana_programar_citas, text= "Tipo de vehículo: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 150)
-    entry3 = ttk.Combobox(ventana_programar_citas, values= tipos_de_vehículos, width= 60, state= "readonly",validate="key", validatecommand=texto)
+    entry3 = ttk.Combobox(ventana_programar_citas, values= tipos_de_vehículos, width= 60, state= "readonly")
     entry3.place(x= 140, y= 155)
 
     Label(ventana_programar_citas, text= "Marca del vehículo: ",font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 200)
@@ -181,9 +233,9 @@ def programar_citas():
     entry9.place(x= 140, y= 455)
 
     Label(ventana_programar_citas, text= "Fecha y hora de la cita: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 500)
-    boton_manual = Button(ventana_programar_citas, text= "Manual", command= None)
+    boton_manual = Button(ventana_programar_citas, text= "Manual", command = lambda:fecha_hora_manual())
     boton_manual.place(x= 190, y= 500)
-    boton_auto = Button(ventana_programar_citas, text= "Automático", command= None)
+    boton_auto = Button(ventana_programar_citas, text= "Automático", command = lambda:fecha_hora_automatico())
     boton_auto.place(x= 250, y= 500)
 
     Button(ventana_programar_citas, text= "Programar Cita", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: validar_datos_cita()).place(x= 140, y= 555)
