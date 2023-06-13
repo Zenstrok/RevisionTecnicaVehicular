@@ -291,11 +291,11 @@ def programar_citas():
         return len(texto) <= 40
     
     # Definir los tipos de vehículos en una lista.
-    tipos_de_vehículos = ["Automóvil particular y vehículo de carga liviana (<= 3500 kg)", \
-                          "Automóvil particular y vehículo de carga liviana (3500 kg > 8000 kg)", \
-                            "Vehículo de carga pesada y cabezales (>= 8000 kg)", "Taxis", \
+    tipos_de_vehículos = ["Automovil particular y vehiculo de carga liviana (<= 3500 kg)", \
+                          "Automovil particular y vehiculo de carga liviana (3500 kg > 8000 kg)", \
+                            "Vehiculo de carga pesada y cabezales (>= 8000 kg)", "Taxis", \
                                 "Autobuses, buses y microbuses", "Motocicletas", "Equipo especial de obras", \
-                                    "Equipo especial agrícola (maquinaria agrícola)"]
+                                    "Equipo especial agricola (maquinaria agricola)"]
 
     # Esconder la ventana principal.
     ventana_principal.iconify()
@@ -394,7 +394,7 @@ def programar_citas():
 
     # Asignar valores por defecto a las opciones.
     tipo_cita.set("Primera Vez")
-    entry3.set("Automóvil particular y vehículo de carga liviana (<= 3500 kg)")
+    entry3.set("Automovil particular y vehiculo de carga liviana (<= 3500 kg)")
     tipo_programacion.set("manual")
     dia.set("01")
     mes.set("01")
