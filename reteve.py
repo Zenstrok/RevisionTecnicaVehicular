@@ -19,12 +19,9 @@ import time
 
 """ FUNCIONES """
 
-#Validar correos.
-"""Entradas: Correo electronico.
-Salidas: True si es valido y existe
-False si no es valido
-None si no existe
-"""
+# FUNCION VALIDAR CORREOS
+# ENTRADAS: Recibe un correo electronico.
+# SALIDAS: Retorna True si es valido y existe, False si no es valido, None si no existe.
 def validar_existencia_correo(correo):
      es_valido = validate_email(correo) # seccion que valida solo el formato
      if es_valido == True:
@@ -32,11 +29,9 @@ def validar_existencia_correo(correo):
          return existe
      return False
 
-#Validar fechas.
-"""Entradas: fecha.
-Salidas: True si es valido 
-False si no es valido
-"""
+# FUNCION VALIDAR FECHAS
+# ENTRADAS: Recibe la fecha a validar.
+# SALIDAS: True si es valido, False si no es valido.
 def validar_fecha(fecha):
     global fecha_v
     try:
@@ -47,10 +42,9 @@ def validar_fecha(fecha):
         fecha_v = False
         MessageBox.showerror("Fecha","Fecha Invalida")
     
-#Generador de las citas.
-"""Entradas: datos de la configuracion y del sistema.
-Salidas: lista de fechas
-"""   
+# FUNCION QUE GENERA LAS CITAS POSIBLES
+# ENTRADAS: datos de la configuracion y del sistema.
+# SALIDAS: lista de fechas.   
 def generar_lista_fechas_intervalo(inicio, fin, hora_inicio, hora_fin, intervalo_minutos):
     lista_fechas = []
     fecha_actual = inicio
@@ -67,17 +61,71 @@ def generar_lista_fechas_intervalo(inicio, fin, hora_inicio, hora_fin, intervalo
 
     return lista_fechas
 
+# FUNCION QUE AGREGA UN AÑO SI EL MES ES MAYOR A 12
+# ENTRADAS: Recibe la fecha separada.
+# SALIDAS: Retorna la fecha arreglada.
 def validar_fecha_fin(ano, mes_sumado, dia):
     if mes_sumado > 12:
         ano += 1
         mes_sumado -= 12
     return ano, mes_sumado, dia
 
-def programar_cita_nueva():
-    print("Hola")
-    return
+# FUNCION CREAR NODO
+# ENTRADAS: Recibe un valor para convertirlo en nodo con dos hijos.
+# SALIDAS: Retorna el nodo creado.
+def crear_nodo(valor):
+        hijo_izquierdo = None
+        hijo_derecho = None
+        return [valor, hijo_izquierdo, hijo_derecho]
 
+# FUNCION INSERTAR NODO !! ARREGLAR FECHAS
+# ENTRADAS: Recibe el árbol y el valor a agregar.
+# SALIDAS: Retorna el árbol con el nuevo nodo.
+def insertar_nodo(arbol, valor):
+    if arbol == None:
+        return crear_nodo(valor)
+    else:
+        if valor[0] <= arbol[0][0]:
+            arbol[1] = insertar_nodo(arbol[1], valor)
+        else:
+            arbol[2] = insertar_nodo(arbol[2], valor)
+        return arbol
+
+# FUNCION QUE PROGRAMA UNA CITA Y LA GUARDA EN UN ÁRBOL DE BUSQUEDA BINARIA (ABB)
+# ENTRADAS: Recibe los datos que se guardarán en el nodo.
+# SALIDAS: Guarda los datos en un nodo del árbol (ABB).
+def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9):
+    archivo = open("registros.dat", "r")
+    datos_originales = archivo.read()
+    datos_originales = eval(datos_originales)
+    archivo.close()
+    datos_originales["num_citas"] = datos_originales["num_citas"] + 1
+    archivo = open("registros.dat", "w")
+    archivo.write(str(datos_originales))
+    archivo.close()
+
+    dato_nodo = [datos_originales["num_citas"], dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9]
+    print(dato_nodo)
+
+    archivo = open("arbol_citas.dat", "r")
+    arbol = archivo.read()
+    arbol = eval(arbol)
+    archivo.close()
+
+    arbol = insertar_nodo(arbol, dato_nodo)
+
+    archivo = open("arbol_citas.dat", "w")
+    archivo.write(str(arbol))
+    archivo.close()
+
+""" FUNCION COMPLETA DEL BOTÓN PROGRAMAR CITAS
+# ENTRADAS: Lee los datos de la cita a agregar.
+# SALIDAS: Dependiendo del usuario, guarda la cita o no hace nada. """
 def programar_citas():
+
+    # FUNCION QUE GENERA LA LISTA DE INTERVALOS DISPONIBLES
+    # ENTRADAS: Lee la fecha actual y la configuración.
+    # SALIDAS: Lleva a crear la lista de citas.
     def generar_lista_intervalo():
         global fecha_hoy
         fecha = fecha_hoy.split("/")
@@ -107,61 +155,64 @@ def programar_citas():
             valores_lista.append(str(fecha_hora))
         fecha_hora_automatico(valores_lista)
 
+    # FUNCION QUE VALIDA LOS DATOS DE LA CITA ANTES DE PODER GUARDARLA
+    # ENTRADAS: Lee los datos agregados.
+    # SALIDAS: Llama a la función de agregar la cita o si no, retorna un error correspondiente.
     def validar_datos_cita():
         global manual
 
         # Validar el número de placa.
-        dato = entry2.get()
-        if dato == "":
+        dato2 = entry2.get()
+        if dato2 == "":
             MessageBox.showerror("ERROR", "Dato de placa inválido.")
             return
-        if len(dato) > 8 or len(dato) < 1:
+        if len(dato2) > 8 or len(dato2) < 1:
             MessageBox.showerror("ERROR", "Dato de placa inválido.")
             return
         
         # Validar la marca del vehículo.
-        dato = entry4.get()
-        if dato == "":
+        dato4 = entry4.get()
+        if dato4 == "":
             MessageBox.showerror("ERROR", "Marca de vehículo inválida.")
             return
-        if len(dato) > 15 or len(dato) < 3:
+        if len(dato4) > 15 or len(dato4) < 3:
             MessageBox.showerror("ERROR", "Marca de vehiculo inválida.")
             return
 
         # Validar modelo del vehículo.
-        dato = entry5.get()
-        if dato == "":
+        dato5 = entry5.get()
+        if dato5 == "":
             MessageBox.showerror("ERROR", "Modelo del vehículo inválido.")
             return
-        if len(dato) > 15 or len(dato) < 1:
+        if len(dato5) > 15 or len(dato5) < 1:
             MessageBox.showerror("ERROR", "Modelo del vehiculo inválido.")
             return
         
         # Validar propietario del vehículo.
-        dato = entry6.get()
-        if dato == "":
+        dato6 = entry6.get()
+        if dato6 == "":
             MessageBox.showerror("ERROR", "Propietario del vehículo inválido.")
             return
-        if len(dato) > 40 or len(dato) < 6:
+        if len(dato6) > 40 or len(dato6) < 6:
             MessageBox.showerror("ERROR", "Propietario del vehiculo inválido.")
             return
         
         # Validar teléfono.
-        dato = entry7.get()
-        if dato == "":
+        dato7 = entry7.get()
+        if dato7 == "":
             MessageBox.showerror("ERROR", "Teléfono inválido.")
             return
-        if len(dato) > 20 or len(dato) < 6:
+        if len(dato7) > 20 or len(dato7) < 6:
             MessageBox.showerror("ERROR", "Teléfono inválido.")
             return
         
         # Validar correo electrónico.
-        dato = entry8.get()
-        if dato == "":
+        dato8 = entry8.get()
+        if dato8 == "":
             MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
             return
         else:
-            """resultado = validar_existencia_correo(dato)
+            """resultado = validar_existencia_correo(dato8)
             if resultado == None:
                 MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
                 return
@@ -169,20 +220,26 @@ def programar_citas():
                 MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
                 return
             if resultado == True:"""
-            pass
-                    
+            pass    
             
         # Validar dirección física.
-        dato = entry9.get()
-        if dato == "":
+        dato9 = entry9.get()
+        if dato9 == "":
             MessageBox.showerror("ERROR", "Dirección física inválida.")
             return
-        if len(dato) > 40 or len(dato) < 10:
+        if len(dato9) > 40 or len(dato9) < 10:
             MessageBox.showerror("ERROR", "Dirección física inválida.")
             return
         
+        # Guardar cita.
         if manual == True:
-            programar_cita_nueva()
+            dia.get()
+            mes.get()
+            año.get()
+            hora.get()
+            minutos.get()
+            agregar = [dia.get(), mes.get(), año.get(), hora.get(), minutos.get()]
+            programar_cita_nueva(dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, agregar)
         else:
             generar_lista_intervalo()
 
@@ -227,35 +284,45 @@ def programar_citas():
         minutos.config(state= "disabled")
         return
     
+    # FUNCION QUE VALIDA LA LONGITUD DE UN TEXTO EN UN CAMPO DE ESCRITURA
+    # ENTRADAS: Recibe el texto a validar.
+    # SALIDAS: True si es correcto, False de lo contrario.
+    def validar_texto(texto):
+        return len(texto) <= 40
+    
+    # Definir los tipos de vehículos en una lista.
     tipos_de_vehículos = ["Automóvil particular y vehículo de carga liviana (<= 3500 kg)", \
                           "Automóvil particular y vehículo de carga liviana (3500 kg > 8000 kg)", \
                             "Vehículo de carga pesada y cabezales (>= 8000 kg)", "Taxis", \
                                 "Autobuses, buses y microbuses", "Motocicletas", "Equipo especial de obras", \
                                     "Equipo especial agrícola (maquinaria agrícola)"]
 
+    # Esconder la ventana principal.
     ventana_principal.iconify()
+
+    # Crear la ventana de programar citas.
     ventana_programar_citas = Toplevel()
     ventana_programar_citas.geometry("600x700")
     ventana_programar_citas.resizable(False, False)
     ventana_programar_citas.title("Programar Citas")
-
-    Label(ventana_programar_citas, text= "Programar Citas", font= ("Arial", 16)).place(x= 220, y= 10)
-    Label(ventana_programar_citas, text= "Tipo de cita: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 50)
-
-
-    tipo_c = StringVar(value = 0) 
-    p_v = Radiobutton(ventana_programar_citas, text="Primera Vez", variable=tipo_c, value="Primera Vez").place(x= 110, y= 53)
-    r_i = Radiobutton(ventana_programar_citas, text="Reinspeccion", variable=tipo_c, value="Reinspeccion").place(x= 200, y= 53)
     
-    def validar_texto(texto):
-        return len(texto) <= 40
-    
+    # Validación de texto.
     texto = (ventana_programar_citas.register(validar_texto), "%P")
+
+    # Título.
+    Label(ventana_programar_citas, text= "Programar Citas", font= ("Arial", 16)).place(x= 220, y= 10)
+
+    # Campos de información de las citas.
+    Label(ventana_programar_citas, text= "Tipo de cita: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 50)
+    tipo_cita = StringVar(value = 0) 
+    primera = Radiobutton(ventana_programar_citas, text="Primera Vez", variable=tipo_cita, value="Primera Vez")
+    primera.place(x= 110, y= 53)
+    reinspeccion = Radiobutton(ventana_programar_citas, text="Reinspeccion", variable=tipo_cita, value="Reinspeccion")
+    reinspeccion.place(x= 200, y= 53)
 
     Label(ventana_programar_citas, text= "Número de placa: ",font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 100)
     entry2 = Entry(ventana_programar_citas, width=40,validate="key", validatecommand=texto)
     entry2.place(x= 145, y= 105)
-
 
     Label(ventana_programar_citas, text= "Tipo de vehículo: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 150)
     entry3 = ttk.Combobox(ventana_programar_citas, values= tipos_de_vehículos, width= 60, state= "readonly")
@@ -285,11 +352,12 @@ def programar_citas():
     entry9 = Entry(ventana_programar_citas, width= 40,validate="key", validatecommand=texto)
     entry9.place(x= 140, y= 455)
 
+    # Opciones de fechas y horas.
     opciones_dia = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
     opciones_mes = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
     opciones_año = ["2023","2024","2025"]
     opciones_hora = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-    opciones_minutos = [0,1,2,3,4,5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,46,47,47,49,50,51,52,53,54,55,56,57,58,59]
+    opciones_minutos = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59]
 
     Label(ventana_programar_citas, text= "DIA:", font= ("Arial", 12)).place(x= 10, y= 540)
     dia = ttk.Combobox(ventana_programar_citas, values= opciones_dia, state= "readonly", width= 5)
@@ -320,10 +388,12 @@ def programar_citas():
     boton_auto = Radiobutton(ventana_programar_citas, text= "Automático", variable= tipo_programacion, value= "auto", command= lambda: desactivar_manual())
     boton_auto.place(x= 270, y= 502)
 
+    # Botones de interacción.
     Button(ventana_programar_citas, text= "Programar Cita", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: validar_datos_cita()).place(x= 140, y= 600)
     Button(ventana_programar_citas, text= "Cerrar ventana", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: cerrar_citas()).place(x= 300, y= 600)
 
-    tipo_c.set("Primera Vez")
+    # Asignar valores por defecto a las opciones.
+    tipo_cita.set("Primera Vez")
     entry3.set("Automóvil particular y vehículo de carga liviana (<= 3500 kg)")
     tipo_programacion.set("manual")
     dia.set("01")
@@ -332,6 +402,7 @@ def programar_citas():
     hora.set(0)
     minutos.set(0)
 
+    # Loop de la ventana.
     ventana_programar_citas.mainloop()
     return
 
@@ -340,6 +411,9 @@ def programar_citas():
 # SALIDAS: Guarda los cambios en un archivo predefinido. """
 def ventana_configuracion_sistema():
 
+    # FUNCION QUE GUARDA LA OPCION DE LINEAS DE TRABAJO
+    # ENTRADAS: Recibe el nuevo dato de lineas de trabajo.
+    # SALIDAS: Si la opción es válida se guarda, de lo contrario envía el error respectivo.
     def guardar_lineas_trabajo(dato):
         archivo = open("configuración_reteve.dat", "r")
         datos_originales = archivo.read()
@@ -357,6 +431,9 @@ def ventana_configuracion_sistema():
             MessageBox.showerror("ERROR", "No se puede ejecutar la acción.")
             pass
     
+    # FUNCION QUE GUARDA LAS HORAS DE TRABAJO DE LA ESTACIÓN
+    # ENTRADAS: Recibe la hora inicial y la hora final.
+    # SALIDAS: Si la opción es válida se guarda, de lo contrario envía el error respectivo.
     def guardar_horas(dato1, dato2):
         inicial = int(dato1[0:2])
         final = int(dato2[0:2])
@@ -378,6 +455,9 @@ def ventana_configuracion_sistema():
             MessageBox.showerror("ERROR", "No se pudo guardar \n(hora inicial mayor que la final).")
         return
 
+    # FUNCION QUE GUARDA OPCIONES DE LA CONFIGURACIÓN
+    # ENTRADAS: Recibe el dato a guardar y el índice en el archivo que corresponde.
+    # SALIDAS: Si la opción es válida se guarda, de lo contrario envía el error respectivo.
     def guardar_general(dato, indice):
         if dato != "":
             if indice == 7:
@@ -418,6 +498,9 @@ def ventana_configuracion_sistema():
             MessageBox.showerror("ERROR", "No hay ningún dato registrado o es un dato incorrecto.")
         return
     
+    # FUNCION QUE GUARDA CAMBIOS EN LAS TARIFAS DE VEHÍCULOS
+    # ENTRADAS: Recibe el dato a guardar y el índice en el archivo que corresponde.
+    # SALIDAS: Si la opción es válida se guarda, de lo contrario envía el error respectivo.
     def guardar_tarifas(dato, indice):
         if dato == "":
             MessageBox.showerror("ERROR", "No hay ningún dato registrado o es un dato incorrecto.")
@@ -718,6 +801,16 @@ def salir_del_programa():
         ventana_principal.destroy() # Cerrar la ventana.
     return
 
+# FUNCION QUE ACTUALIZA LA FECHA Y HORA ACTUAL
+# ENTRADAS: Recibe la fecha y hora en tiempo real del sistema.
+# SALIDAS: Actualiza el label de fecha y hora por tics y guarda una variable con la fecha y hora actual.
+def actualizar_fecha_hora():
+    global fecha_hoy
+    fecha_actual = datetime.now()
+    fecha_formateada = fecha_actual.strftime("%Y/%m/%d %H:%M:%S")
+    label_fecha_hora.config(text=fecha_formateada)
+    ventana_principal.after(1000, actualizar_fecha_hora)
+    fecha_hoy = fecha_formateada[:10]
 
 """ FUNCION PRINCIPAL """
 manual = True
@@ -729,19 +822,9 @@ ventana_principal.geometry("600x700")
 ventana_principal.resizable(False, False)
 ventana_principal.title("ReTeVe")
 
-def actualizar_fecha_hora():
-    global fecha_hoy
-    fecha_actual = datetime.now()
-    fecha_formateada = fecha_actual.strftime("%Y/%m/%d %H:%M:%S")
-    label_fecha_hora.config(text=fecha_formateada)
-    ventana_principal.after(1000, actualizar_fecha_hora)
-    fecha_hoy = fecha_formateada[:10]
-    
-
+# Indicador de fecha y hora en la ventana.
 label_fecha_hora = Label(ventana_principal, font=("Arial", 14))
 label_fecha_hora.place(x=400,y=10)
-
-
 actualizar_fecha_hora()
 
 # Opciones de citas.

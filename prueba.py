@@ -31,10 +31,13 @@ def insertar(arbol, valor):
 arbol = None
 
 arbol = insertar(arbol, [3200, 202381232])
-arbol = insertar(arbol, [5600, 345345345])
 
 """arbol = insertar(arbol, [5700, 2023, 7, 26, 4920])
 arbol = insertar(arbol, [5800, 2023, 9, 24, 2956])
 arbol = insertar(arbol, [5900, 2023, 6, 22, 3560])"""
+
+agg = input("Ye")
+if agg == "Ye":
+    insertar(arbol, [5700, 20227244920])
 
 print(arbol)
