@@ -13,7 +13,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.mime.image import MIMEImage
 import base64 # libreria para codificar objetos
-import datetime
+from datetime import datetime, timedelta
+import time
+
 
 """ FUNCIONES """
 
@@ -45,14 +47,69 @@ def validar_fecha(fecha):
         fecha_v = False
         MessageBox.showerror("Fecha","Fecha Invalida")
     
-    
+#Generador de las citas.
+"""Entradas: datos de la configuracion y del sistema.
+Salidas: lista de fechas
+"""   
+def generar_lista_fechas_intervalo(inicio, fin, hora_inicio, hora_fin, intervalo_minutos):
+    lista_fechas = []
+    fecha_actual = inicio
+    hora_actual = datetime.strptime(hora_inicio, "%H:%M")
+
+    while fecha_actual <= fin:
+        fecha_con_hora = datetime.combine(fecha_actual, hora_actual.time())
+        lista_fechas.append(fecha_con_hora)
+        hora_actual += timedelta(minutes=intervalo_minutos)
+
+        if hora_actual.time() > datetime.strptime(hora_fin, "%H:%M").time():
+            fecha_actual += timedelta(days=1)
+            hora_actual = datetime.strptime(hora_inicio, "%H:%M")
+
+    return lista_fechas
+
+def validar_fecha_fin(ano, mes_sumado, dia):
+    if mes_sumado > 12:
+        ano += 1
+        mes_sumado -= 12
+    return ano, mes_sumado, dia
 
 def programar_cita_nueva():
     print("Hola")
     return
 
 def programar_citas():
+    def generar_lista_intervalo():
+        global fecha_hoy
+        fecha = fecha_hoy.split("/")
+        año_hoy = int(fecha[0])
+        mes_hoy = int(fecha[1])
+        dia_hoy = int(fecha[2])
+
+        archivo = open("configuración_reteve.dat", "r")
+        datos_originales = archivo.read()
+        datos_originales = eval(datos_originales)
+        archivo.close()
+        inicio = datetime(año_hoy, mes_hoy, dia_hoy)  # Fecha de inicio
+        fecha_final = validar_fecha_fin(año_hoy, mes_hoy + datos_originales[6], dia_hoy)
+        num1 = fecha_final[0]
+        num2 = fecha_final[1]
+        num3 = fecha_final[2]
+        fin = datetime(num1, num2, num3)  # Fecha de fin
+        hora_inicio = datos_originales[1]  # Hora de inicio
+        hora_fin = datos_originales[2]   # Hora de fin
+        minutos = int(datos_originales[3][3:])
+        intervalo_minutos = minutos  # Intervalo de tiempo en minutos
+
+        lista_fechas_intervalo = generar_lista_fechas_intervalo(inicio.date(), fin.date(), hora_inicio, hora_fin, intervalo_minutos)
+
+        valores_lista = list()
+        for fecha_hora in lista_fechas_intervalo:
+            valores_lista.append(str(fecha_hora))
+        fecha_hora_automatico(valores_lista)
+
     def validar_datos_cita():
+        global manual
+
         # Validar el número de placa.
         dato = entry2.get()
         if dato == "":
@@ -100,20 +157,19 @@ def programar_citas():
         
         # Validar correo electrónico.
         dato = entry8.get()
-        print(dato)
         if dato == "":
             MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
             return
         else:
-            resultado = validar_existencia_correo(dato)
+            """resultado = validar_existencia_correo(dato)
             if resultado == None:
                 MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
                 return
             if resultado == False:
                 MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
                 return
-            if resultado == True:
-                pass
+            if resultado == True:"""
+            pass
                     
             
         # Validar dirección física.
@@ -125,54 +181,50 @@ def programar_citas():
             MessageBox.showerror("ERROR", "Dirección física inválida.")
             return
         
-        programar_cita_nueva()
-    
-    def fecha_hora_manual():
-        opciones_dia = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
-        opciones_mes = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-        opciones_año = ["2023","2024","2025"]
-        opciones_hora = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-        opciones_minutos = [0,1,2,3,4,5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,46,47,47,49,50,51,52,53,54,55,56,57,58,59]
-        ventana_manual = Toplevel()
-        ventana_manual.geometry("300x350")
-        ventana_manual.resizable(False, False)
-        ventana_manual.title("Fecha Manual")
-        Label(ventana_manual, text= "FECHA MANUAL", font= ("Arial", 16)).place(x= 20, y= 10)
+        if manual == True:
+            programar_cita_nueva()
+        else:
+            generar_lista_intervalo()
 
-        Label(ventana_manual, text= "DIA:", font= ("Arial", 16)).place(x= 95, y= 46)
-        dia = ttk.Combobox(ventana_manual, values= opciones_dia, state= "readonly")
-        dia.place(x= 140, y= 50)
-
-        mes = ttk.Combobox(ventana_manual, values= opciones_mes, state= "readonly")
-        mes.place(x= 140, y= 100)
-        Label(ventana_manual, text= "MES:", font= ("Arial", 16)).place(x= 80, y= 96)
-
-        año = ttk.Combobox(ventana_manual, values= opciones_año, state= "readonly")
-        año.place(x= 140, y= 150)
-        Label(ventana_manual, text= "AÑO:", font= ("Arial", 16)).place(x= 80, y= 146)
-
-        hora = ttk.Combobox(ventana_manual, values= opciones_hora, state= "readonly")
-        hora.place(x= 140, y= 200)
-        Label(ventana_manual, text= "HORA:", font= ("Arial", 16)).place(x= 70, y= 196)
-
-        minutos = ttk.Combobox(ventana_manual, values= opciones_minutos, state= "readonly")
-        minutos.place(x= 140, y= 250)
-        Label(ventana_manual, text= "MINUTOS:", font= ("Arial", 16)).place(x= 30, y= 246)
-
-        
-        Button(ventana_manual, text= "Guardar", command= lambda:  validar_fecha(fecha = (año.get() + "-" + mes.get() + "-" + dia.get()))).place(x = 70, y = 300 )
-        
-
-        dia.set("01")
-        mes.set("01")
-        año.set("2023")
-        hora.set("0")
-        minutos.set("0")
-
+    def cerrar_citas():
+        ventana_principal.deiconify()
+        ventana_programar_citas.destroy()
         return
     
-    def fecha_hora_automatico():
+    def fecha_hora_automatico(lista_automaticos):
+        ventana_automatico = Toplevel()
+        ventana_automatico.geometry("500x300")
+        ventana_automatico.resizable(False, False)
 
+        Label(ventana_automatico, text= "Seleccione una opción de fecha y hora:", font= ("Franklin Gothic Demi", 16)).pack()
+        combo_auto = ttk.Combobox(ventana_automatico, values= lista_automaticos, state= "readonly", width= 50)
+        combo_auto.pack()
+        Button(ventana_automatico, text= "Guardar").pack(pady= 6)
+
+        combo_auto.set(lista_automaticos[0])
+        ventana_automatico.mainloop()
+        return
+
+    def activar_manual():
+        global manual
+        manual = True
+
+        dia.config(state= "readonly")
+        mes.config(state= "readonly")
+        año.config(state= "readonly")
+        hora.config(state= "readonly")
+        minutos.config(state= "readonly")
+        return
+    
+    def desactivar_manual():
+        global manual
+        manual = False
+
+        dia.config(state= "disabled")
+        mes.config(state= "disabled")
+        año.config(state= "disabled")
+        hora.config(state= "disabled")
+        minutos.config(state= "disabled")
         return
     
     tipos_de_vehículos = ["Automóvil particular y vehículo de carga liviana (<= 3500 kg)", \
@@ -181,6 +233,7 @@ def programar_citas():
                                 "Autobuses, buses y microbuses", "Motocicletas", "Equipo especial de obras", \
                                     "Equipo especial agrícola (maquinaria agrícola)"]
 
+    ventana_principal.iconify()
     ventana_programar_citas = Toplevel()
     ventana_programar_citas.geometry("600x700")
     ventana_programar_citas.resizable(False, False)
@@ -232,17 +285,52 @@ def programar_citas():
     entry9 = Entry(ventana_programar_citas, width= 40,validate="key", validatecommand=texto)
     entry9.place(x= 140, y= 455)
 
-    Label(ventana_programar_citas, text= "Fecha y hora de la cita: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 500)
-    boton_manual = Button(ventana_programar_citas, text= "Manual", command = lambda:fecha_hora_manual())
-    boton_manual.place(x= 190, y= 500)
-    boton_auto = Button(ventana_programar_citas, text= "Automático", command = lambda:fecha_hora_automatico())
-    boton_auto.place(x= 250, y= 500)
+    opciones_dia = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31']
+    opciones_mes = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+    opciones_año = ["2023","2024","2025"]
+    opciones_hora = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    opciones_minutos = [0,1,2,3,4,5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,46,47,47,49,50,51,52,53,54,55,56,57,58,59]
 
-    Button(ventana_programar_citas, text= "Programar Cita", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: validar_datos_cita()).place(x= 140, y= 555)
-    Button(ventana_programar_citas, text= "Cerrar ventana", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: ventana_programar_citas.destroy()).place(x= 300, y= 555)
+    Label(ventana_programar_citas, text= "DIA:", font= ("Arial", 12)).place(x= 10, y= 540)
+    dia = ttk.Combobox(ventana_programar_citas, values= opciones_dia, state= "readonly", width= 5)
+    dia.place(x= 50, y= 542)
+
+    mes = ttk.Combobox(ventana_programar_citas, values= opciones_mes, state= "readonly", width= 5)
+    mes.place(x= 160, y= 542)
+    Label(ventana_programar_citas, text= "MES:", font= ("Arial", 12)).place(x= 110, y= 540)
+
+    año = ttk.Combobox(ventana_programar_citas, values= opciones_año, state= "readonly", width= 5)
+    año.place(x= 270, y= 542)
+    Label(ventana_programar_citas, text= "AÑO:", font= ("Arial", 12)).place(x= 220, y= 540)
+
+    hora = ttk.Combobox(ventana_programar_citas, values= opciones_hora, state= "readonly", width= 5)
+    hora.place(x= 390, y= 542)
+    Label(ventana_programar_citas, text= "HORA:", font= ("Arial", 12)).place(x= 330, y= 540)
+
+    minutos = ttk.Combobox(ventana_programar_citas, values= opciones_minutos, state= "readonly", width= 5)
+    minutos.place(x= 535, y= 542)
+    Label(ventana_programar_citas, text= "MINUTOS:", font= ("Arial", 12)).place(x= 450, y= 540)
+
+    Button(ventana_programar_citas, text= "Guardar", command= lambda:  validar_fecha(fecha = (año.get() + "-" + mes.get() + "-" + dia.get())))
+
+    tipo_programacion = StringVar()
+    Label(ventana_programar_citas, text= "Fecha y hora de la cita: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 500)
+    boton_manual = Radiobutton(ventana_programar_citas, text= "Manual", variable= tipo_programacion, value= "manual", command= lambda: activar_manual())
+    boton_manual.place(x= 190, y= 502)
+    boton_auto = Radiobutton(ventana_programar_citas, text= "Automático", variable= tipo_programacion, value= "auto", command= lambda: desactivar_manual())
+    boton_auto.place(x= 270, y= 502)
+
+    Button(ventana_programar_citas, text= "Programar Cita", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: validar_datos_cita()).place(x= 140, y= 600)
+    Button(ventana_programar_citas, text= "Cerrar ventana", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: cerrar_citas()).place(x= 300, y= 600)
 
     tipo_c.set("Primera Vez")
     entry3.set("Automóvil particular y vehículo de carga liviana (<= 3500 kg)")
+    tipo_programacion.set("manual")
+    dia.set("01")
+    mes.set("01")
+    año.set("2023")
+    hora.set(0)
+    minutos.set(0)
 
     ventana_programar_citas.mainloop()
     return
@@ -262,7 +350,6 @@ def ventana_configuracion_sistema():
         if int(dato) >= dato_comparar:
             archivo = open("configuración_reteve.dat", "w")
             datos_originales[0] = int(dato)
-            print(datos_originales)
             archivo.write(str(datos_originales))
             archivo.close()
             MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
@@ -270,9 +357,9 @@ def ventana_configuracion_sistema():
             MessageBox.showerror("ERROR", "No se puede ejecutar la acción.")
             pass
     
-    def guardar_horas(inicial, final):
-        inicial = int(inicial)
-        final = int(final)
+    def guardar_horas(dato1, dato2):
+        inicial = int(dato1[0:2])
+        final = int(dato2[0:2])
 
         if final >= inicial:
             archivo = open("configuración_reteve.dat", "r")
@@ -281,8 +368,8 @@ def ventana_configuracion_sistema():
             archivo.close()
 
             archivo = open("configuración_reteve.dat", "w")
-            datos_originales[1] = inicial
-            datos_originales[2] = final
+            datos_originales[1] = dato1
+            datos_originales[2] = dato2
             archivo.write(str(datos_originales))
             archivo.close()
 
@@ -303,7 +390,7 @@ def ventana_configuracion_sistema():
                 if dato < 0 or dato > 20:
                     MessageBox.showerror("ERROR", "El dato debe estar entre 0 y 20.")
                     return
-            else:
+            elif indice != 3:
                 try:
                     dato = int(dato)
                 except:
@@ -313,6 +400,8 @@ def ventana_configuracion_sistema():
                 if dato <= 0:
                     MessageBox.showerror("ERROR", "El dato debe ser mayor a 0.")
                     return
+            else:
+                pass
 
             archivo = open("configuración_reteve.dat", "r")
             datos_originales = archivo.read()
@@ -321,7 +410,6 @@ def ventana_configuracion_sistema():
 
             archivo = open("configuración_reteve.dat", "w")
             datos_originales[indice] = dato
-            print(datos_originales)
             archivo.write(str(datos_originales))
             archivo.close()
 
@@ -402,7 +490,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Horario de la estación.
-    opciones_horario = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    opciones_horario = ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"]
     Label(segundo_frame_config, text="Horario de la estación:", font=("Arial", 12)).pack()
     Label(segundo_frame_config, text="Hora inicial:", font=("Arial", 8)).pack()
     combo_hora_inicial = ttk.Combobox(segundo_frame_config, values= opciones_horario, state="readonly")
@@ -415,7 +503,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Minutos por cada cita de revisión.
-    opciones_minutos_cita = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45]
+    opciones_minutos_cita = ["00:05", "00:10", "00:15", "00:20", "00:25", "00:30", "00:35", "00:40", "00:45"]
     Label(segundo_frame_config, text="Minutos por cada cita de revisión:", font=("Arial", 12)).pack()
     combo_minutos_cita = ttk.Combobox(segundo_frame_config, values= opciones_minutos_cita, state="readonly")
     combo_minutos_cita.pack()
@@ -632,12 +720,29 @@ def salir_del_programa():
 
 
 """ FUNCION PRINCIPAL """
+manual = True
+fecha_hoy = ""
 
 # Ventana principal.
 ventana_principal = Tk()
 ventana_principal.geometry("600x700")
 ventana_principal.resizable(False, False)
 ventana_principal.title("ReTeVe")
+
+def actualizar_fecha_hora():
+    global fecha_hoy
+    fecha_actual = datetime.now()
+    fecha_formateada = fecha_actual.strftime("%Y/%m/%d %H:%M:%S")
+    label_fecha_hora.config(text=fecha_formateada)
+    ventana_principal.after(1000, actualizar_fecha_hora)
+    fecha_hoy = fecha_formateada[:10]
+    
+
+label_fecha_hora = Label(ventana_principal, font=("Arial", 14))
+label_fecha_hora.place(x=400,y=10)
+
+
+actualizar_fecha_hora()
 
 # Opciones de citas.
 Label(ventana_principal, text="").pack()
