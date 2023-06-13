@@ -124,48 +124,43 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
 
     MessageBox.showinfo("ESTADO", "Se ha programado la nueva cita.")
 
+def aprobar_fecha_hora(fechahora, lista_intervalos):
+    if len(fechahora[1]) == 1:
+        fechahora[1] = "0" + fechahora[1]
+    if len(fechahora[2]) == 1:
+        fechahora[2] = "0" + fechahora[2]
+    if len(fechahora[3]) == 1:
+        fechahora[3] = "0" + fechahora[3]
+    if len(fechahora[4]) == 1:
+        fechahora[4] = "0" + fechahora[4]
+
+    nuevo_texto = fechahora[0] + "-" + fechahora[1] + "-" + fechahora[2] + " " + fechahora[3] + ":" + fechahora[4] + ":00"
+    
+    if nuevo_texto in lista_intervalos:
+        return True
+    else:
+        return False
+    
+def descomponer_h_m(lista):
+    horas = int(lista[-2])
+    mins = int(lista[-1])
+    suma = horas * 3600
+    suma += mins * 60
+
+    lista = lista[:-2]
+    lista.append(suma)
+    return lista
+
 """ FUNCION COMPLETA DEL BOTÓN PROGRAMAR CITAS
 # ENTRADAS: Lee los datos de la cita a agregar.
 # SALIDAS: Dependiendo del usuario, guarda la cita o no hace nada. """
 def programar_citas():
 
-    # FUNCION QUE GENERA LA LISTA DE INTERVALOS DISPONIBLES
-    # ENTRADAS: Lee la fecha actual y la configuración.
-    # SALIDAS: Lleva a crear la lista de citas.
-    def generar_lista_intervalo(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8):
-        global fecha_hoy
-        fecha = fecha_hoy.split("/")
-        año_hoy = int(fecha[0])
-        mes_hoy = int(fecha[1])
-        dia_hoy = int(fecha[2])
-
-        archivo = open("configuración_reteve.dat", "r")
-        datos_originales = archivo.read()
-        datos_originales = eval(datos_originales)
-        archivo.close()
-        inicio = datetime(año_hoy, mes_hoy, dia_hoy)  # Fecha de inicio
-        fecha_final = validar_fecha_fin(año_hoy, mes_hoy + datos_originales[6], dia_hoy)
-        num1 = fecha_final[0]
-        num2 = fecha_final[1]
-        num3 = fecha_final[2]
-        fin = datetime(num1, num2, num3)  # Fecha de fin
-        hora_inicio = datos_originales[1]  # Hora de inicio
-        hora_fin = datos_originales[2]   # Hora de fin
-        minutos = int(datos_originales[3][3:])
-        intervalo_minutos = minutos  # Intervalo de tiempo en minutos
-
-        lista_fechas_intervalo = generar_lista_fechas_intervalo(inicio.date(), fin.date(), hora_inicio, hora_fin, intervalo_minutos)
-
-        valores_lista = list()
-        for fecha_hora in lista_fechas_intervalo:
-            valores_lista.append(str(fecha_hora))
-        fecha_hora_automatico(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, valores_lista)
-
     # FUNCION QUE VALIDA LOS DATOS DE LA CITA ANTES DE PODER GUARDARLA
     # ENTRADAS: Lee los datos agregados.
     # SALIDAS: Llama a la función de agregar la cita o si no, retorna un error correspondiente.
     def validar_datos_cita():
-        global manual
+        global manual, valores_lista
 
         # Validar el número de placa.
         dato2 = entry2.get()
@@ -244,15 +239,25 @@ def programar_citas():
             año.get()
             hora.get()
             minutos.get()
-            agregar = [dia.get(), mes.get(), año.get(), hora.get(), minutos.get()]
-            programar_cita_nueva(dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, agregar)
+            if aprobar_fecha_hora([año.get(), mes.get(), dia.get(), hora.get(), minutos.get()], valores_lista):
+                descompuesto = descomponer_h_m([año.get(), mes.get(), dia.get(), hora.get(), minutos.get()])
+                programar_cita_nueva(dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, descompuesto)
+            else:
+                MessageBox.showerror("ERROR", "Cita no disponible para programar.")
         else:
-            generar_lista_intervalo(dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9)
+            fecha_hora_automatico(dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, valores_lista)
     
     def fecha_hora_automatico(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, lista_automaticos):
 
         def programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9):
-            programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9)
+            print(dato9)
+            ano_separado = dato9[:4]
+            mes_separado = dato9[5:7]
+            dia_separado = dato9[8:10]
+            hora_separada = dato9[11:13]
+            minutos_separados = dato9[14:16]
+            descompuesto = [ano_separado, mes_separado, dia_separado, hora_separada, minutos_separados]
+            programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, descompuesto)
             ventana_automatico.destroy()
             return
         
@@ -813,6 +818,36 @@ def salir_del_programa():
         ventana_principal.destroy() # Cerrar la ventana.
     return
 
+# FUNCION QUE GENERA LA LISTA DE INTERVALOS DISPONIBLES
+# ENTRADAS: Lee la fecha actual y la configuración.
+# SALIDAS: Lleva a crear la lista de citas.
+def generar_lista_intervalo():
+    global fecha_hoy, valores_lista
+    fecha = fecha_hoy.split("/")
+    año_hoy = int(fecha[0])
+    mes_hoy = int(fecha[1])
+    dia_hoy = int(fecha[2])
+
+    archivo = open("configuración_reteve.dat", "r")
+    datos_originales = archivo.read()
+    datos_originales = eval(datos_originales)
+    archivo.close()
+    inicio = datetime(año_hoy, mes_hoy, dia_hoy)  # Fecha de inicio
+    fecha_final = validar_fecha_fin(año_hoy, mes_hoy + datos_originales[6], dia_hoy)
+    num1 = fecha_final[0]
+    num2 = fecha_final[1]
+    num3 = fecha_final[2]
+    fin = datetime(num1, num2, num3)  # Fecha de fin
+    hora_inicio = datos_originales[1]  # Hora de inicio
+    hora_fin = datos_originales[2]   # Hora de fin
+    minutos = int(datos_originales[3][3:])
+    intervalo_minutos = minutos  # Intervalo de tiempo en minutos
+    lista_fechas_intervalo = generar_lista_fechas_intervalo(inicio.date(), fin.date(), hora_inicio, hora_fin, intervalo_minutos)
+
+    valores_lista = list()
+    for fecha_hora in lista_fechas_intervalo:
+        valores_lista.append(str(fecha_hora))
+
 # FUNCION QUE ACTUALIZA LA FECHA Y HORA ACTUAL
 # ENTRADAS: Recibe la fecha y hora en tiempo real del sistema.
 # SALIDAS: Actualiza el label de fecha y hora por tics y guarda una variable con la fecha y hora actual.
@@ -826,7 +861,8 @@ def actualizar_fecha_hora():
 
 """ FUNCION PRINCIPAL """
 manual = True
-fecha_hoy = ""
+fecha_hoy = str()
+valores_lista = list()
 
 # Ventana principal.
 ventana_principal = Tk()
@@ -838,6 +874,7 @@ ventana_principal.title("ReTeVe")
 label_fecha_hora = Label(ventana_principal, font=("Arial", 14))
 label_fecha_hora.place(x=400,y=10)
 actualizar_fecha_hora()
+generar_lista_intervalo()
 
 # Opciones de citas.
 Label(ventana_principal, text="").pack()
