@@ -95,6 +95,10 @@ def insertar_nodo(arbol, valor):
 # ENTRADAS: Recibe los datos que se guardarán en el nodo.
 # SALIDAS: Guarda los datos en un nodo del árbol (ABB).
 def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9):
+    if dato9 == "":
+        MessageBox.showerror("ERROR", "No se ingresó ningún dato de fecha y hora.")
+        return
+    
     archivo = open("registros.dat", "r")
     datos_originales = archivo.read()
     datos_originales = eval(datos_originales)
@@ -118,6 +122,8 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
     archivo.write(str(arbol))
     archivo.close()
 
+    MessageBox.showinfo("ESTADO", "Se ha programado la nueva cita.")
+
 """ FUNCION COMPLETA DEL BOTÓN PROGRAMAR CITAS
 # ENTRADAS: Lee los datos de la cita a agregar.
 # SALIDAS: Dependiendo del usuario, guarda la cita o no hace nada. """
@@ -126,7 +132,7 @@ def programar_citas():
     # FUNCION QUE GENERA LA LISTA DE INTERVALOS DISPONIBLES
     # ENTRADAS: Lee la fecha actual y la configuración.
     # SALIDAS: Lleva a crear la lista de citas.
-    def generar_lista_intervalo():
+    def generar_lista_intervalo(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8):
         global fecha_hoy
         fecha = fecha_hoy.split("/")
         año_hoy = int(fecha[0])
@@ -153,7 +159,7 @@ def programar_citas():
         valores_lista = list()
         for fecha_hora in lista_fechas_intervalo:
             valores_lista.append(str(fecha_hora))
-        fecha_hora_automatico(valores_lista)
+        fecha_hora_automatico(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, valores_lista)
 
     # FUNCION QUE VALIDA LOS DATOS DE LA CITA ANTES DE PODER GUARDARLA
     # ENTRADAS: Lee los datos agregados.
@@ -241,14 +247,15 @@ def programar_citas():
             agregar = [dia.get(), mes.get(), año.get(), hora.get(), minutos.get()]
             programar_cita_nueva(dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, agregar)
         else:
-            generar_lista_intervalo()
-
-    def cerrar_citas():
-        ventana_principal.deiconify()
-        ventana_programar_citas.destroy()
-        return
+            generar_lista_intervalo(dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9)
     
-    def fecha_hora_automatico(lista_automaticos):
+    def fecha_hora_automatico(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, lista_automaticos):
+
+        def programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9):
+            programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9)
+            ventana_automatico.destroy()
+            return
+        
         ventana_automatico = Toplevel()
         ventana_automatico.geometry("500x300")
         ventana_automatico.resizable(False, False)
@@ -256,7 +263,7 @@ def programar_citas():
         Label(ventana_automatico, text= "Seleccione una opción de fecha y hora:", font= ("Franklin Gothic Demi", 16)).pack()
         combo_auto = ttk.Combobox(ventana_automatico, values= lista_automaticos, state= "readonly", width= 50)
         combo_auto.pack()
-        Button(ventana_automatico, text= "Guardar").pack(pady= 6)
+        Button(ventana_automatico, text= "Guardar", command= lambda: programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, combo_auto.get())).pack()
 
         combo_auto.set(lista_automaticos[0])
         ventana_automatico.mainloop()
@@ -282,6 +289,11 @@ def programar_citas():
         año.config(state= "disabled")
         hora.config(state= "disabled")
         minutos.config(state= "disabled")
+        return
+    
+    def cerrar_citas():
+        ventana_principal.deiconify()
+        ventana_programar_citas.destroy()
         return
     
     # FUNCION QUE VALIDA LA LONGITUD DE UN TEXTO EN UN CAMPO DE ESCRITURA
