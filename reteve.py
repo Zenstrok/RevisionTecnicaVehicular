@@ -94,7 +94,7 @@ def comparar_nodos(dato1, dato2):
     else:
         return True
 
-# FUNCION INSERTAR NODO !! ARREGLAR FECHAS
+# FUNCION INSERTAR NODO
 # ENTRADAS: Recibe el árbol y el valor a agregar.
 # SALIDAS: Retorna el árbol con el nuevo nodo.
 def insertar_nodo(arbol, valor):
@@ -124,7 +124,7 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
     archivo.write(str(datos_originales))
     archivo.close()
 
-    dato_nodo = [datos_originales["num_citas"], dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, dato10]
+    dato_nodo = [datos_originales["num_citas"], dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, dato10, "PENDIENTE"]
     print(dato_nodo)
 
     archivo = open("arbol_citas.dat", "r")
@@ -137,6 +137,8 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
     archivo = open("arbol_citas.dat", "w")
     archivo.write(str(arbol))
     archivo.close()
+
+    # ENVÍO DE CORREO AQUÍ
 
     MessageBox.showinfo("ESTADO", "Se ha programado la nueva cita.")
 
@@ -861,8 +863,8 @@ def generar_lista_intervalo():
     datos_originales = archivo.read()
     datos_originales = eval(datos_originales)
     archivo.close()
-    inicio = datetime(año_hoy, mes_hoy, dia_hoy)  # Fecha de inicio
-    fecha_final = validar_fecha_fin(año_hoy, mes_hoy + datos_originales[6], dia_hoy)
+    inicio = datetime(año_hoy, mes_hoy, dia_hoy + 1)  # Fecha de inicio
+    fecha_final = validar_fecha_fin(año_hoy, mes_hoy + datos_originales[6], dia_hoy + 1)
     num1 = fecha_final[0]
     num2 = fecha_final[1]
     num3 = fecha_final[2]
