@@ -549,7 +549,7 @@ def lista_de_fallas():
     # ENTRADAS: 
     # SALIDAS:
     def modificar_falla(dato):
-
+        
         print("¡Hola! Has presionado el botón del label:", dato)
         return
     
