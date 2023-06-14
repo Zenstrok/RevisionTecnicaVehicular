@@ -462,7 +462,8 @@ def lista_de_fallas():
     # ENTRADAS: 
     # SALIDAS: 
     def crear_falla():
-        def validar_largo_texto1(*args):
+        ventana_lista_de_fallas.iconify()
+        def validar_largo_texto(*args):
              texto_f = d_falla.get("1.0", "end-1c")
              texto_n = n_falla.get("1.0", "end-1c")
              if len(texto_f) > 200:
@@ -473,8 +474,6 @@ def lista_de_fallas():
                  nuevo_texto_n = texto_n[:4]
                  n_falla.delete("1.0", "end")
                  n_falla.insert("1.0", nuevo_texto_n)
-
-        ventana_lista_de_fallas.iconify()
                 
         global ventana_crear_falla   
         ventana_crear_falla = Toplevel()
@@ -486,17 +485,17 @@ def lista_de_fallas():
         Label(ventana_crear_falla, text= "Número de falla:", font= ("Franklin Gothic Demi", 12)).pack()
         n_falla = Text(ventana_crear_falla, height=1, width=4)
         n_falla.pack()
-        n_falla.bind("<KeyRelease>", validar_largo_texto1)
-        Label(ventana_crear_falla, text= "Descripción de la falla:", font= ("Franklin Gothic Demi", 12)).pack()
+        n_falla.bind("<KeyRelease>", validar_largo_texto)
+        Label(ventana_crear_falla, text= "Descripcion de la falla:", font= ("Franklin Gothic Demi", 12)).pack()
         d_falla = Text(ventana_crear_falla, height=6, width=45)
         d_falla.pack()
-        d_falla.bind("<KeyRelease>", validar_largo_texto1)
+        d_falla.bind("<KeyRelease>", validar_largo_texto)
         tipo_de_falla = StringVar() 
         leve = Radiobutton(ventana_crear_falla, text="Leve", variable=tipo_de_falla, value="Leve").place(x= 140, y= 235)
         grave = Radiobutton(ventana_crear_falla, text="Grave", variable=tipo_de_falla, value="Grave").place(x= 200, y= 235)
         tipo_de_falla.set("Leve")
         Label(ventana_crear_falla, text= "Tipo de falla:", font= ("Franklin Gothic Demi", 12)).pack(pady= 6)
-        Button(ventana_crear_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([n_falla.get("1.0", "end-1c"),d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 1)).pack(pady= 30)
+        Button(ventana_crear_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([n_falla.get("1.0", "end-1c"),d_falla.get("1.0", "end-1c"),tipo_de_falla.get()])).pack(pady= 30)
 
         # Loop de la ventana.
         ventana_crear_falla.mainloop()
@@ -504,7 +503,7 @@ def lista_de_fallas():
     # FUNCION GUARDAR FALLA
     # ENTRADAS: 
     # SALIDAS: 
-    def guardar_falla(lista, opcion):
+    def guardar_falla(lista):
         if len(lista[1]) < 5:
             MessageBox.showerror("Error","Texto Invalido")
             return
@@ -518,11 +517,10 @@ def lista_de_fallas():
             archivo.close()
             
             numeros = numeros_usados["fallas_usadas"]
-            if opcion == 1:
-                for elemento in numeros:
-                    if elemento == lista[0]:
-                        MessageBox.showerror("Error","El numero " + lista[0] + " de falla ya se registro")
-                        return
+            for elemento in numeros:
+                if elemento == lista[0]:
+                    MessageBox.showerror("Error","El numero " + lista[0] + " de falla ya se registro")
+                    return
 
             numeros.append(lista[0])
             numeros_usados["fallas_usadas"] = numeros
@@ -542,11 +540,8 @@ def lista_de_fallas():
             archivo.write(str(fallas_generales))
             archivo.close()
 
-            if opcion == 1:
-                ventana_crear_falla.destroy()
-            elif opcion == 2:
-                ventana_modificar_falla.destroy()
 
+            ventana_crear_falla.destroy()
             ventana_lista_de_fallas.destroy()
             lista_de_fallas()
 
@@ -554,41 +549,9 @@ def lista_de_fallas():
     # ENTRADAS: 
     # SALIDAS:
     def modificar_falla(dato):
-        def validar_largo_texto2(*args):
-             texto_f = d_falla.get("1.0", "end-1c")
-             if len(texto_f) > 200:
-                 nuevo_texto_f = texto_f[:200]
-                 d_falla.delete("1.0", "end")
-                 d_falla.insert("1.0", nuevo_texto_f)
 
-        global ventana_modificar_falla
-        ventana_modificar_falla = Toplevel()
-        ventana_modificar_falla.geometry("400x460")
-        ventana_modificar_falla.resizable(False, False)
-        ventana_modificar_falla.title("Modificar Falla")
-
-        archivo = open("lista_fallas.dat")
-        datos_fallas = archivo.read()
-        datos_fallas = eval(datos_fallas)
-        archivo.close()
-
-        Label(ventana_modificar_falla, text= "Modificar Falla", width= 20, font= ("Franklin Gothic Demi", 15)).pack()
-        Label(ventana_modificar_falla, text= "Número de falla:", font= ("Franklin Gothic Demi", 12)).pack()
-        Label(ventana_modificar_falla, text= dato[0], font= ("Arial", 9)).pack()
-        Label(ventana_modificar_falla, text= "Descripción de la falla:", font= ("Franklin Gothic Demi", 12)).pack()
-        Label(ventana_modificar_falla, text= dato[2], wraplength=300, font= ("Arial", 9)).pack()
-        Label(ventana_modificar_falla, text= "Nueva descripción:", font= ("Franklin Gothic Demi", 12)).pack()
-        d_falla = Text(ventana_modificar_falla, height=6, width=45)
-        d_falla.pack()
-        d_falla.bind("<KeyRelease>", validar_largo_texto2)
-        tipo_de_falla = StringVar() 
-        Label(ventana_modificar_falla, text= "Tipo de falla:", font= ("Franklin Gothic Demi", 12)).pack(pady= 6)
-        leve = Radiobutton(ventana_modificar_falla, text="Leve", variable=tipo_de_falla, value="Leve").pack()
-        grave = Radiobutton(ventana_modificar_falla, text="Grave", variable=tipo_de_falla, value="Grave").pack()
-        tipo_de_falla.set("Leve")
-        Button(ventana_modificar_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([dato[0], d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 2)).pack(pady= 15)
-        
-        ventana_modificar_falla.mainloop()
+        print("¡Hola! Has presionado el botón del label:", dato)
+        return
     
     # FUNCION ELIMINAR FALLA
     # ENTRADAS: 
