@@ -477,25 +477,25 @@ def lista_de_fallas():
                 
         global ventana_crear_falla   
         ventana_crear_falla = Toplevel()
-        ventana_crear_falla.geometry("400x400")
+        ventana_crear_falla.geometry("400x350")
         ventana_crear_falla.resizable(False, False)
         ventana_crear_falla.title("Crear Falla")
 
         Label(ventana_crear_falla, text= "Crear Falla", width= 20, font= ("Franklin Gothic Demi", 15)).pack()
-        Label(ventana_crear_falla, text= "#FALLA:" , font= ("Franklin Gothic Demi", 15)).pack()
+        Label(ventana_crear_falla, text= "Número de falla:", font= ("Franklin Gothic Demi", 12)).pack()
         n_falla = Text(ventana_crear_falla, height=1, width=4)
         n_falla.pack()
         n_falla.bind("<KeyRelease>", validar_largo_texto)
-        Label(ventana_crear_falla, text= "DESCRIPCION FALLA:", font= ("Franklin Gothic Demi", 15)).pack()
+        Label(ventana_crear_falla, text= "Descripcion de la falla:", font= ("Franklin Gothic Demi", 12)).pack()
         d_falla = Text(ventana_crear_falla, height=6, width=45)
         d_falla.pack()
         d_falla.bind("<KeyRelease>", validar_largo_texto)
         tipo_de_falla = StringVar() 
-        leve = Radiobutton(ventana_crear_falla, text="Leve", variable=tipo_de_falla, value="Leve").pack()
-        grave = Radiobutton(ventana_crear_falla, text="Grave", variable=tipo_de_falla, value="Grave").pack()
+        leve = Radiobutton(ventana_crear_falla, text="Leve", variable=tipo_de_falla, value="Leve").place(x= 140, y= 235)
+        grave = Radiobutton(ventana_crear_falla, text="Grave", variable=tipo_de_falla, value="Grave").place(x= 200, y= 235)
         tipo_de_falla.set("Leve")
-
-        Button(ventana_crear_falla, text= "Guardar", command= lambda: guardar_falla([n_falla.get("1.0", "end-1c"),d_falla.get("1.0", "end-1c"),tipo_de_falla.get()])).pack()
+        Label(ventana_crear_falla, text= "Tipo de falla:", font= ("Franklin Gothic Demi", 12)).pack(pady= 6)
+        Button(ventana_crear_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([n_falla.get("1.0", "end-1c"),d_falla.get("1.0", "end-1c"),tipo_de_falla.get()])).pack(pady= 30)
 
         # Loop de la ventana.
         ventana_crear_falla.mainloop()
@@ -549,6 +549,7 @@ def lista_de_fallas():
     # ENTRADAS: 
     # SALIDAS:
     def modificar_falla(dato):
+
         print("¡Hola! Has presionado el botón del label:", dato)
         return
     
