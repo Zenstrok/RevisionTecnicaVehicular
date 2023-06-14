@@ -78,6 +78,22 @@ def crear_nodo(valor):
         hijo_derecho = None
         return [valor, hijo_izquierdo, hijo_derecho]
 
+# FUNCION COMPARAR NODOS
+# ENTRADAS: Recibe los dos datos a comparar.
+# SALIDAS: Retorna True si va a la izquierda, False si va a la derecha.
+def comparar_nodos(dato1, dato2):
+    print(dato1, dato2)
+    if int(dato2[0]) > int(dato1[0]):
+        return False
+    elif int(dato2[1]) > int(dato1[1]):
+        return False
+    elif int(dato2[2]) > int(dato1[2]):
+        return False
+    elif int(dato2[3]) > int(dato1[3]):
+        return False
+    else:
+        return True
+
 # FUNCION INSERTAR NODO !! ARREGLAR FECHAS
 # ENTRADAS: Recibe el árbol y el valor a agregar.
 # SALIDAS: Retorna el árbol con el nuevo nodo.
@@ -85,7 +101,7 @@ def insertar_nodo(arbol, valor):
     if arbol == None:
         return crear_nodo(valor)
     else:
-        if valor[0] <= arbol[0][0]:
+        if comparar_nodos(arbol[0][10], valor[10]) == True:
             arbol[1] = insertar_nodo(arbol[1], valor)
         else:
             arbol[2] = insertar_nodo(arbol[2], valor)
@@ -94,7 +110,7 @@ def insertar_nodo(arbol, valor):
 # FUNCION QUE PROGRAMA UNA CITA Y LA GUARDA EN UN ÁRBOL DE BUSQUEDA BINARIA (ABB)
 # ENTRADAS: Recibe los datos que se guardarán en el nodo.
 # SALIDAS: Guarda los datos en un nodo del árbol (ABB).
-def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9):
+def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, dato10):
     if dato9 == "":
         MessageBox.showerror("ERROR", "No se ingresó ningún dato de fecha y hora.")
         return
@@ -108,7 +124,7 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
     archivo.write(str(datos_originales))
     archivo.close()
 
-    dato_nodo = [datos_originales["num_citas"], dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9]
+    dato_nodo = [datos_originales["num_citas"], dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, dato10]
     print(dato_nodo)
 
     archivo = open("arbol_citas.dat", "r")
@@ -140,15 +156,17 @@ def aprobar_fecha_hora(fechahora, lista_intervalos):
         return True
     else:
         return False
-    
+
+# FUNCION DESCOMPONER H M
+# ENTRADAS: Recibe la lista que contiene la fecha y hora.
+# SALIDAS: Retorna la lista con la hora en segundos.
 def descomponer_h_m(lista):
     horas = int(lista[-2])
     mins = int(lista[-1])
     suma = horas * 3600
     suma += mins * 60
-
     lista = lista[:-2]
-    lista.append(suma)
+    lista.append(str(suma))
     return lista
 
 """ FUNCION COMPLETA DEL BOTÓN PROGRAMAR CITAS
@@ -241,34 +259,43 @@ def programar_citas():
             minutos.get()
             if aprobar_fecha_hora([año.get(), mes.get(), dia.get(), hora.get(), minutos.get()], valores_lista):
                 descompuesto = descomponer_h_m([año.get(), mes.get(), dia.get(), hora.get(), minutos.get()])
-                programar_cita_nueva(dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, descompuesto)
+                programar_cita_nueva(tipo_cita.get(), dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, descompuesto)
             else:
                 MessageBox.showerror("ERROR", "Cita no disponible para programar.")
         else:
-            fecha_hora_automatico(dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, valores_lista)
+            fecha_hora_automatico(tipo_cita.get(), dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, valores_lista)
     
-    def fecha_hora_automatico(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, lista_automaticos):
+    # FUNCION PARA EL BOTÓN DE FECHA Y HORA AUTOMÁTICOS
+    # ENTRADAS: Recibe los datos a guardar en la cita y la lista de citas posibles.
+    # SALIDAS: Envía la solicitud de programar cita si el usuario lo indica.
+    def fecha_hora_automatico(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, lista_automaticos):
 
-        def programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9):
-            print(dato9)
-            ano_separado = dato9[:4]
-            mes_separado = dato9[5:7]
-            dia_separado = dato9[8:10]
-            hora_separada = dato9[11:13]
-            minutos_separados = dato9[14:16]
-            descompuesto = [ano_separado, mes_separado, dia_separado, hora_separada, minutos_separados]
-            programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, descompuesto)
+        # FUNCION PROGRAMAR AUTO
+        # ENTRADAS: Recibe los datos de la cita a programar.
+        # SALIDAS: Envía a programar la cita en el árbol de citas.
+        def programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, dato10):
+            print(dato10)
+            ano_separado = dato10[:4]
+            mes_separado = dato10[5:7]
+            dia_separado = dato10[8:10]
+            hora_separada = dato10[11:13]
+            minutos_separados = dato10[14:16]
+            descompuesto = descomponer_h_m([ano_separado, mes_separado, dia_separado, hora_separada, minutos_separados])
+            programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, descompuesto)
             ventana_automatico.destroy()
+            ventana_programar_citas.destroy()
+            programar_citas()
             return
         
         ventana_automatico = Toplevel()
-        ventana_automatico.geometry("500x300")
+        ventana_automatico.geometry("400x100")
         ventana_automatico.resizable(False, False)
 
-        Label(ventana_automatico, text= "Seleccione una opción de fecha y hora:", font= ("Franklin Gothic Demi", 16)).pack()
-        combo_auto = ttk.Combobox(ventana_automatico, values= lista_automaticos, state= "readonly", width= 50)
+        Label(ventana_automatico, text= "Seleccione una opción de fecha y hora:", font= ("Franklin Gothic Demi", 14)).pack()
+        combo_auto = ttk.Combobox(ventana_automatico, values= lista_automaticos, state= "readonly", width= 40)
         combo_auto.pack()
-        Button(ventana_automatico, text= "Guardar", command= lambda: programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, combo_auto.get())).pack()
+        Label(ventana_automatico, text="").pack()
+        Button(ventana_automatico, text= "Guardar", command= lambda: programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, combo_auto.get())).pack()
 
         combo_auto.set(lista_automaticos[0])
         ventana_automatico.mainloop()
@@ -297,8 +324,10 @@ def programar_citas():
         return
     
     def cerrar_citas():
-        ventana_principal.deiconify()
-        ventana_programar_citas.destroy()
+        respuesta = MessageBox.askyesno("SALIR", "¿Seguro de que desea cerrar la\nventana de programación de citas?")
+        if respuesta:
+            ventana_principal.deiconify()
+            ventana_programar_citas.destroy()
         return
     
     # FUNCION QUE VALIDA LA LONGITUD DE UN TEXTO EN UN CAMPO DE ESCRITURA
