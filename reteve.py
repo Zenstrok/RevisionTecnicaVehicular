@@ -555,36 +555,38 @@ def lista_de_fallas():
     # FUNCION ELIMINAR FALLA
     # ENTRADAS: 
     # SALIDAS:
-    def eliminar_falla(dato): 
-        validar = 0
-        if validar == 1:
-            MessageBox.showerror("Error","Esta usandose")
-            return
-        else:
-            numero_falla_borrar = dato[0]
-            archivo = open("lista_fallas.dat", "r")
-            fallas_generales = archivo.read()
-            fallas_generales = eval(fallas_generales)
-            archivo.close()
+    def eliminar_falla(dato):
+        respuesta = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea borrar la falla?")
+        if respuesta:
+            validar = 0
+            if validar == 1:
+                MessageBox.showerror("Error","Esta usandose")
+                return
+            else:
+                numero_falla_borrar = dato[0]
+                archivo = open("lista_fallas.dat", "r")
+                fallas_generales = archivo.read()
+                fallas_generales = eval(fallas_generales)
+                archivo.close()
 
-            del fallas_generales[numero_falla_borrar]
+                del fallas_generales[numero_falla_borrar]
 
-            archivo = open("lista_fallas.dat", "w")
-            archivo.write(str(fallas_generales))
-            archivo.close()
+                archivo = open("lista_fallas.dat", "w")
+                archivo.write(str(fallas_generales))
+                archivo.close()
 
-            archivo = open("registros.dat", "r")
-            numeros_usados = archivo.read()
-            numeros_usados = eval(numeros_usados)
-            archivo.close()
+                archivo = open("registros.dat", "r")
+                numeros_usados = archivo.read()
+                numeros_usados = eval(numeros_usados)
+                archivo.close()
 
-            numeros_usados["fallas_usadas"].remove(numero_falla_borrar)
-            archivo = open("registros.dat", "w")
-            archivo.write(str(numeros_usados))
-            archivo.close()
+                numeros_usados["fallas_usadas"].remove(numero_falla_borrar)
+                archivo = open("registros.dat", "w")
+                archivo.write(str(numeros_usados))
+                archivo.close()
                 
-            ventana_lista_de_fallas.destroy()
-            lista_de_fallas()
+                ventana_lista_de_fallas.destroy()
+                lista_de_fallas()
 
     # Esconder la ventana principal.
     ventana_principal.iconify()
@@ -639,18 +641,23 @@ def lista_de_fallas():
         # Crear el label
         label_f = Label(segundo_frame_fallas, text=texto[0])
         label_f.grid(row= contador, column= 1)
+        Label(segundo_frame_fallas, text="────────────").grid(row= contador + 1, column= 1)
         label_t = Label(segundo_frame_fallas, text=texto[1])
         label_t.grid(row= contador, column= 3)
+        Label(segundo_frame_fallas, text="──────").grid(row= contador + 1, column= 3)
         label_d = Label(segundo_frame_fallas, text=texto[2], wraplength=300)
         label_d.grid(row= contador, column= 2)
+        Label(segundo_frame_fallas, text="────────────────────────").grid(row= contador + 1, column= 2)
 
         # Crear el botón y vincularlo a la función modificar o borrar
         boton_up = Button(segundo_frame_fallas, text="Modificar", bg= "#0277fa", fg= "White", command=lambda text=texto: modificar_falla(text))
         boton_up.grid(row= contador, column= 4)
+        Label(segundo_frame_fallas, text="────").grid(row= contador + 1, column= 4)
         boton_del = Button(segundo_frame_fallas, text="Borrar", bg= "#f94141", fg= "White", command=lambda text=texto: eliminar_falla(text))
         boton_del.grid(row= contador, column= 5)
+        Label(segundo_frame_fallas, text="────").grid(row= contador + 1, column= 5)
 
-        contador += 1
+        contador += 2
 
     # Loop de la ventana.
     ventana_lista_de_fallas.mainloop()
