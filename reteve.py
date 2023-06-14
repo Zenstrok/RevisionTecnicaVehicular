@@ -276,6 +276,7 @@ def programar_citas():
         # ENTRADAS: Recibe los datos de la cita a programar.
         # SALIDAS: Envía a programar la cita en el árbol de citas.
         def programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, dato10):
+            global manual
             print(dato10)
             ano_separado = dato10[:4]
             mes_separado = dato10[5:7]
@@ -286,6 +287,7 @@ def programar_citas():
             programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, descompuesto)
             ventana_automatico.destroy()
             ventana_programar_citas.destroy()
+            manual = True
             programar_citas()
             return
         
@@ -453,6 +455,205 @@ def programar_citas():
     # Loop de la ventana.
     ventana_programar_citas.mainloop()
     return
+
+def lista_de_fallas():
+    
+    # FUNCION CREAR FALLA
+    # ENTRADAS: 
+    # SALIDAS: 
+    def crear_falla():
+        ventana_lista_de_fallas.iconify()
+        def validar_largo_texto(*args):
+             texto_f = d_falla.get("1.0", "end-1c")
+             texto_n = n_falla.get("1.0", "end-1c")
+             if len(texto_f) > 200:
+                 nuevo_texto_f = texto_f[:200]
+                 d_falla.delete("1.0", "end")
+                 d_falla.insert("1.0", nuevo_texto_f)
+             if len(texto_n) > 4:
+                 nuevo_texto_n = texto_n[:4]
+                 n_falla.delete("1.0", "end")
+                 n_falla.insert("1.0", nuevo_texto_n)
+                
+        global ventana_crear_falla   
+        ventana_crear_falla = Toplevel()
+        ventana_crear_falla.geometry("400x400")
+        ventana_crear_falla.resizable(False, False)
+        ventana_crear_falla.title("Crear Falla")
+
+        Label(ventana_crear_falla, text= "Crear Falla", width= 20, font= ("Franklin Gothic Demi", 15)).pack()
+        Label(ventana_crear_falla, text= "#FALLA:" , font= ("Franklin Gothic Demi", 15)).pack()
+        n_falla = Text(ventana_crear_falla, height=1, width=4)
+        n_falla.pack()
+        n_falla.bind("<KeyRelease>", validar_largo_texto)
+        Label(ventana_crear_falla, text= "DESCRIPCION FALLA:", font= ("Franklin Gothic Demi", 15)).pack()
+        d_falla = Text(ventana_crear_falla, height=6, width=45)
+        d_falla.pack()
+        d_falla.bind("<KeyRelease>", validar_largo_texto)
+        tipo_de_falla = StringVar() 
+        leve = Radiobutton(ventana_crear_falla, text="Leve", variable=tipo_de_falla, value="Leve").pack()
+        grave = Radiobutton(ventana_crear_falla, text="Grave", variable=tipo_de_falla, value="Grave").pack()
+        tipo_de_falla.set("Leve")
+
+        Button(ventana_crear_falla, text= "Guardar", command= lambda: guardar_falla([n_falla.get("1.0", "end-1c"),d_falla.get("1.0", "end-1c"),tipo_de_falla.get()])).pack()
+
+        # Loop de la ventana.
+        ventana_crear_falla.mainloop()
+    
+    # FUNCION GUARDAR FALLA
+    # ENTRADAS: 
+    # SALIDAS: 
+    def guardar_falla(lista):
+        if len(lista[1]) < 5:
+            MessageBox.showerror("Error","Texto Invalido")
+            return
+        if lista[0].isdigit() == False:
+            MessageBox.showerror("Error","Falla debe ser un numero")
+            return
+        else:
+            archivo = open("registros.dat", "r")
+            numeros_usados = archivo.read()
+            numeros_usados = eval(numeros_usados)
+            archivo.close()
+            
+            numeros = numeros_usados["fallas_usadas"]
+            for elemento in numeros:
+                if elemento == lista[0]:
+                    MessageBox.showerror("Error","El numero " + lista[0] + " de falla ya se registro")
+                    return
+
+            numeros.append(lista[0])
+            numeros_usados["fallas_usadas"] = numeros
+            archivo = open("registros.dat", "w")
+            archivo.write(str(numeros_usados))
+            archivo.close()
+
+
+            archivo = open("lista_fallas.dat", "r")
+            fallas_generales = archivo.read()
+            fallas_generales = eval(fallas_generales)
+            archivo.close()
+
+
+            fallas_generales[lista[0]] = tuple(lista[1:])
+            archivo = open("lista_fallas.dat", "w")
+            archivo.write(str(fallas_generales))
+            archivo.close()
+
+
+            ventana_crear_falla.destroy()
+            ventana_lista_de_fallas.destroy()
+            lista_de_fallas()
+
+    # FUNCION MODIFICAR FALLA
+    # ENTRADAS: 
+    # SALIDAS:
+    def modificar_falla(dato):
+        print("¡Hola! Has presionado el botón del label:", dato)
+        return
+    
+    # FUNCION ELIMINAR FALLA
+    # ENTRADAS: 
+    # SALIDAS:
+    def eliminar_falla(dato): 
+        validar = 0
+        if validar == 1:
+            MessageBox.showerror("Error","Esta usandose")
+            return
+        else:
+            numero_falla_borrar = dato[0]
+            archivo = open("lista_fallas.dat", "r")
+            fallas_generales = archivo.read()
+            fallas_generales = eval(fallas_generales)
+            archivo.close()
+
+            del fallas_generales[numero_falla_borrar]
+
+            archivo = open("lista_fallas.dat", "w")
+            archivo.write(str(fallas_generales))
+            archivo.close()
+
+            archivo = open("registros.dat", "r")
+            numeros_usados = archivo.read()
+            numeros_usados = eval(numeros_usados)
+            archivo.close()
+
+            numeros_usados["fallas_usadas"].remove(numero_falla_borrar)
+            archivo = open("registros.dat", "w")
+            archivo.write(str(numeros_usados))
+            archivo.close()
+                
+            ventana_lista_de_fallas.destroy()
+            lista_de_fallas()
+
+    # Esconder la ventana principal.
+    ventana_principal.iconify()
+
+    # Crear la ventana de lista de fallas.
+    ventana_lista_de_fallas = Toplevel()
+    ventana_lista_de_fallas.geometry("680x700")
+    ventana_lista_de_fallas.resizable(False, False)
+    ventana_lista_de_fallas.title("Lista de fallas")
+
+    # Crear un frame en la ventana.
+    frame_fallas = Frame(ventana_lista_de_fallas)
+    frame_fallas.pack(fill= BOTH, expand= 1)
+
+    # Crear un canvas.
+    canvas_fallas = Canvas(frame_fallas)
+    canvas_fallas.pack(side= LEFT, fill= BOTH, expand= 1)
+
+    # Crear el scrollbar en el canvas.
+    scrollbar_fallas = Scrollbar(frame_fallas, orient= VERTICAL, command= canvas_fallas.yview)
+    scrollbar_fallas.pack(side= RIGHT, fill= Y)
+
+    # Configurar el canvas.
+    canvas_fallas.configure(yscrollcommand= scrollbar_fallas.set)
+    canvas_fallas.bind("<Configure>", lambda e: canvas_fallas.configure(scrollregion= canvas_fallas.bbox("all"))) 
+
+    # Crear otro frame dentro del canvas.
+    segundo_frame_fallas = Frame(canvas_fallas)
+
+    # Agregar el nuevo frame a una ventana en el canvas.
+    canvas_fallas.create_window((0, 0), window = segundo_frame_fallas, anchor= "nw")       
+
+    Label(segundo_frame_fallas, text= "Lista de fallas", width= 20, font= ("Franklin Gothic Demi", 16)).grid(row= 1, column= 2)
+    Button(segundo_frame_fallas, text= "Agregar Falla", width= 20, bg= "#0277fa", fg= "White", command= lambda: crear_falla()).grid(row= 2, column= 1)
+    Label(segundo_frame_fallas, text= "                                                                                                    ").grid(row= 3, column= 2)
+    Label(segundo_frame_fallas, text= " Número de Falla ", font= ("Franklin Gothic Demi", 10)).grid(row= 4, column= 1)
+    Label(segundo_frame_fallas, text= " ↓Descripcion↓ ", font= ("Franklin Gothic Demi", 10)).grid(row= 4, column= 2)
+    Label(segundo_frame_fallas, text= " Tipo de Falla ", font= ("Franklin Gothic Demi", 10)).grid(row= 4, column= 3)
+
+    archivo = open("lista_fallas.dat", "r")
+    fallas_generales = archivo.read()
+    fallas_generales = eval(fallas_generales)
+    archivo.close()
+
+    labels_textos = list()
+    for elemento in fallas_generales:
+        labels_textos.append([elemento,fallas_generales[elemento][1],fallas_generales[elemento][0]])
+
+    contador = 5
+    for texto in labels_textos:
+        print(texto)
+        # Crear el label
+        label_f = Label(segundo_frame_fallas, text=texto[0])
+        label_f.grid(row= contador, column= 1)
+        label_t = Label(segundo_frame_fallas, text=texto[1])
+        label_t.grid(row= contador, column= 3)
+        label_d = Label(segundo_frame_fallas, text=texto[2], wraplength=300)
+        label_d.grid(row= contador, column= 2)
+
+        # Crear el botón y vincularlo a la función modificar o borrar
+        boton_up = Button(segundo_frame_fallas, text="Modificar", bg= "#0277fa", fg= "White", command=lambda text=texto: modificar_falla(text))
+        boton_up.grid(row= contador, column= 4)
+        boton_del = Button(segundo_frame_fallas, text="Borrar", bg= "#f94141", fg= "White", command=lambda text=texto: eliminar_falla(text))
+        boton_del.grid(row= contador, column= 5)
+
+        contador += 1
+
+    # Loop de la ventana.
+    ventana_lista_de_fallas.mainloop()
 
 """ FUNCION PARA ABRIR LA VENTANA DE CONFIGURACION DEL SISTEMA
 # ENTRADAS: Lee las opciones seleccionadas por el usuario.
@@ -926,7 +1127,7 @@ Label(ventana_principal, text="").pack()
 Label(ventana_principal, text="Revisiones", font=("Comic Sans MS", 16)).pack()
 boton_d = Button(ventana_principal, text="Tablero de revisión", font=("Arial", 12), command= None)
 boton_d.pack()
-boton_e = Button(ventana_principal, text="Lista de fallas", font=("Arial", 12), command= None)
+boton_e = Button(ventana_principal, text="Lista de fallas", font=("Arial", 12), command= lambda: lista_de_fallas())
 boton_e.pack()
 
 # Barra de menú.
