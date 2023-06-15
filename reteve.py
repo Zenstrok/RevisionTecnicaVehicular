@@ -807,6 +807,69 @@ def lista_de_fallas():
     # Loop de la ventana.
     ventana_lista_de_fallas.mainloop()
 
+def tablero():
+
+    def ejecutar_comando(lineas):
+        global com
+        com = comando.get()
+            
+        if com != "":
+            comando.configure(state="readonly")
+            btn_ejecutar.configure(state="disabled")
+            print(com)
+            if com[0] == "T":
+                for linea in lineas:
+                    if com[1:] in linea[1]:
+                         linea[1].pop()
+                            
+                            
+        
+    VentanaTablero = Tk()
+    VentanaTablero.title("Tablero de revision")
+    VentanaTablero.geometry("700x700")
+
+    lineas = 6
+
+    tit_linea = Label(VentanaTablero,text="Linea",font=("", 12))
+    tit_linea.place(x=50,y=40)
+    tit_puesto1 = Label(VentanaTablero,text="Puesto 1",font=("", 12))
+    tit_puesto1.place(x=150,y=40)
+    tit_puesto2 = Label(VentanaTablero,text="Puesto 2",font=("", 12))
+    tit_puesto2.place(x=250,y=40)
+    tit_puesto3 = Label(VentanaTablero,text="Puesto 3",font=("", 12))
+    tit_puesto3.place(x=350,y=40)
+    tit_puesto4 = Label(VentanaTablero,text="Puesto 4",font=("", 12))
+    tit_puesto4.place(x=450,y=40)
+    tit_puesto5 = Label(VentanaTablero,text="Puesto 5",font=("", 12))
+    tit_puesto5.place(x=550,y=40)
+    
+    num = 1
+    x_num = 60
+    y_num = 70
+    lista_lineas = []
+    for i in range(lineas):
+        num_linea = Label(VentanaTablero,text=str(num),font=("", 12))
+        num_linea.place(x = x_num,y = y_num)
+
+        lista_lineas.append([str(num),[],[]])
+
+        
+
+
+
+        num += 1
+        y_num += 30
+
+        
+    lista_lineas[0][1].append("XU700")
+    print(lista_lineas)
+        
+
+    comando = Entry(VentanaTablero,width = 50)
+    comando.place(x=150,y=10)
+    btn_ejecutar = Button(VentanaTablero, text="Ejecutar",bg ="black",fg = "white",font=("", 10),width=7, height=1,command = lambda : ejecutar_comando(lista_lineas))
+    btn_ejecutar.place(x=500, y=10)
+
 """ FUNCION PARA ABRIR LA VENTANA DE CONFIGURACION DEL SISTEMA
 # ENTRADAS: Lee las opciones seleccionadas por el usuario.
 # SALIDAS: Guarda los cambios en un archivo predefinido. """
@@ -1277,7 +1340,7 @@ boton_c.pack()
 # Opciones de revisiones.
 Label(ventana_principal, text="").pack()
 Label(ventana_principal, text="Revisiones", font=("Comic Sans MS", 16)).pack()
-boton_d = Button(ventana_principal, text="Tablero de revisión", font=("Arial", 12), command= None)
+boton_d = Button(ventana_principal, text="Tablero de revisión", font=("Arial", 12), command= lambda: tablero())
 boton_d.pack()
 boton_e = Button(ventana_principal, text="Lista de fallas", font=("Arial", 12), command= lambda: lista_de_fallas())
 boton_e.pack()
