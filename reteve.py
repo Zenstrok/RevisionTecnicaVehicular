@@ -285,6 +285,12 @@ def programar_citas():
     # SALIDAS: Envía la solicitud de programar cita si el usuario lo indica.
     def fecha_hora_automatico(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, lista_automaticos):
 
+        def cancelar_accion():
+            res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea cancelar la asignación?")
+            if res:
+                ventana_automatico.destroy()
+                ventana_programar_citas.deiconify()
+
         # FUNCION PROGRAMAR AUTO
         # ENTRADAS: Recibe los datos de la cita a programar.
         # SALIDAS: Envía a programar la cita en el árbol de citas.
@@ -304,6 +310,7 @@ def programar_citas():
             programar_citas()
             return
         
+        ventana_programar_citas.iconify()
         ventana_automatico = Toplevel()
         ventana_automatico.geometry("400x120")
         ventana_automatico.resizable(False, False)
@@ -312,7 +319,8 @@ def programar_citas():
         combo_auto = ttk.Combobox(ventana_automatico, values= lista_automaticos, state= "readonly", width= 40)
         combo_auto.pack()
         Label(ventana_automatico, text="").pack()
-        Button(ventana_automatico, text= "Guardar", command= lambda: programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, combo_auto.get()), bg= "#0277fa", fg= "White").pack()
+        Button(ventana_automatico, text= "Guardar", command= lambda: programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, combo_auto.get()), bg= "#0277fa", fg= "White").place(x= 140, y= 70)
+        Button(ventana_automatico, text= "Cancelar", command= lambda: cancelar_accion(), bg= "#f94141", fg= "White").place(x= 200, y= 70)
 
         combo_auto.set(lista_automaticos[0])
         ventana_automatico.mainloop()
@@ -488,6 +496,14 @@ def buscar_nodo_cancelar(arbol, num, placa, fecha_hora):
         return arbol
 
 def cancelar_citas():
+
+    def salir_cancelar():
+        res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea salir?")
+        if res:
+            ventana_cancelar_citas.destroy()
+            ventana_principal.deiconify()
+        return
+    
     def cancelar_cita_deseada(cita, placa):
         if not cita.isdigit():
             MessageBox.showerror("ERROR", "Cita debe ser numérica")
@@ -524,6 +540,7 @@ def cancelar_citas():
             archivo1.close()
         return
     
+    ventana_principal.iconify()
     ventana_cancelar_citas = Toplevel()
     ventana_cancelar_citas.geometry("400x300")
     ventana_cancelar_citas.resizable(False, False)
@@ -537,7 +554,8 @@ def cancelar_citas():
     placa_vehiculo = Entry(ventana_cancelar_citas, width= 10, border= 6)
     placa_vehiculo.pack()
 
-    Button(ventana_cancelar_citas, text= "Cancelar cita", command= lambda: cancelar_cita_deseada(num_cita.get(), placa_vehiculo.get()), bg= "#f94141", fg= "White").pack(pady= 30)
+    Button(ventana_cancelar_citas, text= "Cancelar cita", command= lambda: cancelar_cita_deseada(num_cita.get(), placa_vehiculo.get()), bg= "#f94141", fg= "White").place(x= 110, y= 240)
+    Button(ventana_cancelar_citas, text= "Cerrar ventana", command= lambda: salir_cancelar(), bg= "#0277fa", fg= "White").place(x= 200, y= 240)
 
     ventana_cancelar_citas.mainloop()
 
@@ -566,6 +584,20 @@ def buscar_nodo_info(arbol, num, placa, fecha_hora):
 
 def ingreso_a_estacion():
 
+    def salir_ingreso():
+        res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea salir?")
+        if res:
+            ventana_ingreso_estacion.destroy()
+            ventana_principal.deiconify()
+        return
+    
+    def salir_ingresar():
+        res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea salir?")
+        if res:
+            ventana_ingresar.destroy()
+            ventana_ingreso_estacion.deiconify()
+        return
+    
     def verificacion_cola(placa):
         archivo = open("lista_colas.dat", "r")
         colas = archivo.read()
@@ -650,7 +682,7 @@ def ingreso_a_estacion():
 
         Label(ventana_ingresar, text= "                    ").grid(row= 1, column= 2)
         Label(ventana_ingresar, text= "                    ").grid(row= 2, column= 2)
-        Label(ventana_ingresar, text= "Ingresar un vehículo a la estación", width= 30, font= ("Franklin Gothic Demi", 16)).place(x= 60, y= 5)
+        Label(ventana_ingresar, text= "Ingresar un vehículo a la estación", width= 30, font= ("Franklin Gothic Demi", 16)).place(x= 50, y= 5)
         Label(ventana_ingresar, text= "Número de la cita:", font= ("Franklin Gothic Demi", 12)).grid(row= 3, column= 1)
         Label(ventana_ingresar, text= datos_del_ingreso[0], font= ("Arial", 10)).grid(row= 4, column= 1)
         Label(ventana_ingresar, text= "Placa del vehículo:", font= ("Franklin Gothic Demi", 12)).grid(row= 3, column= 3)
@@ -664,9 +696,13 @@ def ingreso_a_estacion():
         Label(ventana_ingresar, text= "Costo de revisión:", font= ("Franklin Gothic Demi", 12)).grid(row= 7, column= 3)
         Label(ventana_ingresar, text= datos_del_ingreso[7], font= ("Arial", 10)).grid(row= 8, column= 3)
 
-        Button(ventana_ingresar, text= "Ingresar vehículo", bg= "#0277fa", fg= "White", command= lambda: verificacion_cola(datos_del_ingreso[2])).grid(row= 10, column= 2)
+        Label(ventana_ingresar, text= "                    ", font= ("Arial", 10)).grid(row= 9, column= 2)
+
+        Button(ventana_ingresar, text= "Ingresar vehículo", bg= "#0277fa", fg= "White", command= lambda: verificacion_cola(datos_del_ingreso[2])).grid(row= 10, column= 1)
+        Button(ventana_ingresar, text= "Cancelar ingreso", command= lambda: salir_ingresar(), bg= "#f94141", fg= "White").grid(row= 10, column= 3)
         return
 
+    ventana_principal.iconify()
     ventana_ingreso_estacion = Toplevel()
     ventana_ingreso_estacion.geometry("400x300")
     ventana_ingreso_estacion.resizable(False, False)
@@ -680,7 +716,8 @@ def ingreso_a_estacion():
     placa_vehiculo = Entry(ventana_ingreso_estacion, width= 10, border= 6)
     placa_vehiculo.pack()
 
-    Button(ventana_ingreso_estacion, text= "Validar datos", command= lambda: ingresar(num_cita.get(), placa_vehiculo.get()), bg= "#0277fa", fg= "White").pack(pady= 30)
+    Button(ventana_ingreso_estacion, text= "Validar datos", command= lambda: ingresar(num_cita.get(), placa_vehiculo.get()), bg= "#0277fa", fg= "White").place(x= 110, y= 240)
+    Button(ventana_ingreso_estacion, text= "Cerrar ventana", command= lambda: salir_ingreso(), bg= "#f94141", fg= "White").place(x= 200, y= 240)
 
     ventana_ingreso_estacion.mainloop()
     return
@@ -689,49 +726,14 @@ def ingreso_a_estacion():
 # ENTRADAS: Lee las acciones del usuario.
 # SALIDAS: Guarda los cambios en un archivo predefinido. """
 def lista_de_fallas():
-    
-    # FUNCION CREAR FALLA
-    # ENTRADAS: 
-    # SALIDAS: 
-    def crear_falla():
-        def validar_largo_texto1(*args):
-             texto_f = d_falla.get("1.0", "end-1c")
-             texto_n = n_falla.get("1.0", "end-1c")
-             if len(texto_f) > 200:
-                 nuevo_texto_f = texto_f[:200]
-                 d_falla.delete("1.0", "end")
-                 d_falla.insert("1.0", nuevo_texto_f)
-             if len(texto_n) > 4:
-                 nuevo_texto_n = texto_n[:4]
-                 n_falla.delete("1.0", "end")
-                 n_falla.insert("1.0", nuevo_texto_n)
-        
-        ventana_lista_de_fallas.iconify()    
-        global ventana_crear_falla   
-        ventana_crear_falla = Toplevel()
-        ventana_crear_falla.geometry("400x350")
-        ventana_crear_falla.resizable(False, False)
-        ventana_crear_falla.title("Crear Falla")
 
-        Label(ventana_crear_falla, text= "Crear Falla", width= 20, font= ("Franklin Gothic Demi", 15)).pack()
-        Label(ventana_crear_falla, text= "Número de falla:", font= ("Franklin Gothic Demi", 12)).pack()
-        n_falla = Text(ventana_crear_falla, height=1, width=4)
-        n_falla.pack()
-        n_falla.bind("<KeyRelease>", validar_largo_texto1)
-        Label(ventana_crear_falla, text= "Descripcion de la falla:", font= ("Franklin Gothic Demi", 12)).pack()
-        d_falla = Text(ventana_crear_falla, height=6, width=45)
-        d_falla.pack()
-        d_falla.bind("<KeyRelease>", validar_largo_texto1)
-        tipo_de_falla = StringVar() 
-        leve = Radiobutton(ventana_crear_falla, text="Leve", variable=tipo_de_falla, value="Leve").place(x= 140, y= 235)
-        grave = Radiobutton(ventana_crear_falla, text="Grave", variable=tipo_de_falla, value="Grave").place(x= 200, y= 235)
-        tipo_de_falla.set("Leve")
-        Label(ventana_crear_falla, text= "Tipo de falla:", font= ("Franklin Gothic Demi", 12)).pack(pady= 6)
-        Button(ventana_crear_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([n_falla.get("1.0", "end-1c"),d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 1)).pack(pady= 30)
+    def salir_fallas():
+        res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea salir?")
+        if res:
+            ventana_lista_de_fallas.destroy()
+            ventana_principal.deiconify()
+        return
 
-        # Loop de la ventana.
-        ventana_crear_falla.mainloop()
-    
     # FUNCION GUARDAR FALLA
     # ENTRADAS: 
     # SALIDAS: 
@@ -779,11 +781,70 @@ def lista_de_fallas():
                 ventana_modificar_falla.destroy()
             ventana_lista_de_fallas.destroy()
             lista_de_fallas()
+    
+    # FUNCION CREAR FALLA
+    # ENTRADAS: 
+    # SALIDAS: 
+    def crear_falla():
+
+        def salir_crear_falla():
+            res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea salir?")
+            if res:
+                ventana_crear_falla.destroy()
+                ventana_lista_de_fallas.deiconify()
+            return
+    
+        def validar_largo_texto1(*args):
+             texto_f = d_falla.get("1.0", "end-1c")
+             texto_n = n_falla.get("1.0", "end-1c")
+             if len(texto_f) > 200:
+                 nuevo_texto_f = texto_f[:200]
+                 d_falla.delete("1.0", "end")
+                 d_falla.insert("1.0", nuevo_texto_f)
+             if len(texto_n) > 4:
+                 nuevo_texto_n = texto_n[:4]
+                 n_falla.delete("1.0", "end")
+                 n_falla.insert("1.0", nuevo_texto_n)
+        
+        ventana_lista_de_fallas.iconify()    
+        global ventana_crear_falla   
+        ventana_crear_falla = Toplevel()
+        ventana_crear_falla.geometry("400x350")
+        ventana_crear_falla.resizable(False, False)
+        ventana_crear_falla.title("Crear Falla")
+
+        Label(ventana_crear_falla, text= "Crear Falla", width= 20, font= ("Franklin Gothic Demi", 15)).pack()
+        Label(ventana_crear_falla, text= "Número de falla:", font= ("Franklin Gothic Demi", 12)).pack()
+        n_falla = Text(ventana_crear_falla, height=1, width=4)
+        n_falla.pack()
+        n_falla.bind("<KeyRelease>", validar_largo_texto1)
+        Label(ventana_crear_falla, text= "Descripcion de la falla:", font= ("Franklin Gothic Demi", 12)).pack()
+        d_falla = Text(ventana_crear_falla, height=6, width=45)
+        d_falla.pack()
+        d_falla.bind("<KeyRelease>", validar_largo_texto1)
+        tipo_de_falla = StringVar() 
+        leve = Radiobutton(ventana_crear_falla, text="Leve", variable=tipo_de_falla, value="Leve").place(x= 145, y= 235)
+        grave = Radiobutton(ventana_crear_falla, text="Grave", variable=tipo_de_falla, value="Grave").place(x= 205, y= 235)
+        tipo_de_falla.set("Leve")
+        Label(ventana_crear_falla, text= "Tipo de falla:", font= ("Franklin Gothic Demi", 12)).pack(pady= 6)
+        Button(ventana_crear_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([n_falla.get("1.0", "end-1c"),d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 1)).place(x= 145, y= 290)
+        Button(ventana_crear_falla, text= "Cancelar", bg= "#f94141", fg= "White", command= lambda: salir_crear_falla()).place(x= 205, y= 290)
+
+        # Loop de la ventana.
+        ventana_crear_falla.mainloop()
 
     # FUNCION MODIFICAR FALLA
     # ENTRADAS: 
     # SALIDAS:
     def modificar_falla(dato):
+
+        def salir_modificar_falla():
+            res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea salir?")
+            if res:
+                ventana_modificar_falla.destroy()
+                ventana_lista_de_fallas.deiconify()
+            return
+
         def validar_largo_texto2(*args):
              texto_f = d_falla.get("1.0", "end-1c")
              if len(texto_f) > 200:
@@ -791,6 +852,7 @@ def lista_de_fallas():
                  d_falla.delete("1.0", "end")
                  d_falla.insert("1.0", nuevo_texto_f)
 
+        ventana_lista_de_fallas.iconify()
         global ventana_modificar_falla
         ventana_modificar_falla = Toplevel()
         ventana_modificar_falla.geometry("400x460")
@@ -816,7 +878,8 @@ def lista_de_fallas():
         leve = Radiobutton(ventana_modificar_falla, text="Leve", variable=tipo_de_falla, value="Leve").pack()
         grave = Radiobutton(ventana_modificar_falla, text="Grave", variable=tipo_de_falla, value="Grave").pack()
         tipo_de_falla.set("Leve")
-        Button(ventana_modificar_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([dato[0], d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 2)).pack(pady= 15)
+        Button(ventana_modificar_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([dato[0], d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 2)).place(x= 145, y= 400)
+        Button(ventana_modificar_falla, text= "Cancelar", bg= "#f94141", fg= "White", command= lambda: salir_modificar_falla()).place(x= 205, y= 400)
         
         ventana_modificar_falla.mainloop()
         print("¡Hola! Has presionado el botón del label:", dato)
@@ -867,15 +930,16 @@ def lista_de_fallas():
     ventana_lista_de_fallas.resizable(False, False)
     ventana_lista_de_fallas.title("Lista de fallas")
 
-    Label(ventana_lista_de_fallas, text= "Lista de fallas", width= 20, font= ("Franklin Gothic Demi", 16)).pack()
-    Label(ventana_lista_de_fallas, text= "", pady= 10).pack()
-    Button(ventana_lista_de_fallas, text= "Agregar Falla", width= 20, bg= "#0277fa", fg= "White", command= lambda: crear_falla()).place(x= 12, y= 35)
+    Label(ventana_lista_de_fallas, text= "Lista de fallas         ", width= 20, font= ("Franklin Gothic Demi", 16)).pack()
+    Label(ventana_lista_de_fallas, text= "").pack(pady= 10)
+    Button(ventana_lista_de_fallas, text= "Agregar Falla", width= 20, bg= "#0277fa", fg= "White", command= lambda: crear_falla()).place(x= 12, y= 75)
+    Button(ventana_lista_de_fallas, text= "Salir", width= 10, bg= "#f94141", fg= "White", command= lambda: salir_fallas()).place(x= 585, y= 10)
     Label(ventana_lista_de_fallas, text= "", pady= 6).pack()
-    Label(ventana_lista_de_fallas, text= "Número de Falla                                              ↓Descripcion↓                                       Tipo de Falla", font= ("Franklin Gothic Demi", 10)).place(x= 30, y= 70)
+    Label(ventana_lista_de_fallas, text= "Número de Falla                                              ↓Descripcion↓                                       Tipo de Falla", font= ("Franklin Gothic Demi", 10)).place(x= 30, y= 120)
 
     # Crear un frame en la ventana.
     frame_fallas = Frame(ventana_lista_de_fallas)
-    frame_fallas.pack(fill= BOTH, expand= 1)
+    frame_fallas.pack(fill= BOTH, expand= 1, pady= 40)
 
     # Crear un canvas.
     canvas_fallas = Canvas(frame_fallas)
