@@ -997,6 +997,37 @@ def lista_de_fallas():
     # Loop de la ventana.
     ventana_lista_de_fallas.mainloop()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def tablero():
 
     def ejecutar_comando(lineas):
@@ -1014,51 +1045,111 @@ def tablero():
                             
                             
         
-    VentanaTablero = Tk()
-    VentanaTablero.title("Tablero de revision")
-    VentanaTablero.geometry("700x700")
+    ventana_tablero_revision = Toplevel()
+    ventana_tablero_revision.title("Tablero de revision")
+    ventana_tablero_revision.geometry("700x700")
 
-    lineas = 6
+    archivo = open("lista_colas.dat", "r")
+    colas = archivo.read()
+    colas = eval(colas)
+    archivo.close()
 
-    tit_linea = Label(VentanaTablero,text="Linea",font=("", 12))
-    tit_linea.place(x=50,y=40)
-    tit_puesto1 = Label(VentanaTablero,text="Puesto 1",font=("", 12))
-    tit_puesto1.place(x=150,y=40)
-    tit_puesto2 = Label(VentanaTablero,text="Puesto 2",font=("", 12))
-    tit_puesto2.place(x=250,y=40)
-    tit_puesto3 = Label(VentanaTablero,text="Puesto 3",font=("", 12))
-    tit_puesto3.place(x=350,y=40)
-    tit_puesto4 = Label(VentanaTablero,text="Puesto 4",font=("", 12))
-    tit_puesto4.place(x=450,y=40)
-    tit_puesto5 = Label(VentanaTablero,text="Puesto 5",font=("", 12))
-    tit_puesto5.place(x=550,y=40)
-    
+    lineas = len(colas)
+    lineas = 25
+    contador = lineas + 1
+    canvas = Canvas(ventana_tablero_revision, width=500, height=500)
+    canvas.place(x=0, y=70) # Ajusta la posición del canvas según tus necesidades
+    # Dibujar línea vertical   # Ajusta la posición inicial de las líneas según tus necesidades
+    n = 0
+    while contador != 0:
+        canvas.create_line(140 + n, 0, 140 + n, lineas *45, fill="black")  # Ajusta el ancho y color de las líneas según tus necesidades
+        contador -= 1
+        n += 100
+
+    linea = Label(ventana_tablero_revision,text="Linea",font=("", 12))
+    linea.place(x=50,y=40)
+    puesto1 = Label(ventana_tablero_revision,text="Puesto 1",font=("", 12))
+    puesto1.place(x=150,y=40)
+    puesto2 = Label(ventana_tablero_revision,text="Puesto 2",font=("", 12))
+    puesto2.place(x=250,y=40)
+    puesto3 = Label(ventana_tablero_revision,text="Puesto 3",font=("", 12))
+    puesto3.place(x=350,y=40)
+    puesto4 = Label(ventana_tablero_revision,text="Puesto 4",font=("", 12))
+    puesto4.place(x=450,y=40)
+    puesto5 = Label(ventana_tablero_revision,text="Puesto 5",font=("", 12))
+    puesto5.place(x=550,y=40)
+    espacio = Label(ventana_tablero_revision,text="",font=("", 12))
+    espacio.grid(row = 1,column= 1)
+    espacio2 = Label(ventana_tablero_revision,text="",font=("", 12))
+    espacio2.grid(row = 2,column= 2)
+    espacio3 = Label(ventana_tablero_revision,text="",font=("", 12))
+    espacio3.grid(row = 3,column= 3)
+
+ 
     num = 1
-    x_num = 60
-    y_num = 70
+    n = 3
     lista_lineas = []
     for i in range(lineas):
-        num_linea = Label(VentanaTablero,text=str(num),font=("", 12))
-        num_linea.place(x = x_num,y = y_num)
-
-        lista_lineas.append([str(num),[],[]])
-
-        
-
-
-
+        print(n)
+        num_linea = Label(ventana_tablero_revision,text="           " + str(num),font=("", 12))
+        num_linea.grid(row = n + num   ,column= 3)
+        separador = Label(ventana_tablero_revision,text="─────────────────────────────────────────────")
+        separador.grid(row = n +1 + num   ,column= 4)
         num += 1
-        y_num += 30
+        n += 1
+
+    
+
+    
+
 
         
-    lista_lineas[0][1].append("XU700")
-    print(lista_lineas)
-        
 
-    comando = Entry(VentanaTablero,width = 50)
+    comando = Entry(ventana_tablero_revision,width = 50)
     comando.place(x=150,y=10)
-    btn_ejecutar = Button(VentanaTablero, text="Ejecutar",bg ="black",fg = "white",font=("", 10),width=7, height=1,command = lambda : ejecutar_comando(lista_lineas))
+    btn_ejecutar = Button(ventana_tablero_revision, text="Ejecutar",bg ="black",fg = "white",font=("", 10),width=7, height=1,command = lambda : ejecutar_comando(lista_lineas))
     btn_ejecutar.place(x=500, y=10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 """ FUNCION PARA ABRIR LA VENTANA DE CONFIGURACION DEL SISTEMA
 # ENTRADAS: Lee las opciones seleccionadas por el usuario.
