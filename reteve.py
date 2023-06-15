@@ -127,15 +127,28 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
     dato_nodo = [datos_originales["num_citas"], dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, dato10, "PENDIENTE"]
     print(dato_nodo)
 
-    archivo = open("arbol_citas.dat", "r")
-    arbol = archivo.read()
+    # Leer archivos.
+    archivo1 = open("arbol_citas.dat", "r")
+    arbol = archivo1.read()
     arbol = eval(arbol)
-    archivo.close()
+    archivo1.close()
+
+    archivo2 = open("registro_arbol.dat", "r")
+    indices_nodo = archivo2.read()
+    indices_nodo = eval(indices_nodo)
+    archivo2.close()
 
     arbol = insertar_nodo(arbol, dato_nodo)
 
+    indices_nodo[dato_nodo[0]] = [dato_nodo[2], dato_nodo[10]]
+
+    # Escribir archivos.
     archivo = open("arbol_citas.dat", "w")
     archivo.write(str(arbol))
+    archivo.close()
+
+    archivo = open("registro_arbol.dat", "w")
+    archivo.write(str(indices_nodo))
     archivo.close()
 
     # ENVÍO DE CORREO AQUÍ
@@ -455,7 +468,100 @@ def programar_citas():
     # Loop de la ventana.
     ventana_programar_citas.mainloop()
     return
+    
+# FUNCIAN BUSCAR NODO Y CANCELAR
+# ENTRADAS:
+# SALIDAS: 
+def buscar_nodo_cancelar(arbol, num, placa, fecha_hora):
+    if arbol[0][0] == num:
+        if arbol[0][11] == "PENDIENTE":
+            arbol[0][11] = "CANCELADA"
+            return arbol
+        else:
+            MessageBox.showerror("ERROR", "La cita debe estar pendiente para ser cancelada.")
+            return arbol
+    else:
+        if comparar_nodos(arbol[0][10], fecha_hora) == True:
+            arbol[1] = buscar_nodo_cancelar(arbol[1], num, placa, fecha_hora)
+        else:
+            arbol[2] = buscar_nodo_cancelar(arbol[2], num, placa, fecha_hora)
+        return arbol
 
+def cancelar_citas():
+    def cancelar_cita_deseada(cita, placa):
+        if not cita.isdigit():
+            MessageBox.showerror("ERROR", "Cita debe ser numérica")
+            return
+        cita = int(cita)
+
+        archivo1 = open("arbol_citas.dat", "r")
+        arbol = archivo1.read()
+        arbol = eval(arbol)
+        archivo1.close()
+
+        archivo2 = open("registro_arbol.dat", "r")
+        indices_nodo = archivo2.read()
+        indices_nodo = eval(indices_nodo)
+        archivo2.close()
+
+        try:
+            datos_cita = indices_nodo[cita]
+        except:
+            MessageBox.showerror("ERROR", "Cita no registrada")
+            return
+        
+        if datos_cita[0] != placa:
+            MessageBox.showerror("ERROR", "Cita no registrada")
+            return
+        
+        continuar = MessageBox.askyesno("CONTINUAR", "¿Seguro de que desea eliminar la cita Número " + str(cita) + "?")
+        if continuar:
+            arbol = buscar_nodo_cancelar(arbol, cita, placa, datos_cita[1])
+            print(arbol)
+
+            archivo1 = open("arbol_citas.dat", "w")
+            arbol = archivo1.write(str(arbol))
+            archivo1.close()
+        return
+    
+    ventana_cancelar_citas = Toplevel()
+    ventana_cancelar_citas.geometry("400x460")
+    ventana_cancelar_citas.resizable(False, False)
+    ventana_cancelar_citas.title("Cancelar citas")
+
+    Label(ventana_cancelar_citas, text= "Cancelar citas", width= 20, font= ("Franklin Gothic Demi", 16)).pack(pady= 10)
+    Label(ventana_cancelar_citas, text= "Número de la cita:", font= ("Franklin Gothic Demi", 12)).pack(pady= 10)
+    num_cita = Entry(ventana_cancelar_citas, width= 10, border= 6)
+    num_cita.pack()
+    Label(ventana_cancelar_citas, text= "Placa del vehículo:", font= ("Franklin Gothic Demi", 12)).pack(pady= 10)
+    placa_vehiculo = Entry(ventana_cancelar_citas, width= 10, border= 6)
+    placa_vehiculo.pack()
+
+    Button(ventana_cancelar_citas, text= "Cancelar cita", command= lambda: cancelar_cita_deseada(num_cita.get(), placa_vehiculo.get())).pack(pady= 40)
+
+    ventana_cancelar_citas.mainloop()
+
+def ingreso_a_estacion():
+    ventana_ingreso_estacion = Toplevel()
+    ventana_ingreso_estacion.geometry("400x460")
+    ventana_ingreso_estacion.resizable(False, False)
+    ventana_ingreso_estacion.title("Ingreso de vehículos")
+
+    Label(ventana_ingreso_estacion, text= "Ingreso de vehículos a la estación", width= 20, font= ("Franklin Gothic Demi", 16)).pack(pady= 10)
+    Label(ventana_ingreso_estacion, text= "Número de la cita:", font= ("Franklin Gothic Demi", 12)).pack(pady= 10)
+    num_cita = Entry(ventana_ingreso_estacion, width= 10, border= 6)
+    num_cita.pack()
+    Label(ventana_ingreso_estacion, text= "Placa del vehículo:", font= ("Franklin Gothic Demi", 12)).pack(pady= 10)
+    placa_vehiculo = Entry(ventana_ingreso_estacion, width= 10, border= 6)
+    placa_vehiculo.pack()
+
+    Button(ventana_ingreso_estacion, text= "Cancelar cita", command= None).pack(pady= 40)
+
+    ventana_ingreso_estacion.mainloop()
+    return
+""" FUNCION PARA ABRIR LA VENTANA DE LISTA DE FALLAS
+# ENTRADAS: Lee las acciones del usuario.
+# SALIDAS: Guarda los cambios en un archivo predefinido. """
 def lista_de_fallas():
     
     # FUNCION CREAR FALLA
@@ -631,9 +737,15 @@ def lista_de_fallas():
 
     # Crear la ventana de lista de fallas.
     ventana_lista_de_fallas = Toplevel()
-    ventana_lista_de_fallas.geometry("680x700")
+    ventana_lista_de_fallas.geometry("680x650")
     ventana_lista_de_fallas.resizable(False, False)
     ventana_lista_de_fallas.title("Lista de fallas")
+
+    Label(ventana_lista_de_fallas, text= "Lista de fallas", width= 20, font= ("Franklin Gothic Demi", 16)).pack()
+    Label(ventana_lista_de_fallas, text= "", pady= 10).pack()
+    Button(ventana_lista_de_fallas, text= "Agregar Falla", width= 20, bg= "#0277fa", fg= "White", command= lambda: crear_falla()).place(x= 12, y= 35)
+    Label(ventana_lista_de_fallas, text= "", pady= 6).pack()
+    Label(ventana_lista_de_fallas, text= "Número de Falla                                              ↓Descripcion↓                                       Tipo de Falla", font= ("Franklin Gothic Demi", 10)).place(x= 30, y= 70)
 
     # Crear un frame en la ventana.
     frame_fallas = Frame(ventana_lista_de_fallas)
@@ -657,12 +769,7 @@ def lista_de_fallas():
     # Agregar el nuevo frame a una ventana en el canvas.
     canvas_fallas.create_window((0, 0), window = segundo_frame_fallas, anchor= "nw")       
 
-    Label(segundo_frame_fallas, text= "Lista de fallas", width= 20, font= ("Franklin Gothic Demi", 16)).grid(row= 1, column= 2)
-    Button(segundo_frame_fallas, text= "Agregar Falla", width= 20, bg= "#0277fa", fg= "White", command= lambda: crear_falla()).grid(row= 2, column= 1)
     Label(segundo_frame_fallas, text= "                                                                                                    ").grid(row= 3, column= 2)
-    Label(segundo_frame_fallas, text= " Número de Falla ", font= ("Franklin Gothic Demi", 10)).grid(row= 4, column= 1)
-    Label(segundo_frame_fallas, text= " ↓Descripcion↓ ", font= ("Franklin Gothic Demi", 10)).grid(row= 4, column= 2)
-    Label(segundo_frame_fallas, text= " Tipo de Falla ", font= ("Franklin Gothic Demi", 10)).grid(row= 4, column= 3)
 
     archivo = open("lista_fallas.dat", "r")
     fallas_generales = archivo.read()
@@ -1158,13 +1265,13 @@ Label(ventana_principal, text="").pack()
 Label(ventana_principal, text="Citas", font=("Comic Sans MS", 16)).pack()
 boton_a = Button(ventana_principal, text="Programar citas", font=("Arial", 12), command= lambda: programar_citas())
 boton_a.pack()
-boton_b = Button(ventana_principal, text="Cancelar citas", font=("Arial", 12), command= None)
+boton_b = Button(ventana_principal, text="Cancelar citas", font=("Arial", 12), command= lambda: cancelar_citas())
 boton_b.pack()
 
 # Opciones de vehículos.
 Label(ventana_principal, text="").pack()
 Label(ventana_principal, text="Vehículos", font=("Comic Sans MS", 16)).pack()
-boton_c = Button(ventana_principal, text="Ingreso de vehículos a la estación", font=("Arial", 12), command= None)
+boton_c = Button(ventana_principal, text="Ingreso de vehículos a la estación", font=("Arial", 12), command= lambda: ingreso_a_estacion())
 boton_c.pack()
 
 # Opciones de revisiones.
