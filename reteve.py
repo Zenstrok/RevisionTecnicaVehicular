@@ -305,14 +305,14 @@ def programar_citas():
             return
         
         ventana_automatico = Toplevel()
-        ventana_automatico.geometry("400x100")
+        ventana_automatico.geometry("400x120")
         ventana_automatico.resizable(False, False)
 
         Label(ventana_automatico, text= "Seleccione una opción de fecha y hora:", font= ("Franklin Gothic Demi", 14)).pack()
         combo_auto = ttk.Combobox(ventana_automatico, values= lista_automaticos, state= "readonly", width= 40)
         combo_auto.pack()
         Label(ventana_automatico, text="").pack()
-        Button(ventana_automatico, text= "Guardar", command= lambda: programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, combo_auto.get())).pack()
+        Button(ventana_automatico, text= "Guardar", command= lambda: programar_auto(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8, dato9, combo_auto.get()), bg= "#0277fa", fg= "White").pack()
 
         combo_auto.set(lista_automaticos[0])
         ventana_automatico.mainloop()
@@ -452,8 +452,8 @@ def programar_citas():
     boton_auto.place(x= 270, y= 502)
 
     # Botones de interacción.
-    Button(ventana_programar_citas, text= "Programar Cita", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: validar_datos_cita()).place(x= 140, y= 600)
-    Button(ventana_programar_citas, text= "Cerrar ventana", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), command= lambda: cerrar_citas()).place(x= 300, y= 600)
+    Button(ventana_programar_citas, text= "Programar Cita", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), bg= "#0277fa", fg= "White", command= lambda: validar_datos_cita()).place(x= 140, y= 600)
+    Button(ventana_programar_citas, text= "Cerrar ventana", width= 20, height= 2, font= ("Franklin Gothic Demi", 10), bg= "#f94141", fg= "White", command= lambda: cerrar_citas()).place(x= 300, y= 600)
 
     # Asignar valores por defecto a las opciones.
     tipo_cita.set("Primera Vez")
@@ -525,7 +525,7 @@ def cancelar_citas():
         return
     
     ventana_cancelar_citas = Toplevel()
-    ventana_cancelar_citas.geometry("400x460")
+    ventana_cancelar_citas.geometry("400x300")
     ventana_cancelar_citas.resizable(False, False)
     ventana_cancelar_citas.title("Cancelar citas")
 
@@ -537,17 +537,142 @@ def cancelar_citas():
     placa_vehiculo = Entry(ventana_cancelar_citas, width= 10, border= 6)
     placa_vehiculo.pack()
 
-    Button(ventana_cancelar_citas, text= "Cancelar cita", command= lambda: cancelar_cita_deseada(num_cita.get(), placa_vehiculo.get())).pack(pady= 40)
+    Button(ventana_cancelar_citas, text= "Cancelar cita", command= lambda: cancelar_cita_deseada(num_cita.get(), placa_vehiculo.get()), bg= "#f94141", fg= "White").pack(pady= 30)
 
     ventana_cancelar_citas.mainloop()
 
+def guardar_dato_ingreso(dato):
+    global datos_del_ingreso
+    datos_del_ingreso = dato
+    return
+
+# FUNCIAN BUSCAR NODO Y CANCELAR
+# ENTRADAS:
+# SALIDAS: 
+def buscar_nodo_info(arbol, num, placa, fecha_hora):
+    if arbol[0][0] == num:
+        if arbol[0][11] == "PENDIENTE":
+            guardar_dato_ingreso(arbol[0])
+            return arbol
+        else:
+            MessageBox.showerror("ERROR", "Cita debe ser pendiente.")
+            return False
+    else:
+        if comparar_nodos(arbol[0][10], fecha_hora) == True:
+            arbol[1] = buscar_nodo_info(arbol[1], num, placa, fecha_hora)
+        else:
+            arbol[2] = buscar_nodo_info(arbol[2], num, placa, fecha_hora)
+        return arbol
+
 def ingreso_a_estacion():
+
+    def verificacion_cola(placa):
+        archivo = open("lista_colas.dat", "r")
+        colas = archivo.read()
+        colas = eval(colas)
+        archivo.close()
+
+        for lista in colas:
+            print(lista)
+            if placa in lista[1]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                ventana_ingresar.destroy()
+                ventana_ingreso_estacion.deiconify()
+                return
+            if placa in lista[2]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                ventana_ingresar.destroy()
+                ventana_ingreso_estacion.deiconify()
+                return
+    
+        valor_minimo = None
+        indice = None
+        contador = 0
+        for lista in colas:
+            if valor_minimo == None:
+                valor_minimo = len(lista[1])
+                indice = 0
+            elif len(lista[1]) < valor_minimo:
+                valor_minimo = len(lista[1])
+                indice = contador
+            contador += 1
+
+        colas[indice][1].append(placa)
+
+        print(colas)
+
+        archivo = open("lista_colas.dat", "w")
+        archivo.write(str(colas))
+        archivo.close()
+        MessageBox.showinfo("ESTADO", "Se ha ingresado a la estación correctamente.")
+        ventana_ingresar.destroy()
+        ventana_ingreso_estacion.deiconify()
+
+    def ingresar(num_cita, placa):
+
+        if not num_cita.isdigit():
+            MessageBox.showerror("ERROR", "Valor de cita debe ser numérico.")
+            return
+        num_cita = int(num_cita)
+        
+        archivo = open("arbol_citas.dat", "r")
+        arbol = archivo.read()
+        arbol = eval(arbol)
+        archivo.close()
+        archivo = open("registro_arbol.dat", "r")
+        registros = archivo.read()
+        registros = eval(registros)
+        archivo.close()
+        
+        try:
+            datos_cita = registros[num_cita]
+        except:
+            MessageBox.showerror("ERROR", "Cita no registrada")
+            return
+        
+        if datos_cita[0] != placa:
+            MessageBox.showerror("ERROR", "Cita no registrada")
+            return
+        datos = registros[num_cita]
+
+        buscar_nodo_info(arbol, num_cita, placa, datos[1])
+        global datos_del_ingreso
+        if datos_del_ingreso == False:
+            return
+
+        ventana_ingreso_estacion.iconify()
+
+        global ventana_ingresar
+        ventana_ingresar = Toplevel()
+        ventana_ingresar.geometry("440x260")
+        ventana_ingresar.resizable(False, False)
+        ventana_ingresar.title("Ingreso de vehículos")
+
+        Label(ventana_ingresar, text= "                    ").grid(row= 1, column= 2)
+        Label(ventana_ingresar, text= "                    ").grid(row= 2, column= 2)
+        Label(ventana_ingresar, text= "Ingresar un vehículo a la estación", width= 30, font= ("Franklin Gothic Demi", 16)).place(x= 60, y= 5)
+        Label(ventana_ingresar, text= "Número de la cita:", font= ("Franklin Gothic Demi", 12)).grid(row= 3, column= 1)
+        Label(ventana_ingresar, text= datos_del_ingreso[0], font= ("Arial", 10)).grid(row= 4, column= 1)
+        Label(ventana_ingresar, text= "Placa del vehículo:", font= ("Franklin Gothic Demi", 12)).grid(row= 3, column= 3)
+        Label(ventana_ingresar, text= datos_del_ingreso[2], font= ("Arial", 10)).grid(row= 4, column= 3)
+        Label(ventana_ingresar, text= "Marca del vehículo:", font= ("Franklin Gothic Demi", 12)).grid(row= 5, column= 1)
+        Label(ventana_ingresar, text= datos_del_ingreso[4], font= ("Arial", 10)).grid(row= 6, column= 1)
+        Label(ventana_ingresar, text= "Modelo del vehículo:", font= ("Franklin Gothic Demi", 12)).grid(row= 5, column= 3)
+        Label(ventana_ingresar, text= datos_del_ingreso[5], font= ("Arial", 10)).grid(row= 6, column= 3)
+        Label(ventana_ingresar, text= "Propietario del vehículo:", font= ("Franklin Gothic Demi", 12)).grid(row= 7, column= 1)
+        Label(ventana_ingresar, text= datos_del_ingreso[6], font= ("Arial", 10), wraplength= 130).grid(row= 8, column= 1)
+        Label(ventana_ingresar, text= "Costo de revisión:", font= ("Franklin Gothic Demi", 12)).grid(row= 7, column= 3)
+        Label(ventana_ingresar, text= datos_del_ingreso[7], font= ("Arial", 10)).grid(row= 8, column= 3)
+
+        Button(ventana_ingresar, text= "Ingresar vehículo", bg= "#0277fa", fg= "White", command= lambda: verificacion_cola(datos_del_ingreso[2])).grid(row= 10, column= 2)
+        return
+
     ventana_ingreso_estacion = Toplevel()
-    ventana_ingreso_estacion.geometry("400x460")
+    ventana_ingreso_estacion.geometry("400x300")
     ventana_ingreso_estacion.resizable(False, False)
     ventana_ingreso_estacion.title("Ingreso de vehículos")
 
-    Label(ventana_ingreso_estacion, text= "Ingreso de vehículos a la estación", width= 20, font= ("Franklin Gothic Demi", 16)).pack(pady= 10)
+    Label(ventana_ingreso_estacion, text= "Ingreso de vehículos a la estación", width= 30, font= ("Franklin Gothic Demi", 16)).pack(pady= 10)
     Label(ventana_ingreso_estacion, text= "Número de la cita:", font= ("Franklin Gothic Demi", 12)).pack(pady= 10)
     num_cita = Entry(ventana_ingreso_estacion, width= 10, border= 6)
     num_cita.pack()
@@ -555,10 +680,11 @@ def ingreso_a_estacion():
     placa_vehiculo = Entry(ventana_ingreso_estacion, width= 10, border= 6)
     placa_vehiculo.pack()
 
-    Button(ventana_ingreso_estacion, text= "Cancelar cita", command= None).pack(pady= 40)
+    Button(ventana_ingreso_estacion, text= "Validar datos", command= lambda: ingresar(num_cita.get(), placa_vehiculo.get()), bg= "#0277fa", fg= "White").pack(pady= 30)
 
     ventana_ingreso_estacion.mainloop()
     return
+
 """ FUNCION PARA ABRIR LA VENTANA DE LISTA DE FALLAS
 # ENTRADAS: Lee las acciones del usuario.
 # SALIDAS: Guarda los cambios en un archivo predefinido. """
@@ -1306,10 +1432,38 @@ def actualizar_fecha_hora():
     ventana_principal.after(1000, actualizar_fecha_hora)
     fecha_hoy = fecha_formateada[:10]
 
+# FUNCION QUE VALIDA QUE LAS LINEAS DE TRABAJO ACTUALES SEAN IGUALES A LA CONFIGURACION
+# ENTRADAS: Lee los archivos de config y de colas.
+# SALIDAS: Corrige el archivo de cola si es necesario.
+def validar_lineas():
+    archivo = open("lista_colas.dat", "r")
+    lineas_actuales = archivo.read()
+    lineas_actuales = eval(lineas_actuales)
+    archivo.close()
+
+    archivo = open("configuración_reteve.dat", "r")
+    config = archivo.read()
+    config = eval(config)
+    archivo.close()
+
+    largo_inicial = len(lineas_actuales)
+
+    if len(lineas_actuales) < config[0]:
+        contador = 1
+        while len(lineas_actuales) < config[0]:
+            lineas_actuales.append([str(largo_inicial + contador), [], []])
+            contador += 1
+
+        archivo = open("lista_colas.dat", "w")
+        lineas_actuales = archivo.write(str(lineas_actuales))
+        archivo.close()
+    return
+
 """ FUNCION PRINCIPAL """
 manual = True
 fecha_hoy = str()
 valores_lista = list()
+datos_del_ingreso = list()
 
 # Ventana principal.
 ventana_principal = Tk()
@@ -1322,6 +1476,7 @@ label_fecha_hora = Label(ventana_principal, font=("Arial", 14))
 label_fecha_hora.place(x=400,y=10)
 actualizar_fecha_hora()
 generar_lista_intervalo()
+validar_lineas()
 
 # Opciones de citas.
 Label(ventana_principal, text="").pack()
