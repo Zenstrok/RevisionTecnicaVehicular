@@ -497,6 +497,40 @@ def buscar_nodo_cancelar(arbol, num, placa, fecha_hora):
 
 def cancelar_citas():
 
+    def verificar_en_colas(dato):
+        archivo = open("lista_colas.dat", "r")
+        colas = archivo.read()
+        colas = eval(colas)
+        archivo.close()
+
+        for lista in colas:
+            # Colas de espera.
+            if dato in lista[1]:
+                lista[1].remove(dato)
+
+                archivo = open("lista_colas.dat", "w")
+                archivo.write(str(colas))
+                archivo.close()
+                return True
+            
+            # Colas de revisión.
+            if dato in lista[2][0]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                return False
+            if dato in lista[2][1]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                return False
+            if dato in lista[2][2]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                return False
+            if dato in lista[2][3]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                return False
+            if dato in lista[2][4]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                return False
+        return
+
     def salir_cancelar():
         res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea salir?")
         if res:
@@ -530,7 +564,10 @@ def cancelar_citas():
             MessageBox.showerror("ERROR", "Cita no registrada")
             return
         
-        continuar = MessageBox.askyesno("CONTINUAR", "¿Seguro de que desea eliminar la cita Número " + str(cita) + "?")
+        if verificar_en_colas(placa) == False:
+            return
+        
+        continuar = MessageBox.askyesno("CONTINUAR", "¿Seguro de que desea eliminar la cita número " + str(cita) + "?")
         if continuar:
             arbol = buscar_nodo_cancelar(arbol, cita, placa, datos_cita[1])
             print(arbol)
@@ -538,6 +575,8 @@ def cancelar_citas():
             archivo1 = open("arbol_citas.dat", "w")
             arbol = archivo1.write(str(arbol))
             archivo1.close()
+
+            MessageBox.showinfo("ESTADO", "Se ha cancelado la cita número " + str(cita))
         return
     
     ventana_principal.iconify()
@@ -611,7 +650,27 @@ def ingreso_a_estacion():
                 ventana_ingresar.destroy()
                 ventana_ingreso_estacion.deiconify()
                 return
-            if placa in lista[2]:
+            if placa in lista[2][0]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                ventana_ingresar.destroy()
+                ventana_ingreso_estacion.deiconify()
+                return
+            if placa in lista[2][1]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                ventana_ingresar.destroy()
+                ventana_ingreso_estacion.deiconify()
+                return
+            if placa in lista[2][2]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                ventana_ingresar.destroy()
+                ventana_ingreso_estacion.deiconify()
+                return
+            if placa in lista[2][3]:
+                MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
+                ventana_ingresar.destroy()
+                ventana_ingreso_estacion.deiconify()
+                return
+            if placa in lista[2][4]:
                 MessageBox.showerror("ERROR", "Vehículo se encuentra en una cola actualmente.")
                 ventana_ingresar.destroy()
                 ventana_ingreso_estacion.deiconify()
@@ -721,6 +780,143 @@ def ingreso_a_estacion():
 
     ventana_ingreso_estacion.mainloop()
     return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def tablero():
+
+    def ejecutar_comando(lineas):
+        global com
+        com = comando.get()
+            
+        if com != "":
+            comando.configure(state="readonly")
+            btn_ejecutar.configure(state="disabled")
+            print(com)
+            if com[0] == "T":
+                for linea in lineas:
+                    if com[1:] in linea[1]:
+                         linea[1].pop()
+                            
+                            
+        
+    ventana_tablero_revision = Toplevel()
+    ventana_tablero_revision.title("Tablero de revision")
+    ventana_tablero_revision.geometry("760x700")
+    ventana_tablero_revision.resizable(False, False)
+    
+    frame_tablero = Frame(ventana_tablero_revision) 
+    frame_tablero.pack(fill= BOTH, expand= 1, pady= 100)  
+    
+    # Crear un canvas.
+    canvas_tablero = Canvas(frame_tablero) 
+    canvas_tablero.pack(side= LEFT, fill= BOTH, expand= 1)  
+    
+    # Crear el scrollbar en el canvas.
+    scrollbar_tablero = Scrollbar(frame_tablero, orient= VERTICAL, command= canvas_tablero.yview) 
+    scrollbar_tablero.pack(side= RIGHT, fill= Y)  
+    
+    # Configurar el canvas.
+    canvas_tablero.configure(yscrollcommand= scrollbar_tablero.set) 
+    canvas_tablero.bind("<Configure>", lambda e: canvas_tablero.configure(scrollregion= canvas_tablero.bbox("all")))  
+    
+    # Crear otro frame dentro del canvas.
+    segundo_frame_tablero = Frame(canvas_tablero)  
+    
+    # Agregar el nuevo frame a una ventana en el canvas.
+    canvas_tablero.create_window((0, 0), window = segundo_frame_tablero, anchor= "nw")
+
+    archivo = open("lista_colas.dat", "r")
+    colas = archivo.read()
+    colas = eval(colas)
+    archivo.close()
+
+    lineas = len(colas)
+    canvas = Canvas(segundo_frame_tablero, width=1200, height=1200)
+    canvas.place(x=0, y=20) # Ajusta la posición del canvas según tus necesidades
+    # Dibujar línea vertical   # Ajusta la posición inicial de las líneas según tus necesidades
+
+    n = 0
+    lineas = 25
+    puestos = 7
+    while puestos > 0:
+        print("hola")
+        canvas.create_line( 60 + n, 0, 60 + n, lineas *70, fill="black")  # Ajusta el ancho y color de las líneas según tus necesidades
+        puestos -= 1
+        n += 100
+
+    linea = Label(ventana_tablero_revision,text="Linea",font=("", 12))
+    linea.place(x=10,y=60)
+    siguiente = Label(ventana_tablero_revision,text="Siguiente",font=("", 12))
+    siguiente.place(x=77,y=60)
+    puesto1 = Label(ventana_tablero_revision,text="Puesto 1",font=("", 12))
+    puesto1.place(x=180,y=60)
+    puesto2 = Label(ventana_tablero_revision,text="Puesto 2",font=("", 12))
+    puesto2.place(x=280,y=60)
+    puesto3 = Label(ventana_tablero_revision,text="Puesto 3",font=("", 12))
+    puesto3.place(x=380,y=60)
+    puesto4 = Label(ventana_tablero_revision,text="Puesto 4",font=("", 12))
+    puesto4.place(x=480,y=60)
+    puesto5 = Label(ventana_tablero_revision,text="Puesto 5",font=("", 12))
+    puesto5.place(x=580,y=60)
+    espacio = Label(segundo_frame_tablero,text="  ",font=("", 12))
+    espacio.grid(row = 0,column= 2)
+
+ 
+    num = 1
+    n = 4
+    lista_lineas = []
+    for i in range(lineas):
+        print(n)
+        num_linea = Label(segundo_frame_tablero,text="     " + str(num),font=("", 12))
+        num_linea.grid(row = n + num   ,column= 1)
+        separador = Label(segundo_frame_tablero,text="───────────────────────────────────────────────────")
+        separador.grid(row = n +1 + num   ,column= 5)
+        num += 1
+        n += 1
+
+    comando = Entry(ventana_tablero_revision,width = 50)
+    comando.place(x=150,y=10)
+    btn_ejecutar = Button(ventana_tablero_revision, text="Ejecutar",bg ="black",fg = "white",font=("", 10),width=7, height=1,command = lambda : ejecutar_comando(lista_lineas))
+    btn_ejecutar.place(x=500, y=10)
+
+    # Loop de la ventana.
+    ventana_tablero_revision.mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 """ FUNCION PARA ABRIR LA VENTANA DE LISTA DE FALLAS
 # ENTRADAS: Lee las acciones del usuario.
@@ -1018,170 +1214,72 @@ def lista_de_fallas():
 
 
 
-
-
-
-
-
-
-
-
-
-
-def tablero():
-
-    def ejecutar_comando(lineas):
-        global com
-        com = comando.get()
-            
-        if com != "":
-            comando.configure(state="readonly")
-            btn_ejecutar.configure(state="disabled")
-            print(com)
-            if com[0] == "T":
-                for linea in lineas:
-                    if com[1:] in linea[1]:
-                         linea[1].pop()
-                            
-                            
-        
-    ventana_tablero_revision = Toplevel()
-    ventana_tablero_revision.title("Tablero de revision")
-    ventana_tablero_revision.geometry("800x800")
-    ventana_tablero_revision.resizable(False, False)
-    
-    frame_tablero = Frame(ventana_tablero_revision) 
-    frame_tablero.pack(fill= BOTH, expand= 1, pady= 65)  # Crear un canvas.
-    canvas_tablero = Canvas(frame_tablero) 
-    canvas_tablero.pack(side= LEFT, fill= BOTH, expand= 1)  # Crear el scrollbar en el canvas.
-    scrollbar_tablero = Scrollbar(frame_tablero, orient= VERTICAL, command= canvas_tablero.yview) 
-    scrollbar_tablero.pack(side= RIGHT, fill= Y)  # Configurar el canvas.
-    canvas_tablero.configure(yscrollcommand= scrollbar_tablero.set) 
-    canvas_tablero.bind("<Configure>", lambda e: canvas_tablero.configure(scrollregion= canvas_tablero.bbox("all")))  # Crear otro frame dentro del canvas.
-    segundo_frame_tablero = Frame(canvas_tablero)  # Agregar el nuevo frame a una ventana en el canvas.
-    canvas_tablero.create_window((0, 0), window = segundo_frame_tablero, anchor= "nw")
-
-    archivo = open("lista_colas.dat", "r")
-    colas = archivo.read()
-    colas = eval(colas)
-    archivo.close()
-
-    lineas = len(colas)
-    canvas = Canvas(segundo_frame_tablero, width=1200, height=1200)
-    canvas.place(x=0, y=20) # Ajusta la posición del canvas según tus necesidades
-    # Dibujar línea vertical   # Ajusta la posición inicial de las líneas según tus necesidades
-
-    n = 0
-    lineas = 6
-    puestos = 7
-    while puestos > 0:
-        print("hola")
-        canvas.create_line( 60 + n, 0, 60 + n, lineas *70, fill="black")  # Ajusta el ancho y color de las líneas según tus necesidades
-        puestos -= 1
-        n += 100
-
-    linea = Label(ventana_tablero_revision,text="Linea",font=("", 12))
-    linea.place(x=10,y=40)
-    siguiente = Label(ventana_tablero_revision,text="Siguiente",font=("", 12))
-    siguiente.place(x=77,y=40)
-    puesto1 = Label(ventana_tablero_revision,text="Puesto 1",font=("", 12))
-    puesto1.place(x=180,y=40)
-    puesto2 = Label(ventana_tablero_revision,text="Puesto 2",font=("", 12))
-    puesto2.place(x=280,y=40)
-    puesto3 = Label(ventana_tablero_revision,text="Puesto 3",font=("", 12))
-    puesto3.place(x=380,y=40)
-    puesto4 = Label(ventana_tablero_revision,text="Puesto 4",font=("", 12))
-    puesto4.place(x=480,y=40)
-    puesto5 = Label(ventana_tablero_revision,text="Puesto 5",font=("", 12))
-    puesto5.place(x=580,y=40)
-    espacio = Label(segundo_frame_tablero,text="  ",font=("", 12))
-    espacio.grid(row = 0,column= 2)
-
- 
-    num = 1
-    n = 4
-    lista_lineas = []
-    for i in range(lineas):
-        print(n)
-        num_linea = Label(segundo_frame_tablero,text="     " + str(num),font=("", 12))
-        num_linea.grid(row = n + num   ,column= 1)
-        separador = Label(segundo_frame_tablero,text="───────────────────────────────────────────────────")
-        separador.grid(row = n +1 + num   ,column= 5)
-        num += 1
-        n += 1
-
-    comando = Entry(ventana_tablero_revision,width = 50)
-    comando.place(x=150,y=10)
-    btn_ejecutar = Button(ventana_tablero_revision, text="Ejecutar",bg ="black",fg = "white",font=("", 10),width=7, height=1,command = lambda : ejecutar_comando(lista_lineas))
-    btn_ejecutar.place(x=500, y=10)
-
-    # Loop de la ventana.
-    ventana_tablero_revision.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 """ FUNCION PARA ABRIR LA VENTANA DE CONFIGURACION DEL SISTEMA
 # ENTRADAS: Lee las opciones seleccionadas por el usuario.
 # SALIDAS: Guarda los cambios en un archivo predefinido. """
 def ventana_configuracion_sistema():
 
+    MessageBox.showinfo("ESTADO", "Si efectúa un cambio, presione el botón cerrar ventana. \n(Se encuentra al final de la ventana).")
+
+    archivo = open("configuración_reteve.dat", "r")
+    datos_originales = archivo.read()
+    datos_originales = eval(datos_originales)
+    archivo.close()
+
+    def guardar_cerrar_config():
+        res = MessageBox.askyesno("CONFIRMAR", "¿Está seguro de que desea guardar los cambios?")
+        if res:
+            MessageBox.showinfo("ESTADO", "Guardando datos. \n(Se cerrará el programa).")
+
+            archivo = open("configuración_reteve.dat", "w")
+            archivo.write(str(datos_originales))
+            archivo.close()
+
+            ventana_config.destroy()
+            ventana_principal.destroy()
+            return
+        return
+    
+    def cerrar_config():
+        res = MessageBox.askyesno("CONFIRMAR", "¿Está seguro de que desea cerrar la ventana? \n(No se guardarán los cambios)")
+        if res:
+            ventana_principal.deiconify()
+            ventana_config.destroy()
+        return
+    
     # FUNCION QUE GUARDA LA OPCION DE LINEAS DE TRABAJO
     # ENTRADAS: Recibe el nuevo dato de lineas de trabajo.
     # SALIDAS: Si la opción es válida se guarda, de lo contrario envía el error respectivo.
     def guardar_lineas_trabajo(dato):
-        archivo = open("configuración_reteve.dat", "r")
-        datos_originales = archivo.read()
-        datos_originales = eval(datos_originales)
-        dato_comparar = datos_originales[0]
+
+        archivo = open("lista_colas.dat", "r")
+        colas = archivo.read()
+        colas = eval(colas)
         archivo.close()
 
-        if int(dato) >= dato_comparar:
-            archivo = open("configuración_reteve.dat", "w")
-            datos_originales[0] = int(dato)
-            archivo.write(str(datos_originales))
-            archivo.close()
-            MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
-        else:
-            MessageBox.showerror("ERROR", "No se puede ejecutar la acción.")
-            pass
+        if int(dato) < datos_originales[0]:
+            for lista in colas:
+                if len(lista[1]) > 0:
+                    MessageBox.showerror("ERROR", "Hay colas ocupadas actualmente.")
+                    return
+                if len(lista[2][0]) > 0:
+                    MessageBox.showerror("ERROR", "Hay colas ocupadas actualmente.")
+                    return
+                if len(lista[2][1]) > 0:
+                    MessageBox.showerror("ERROR", "Hay colas ocupadas actualmente.")
+                    return
+                if len(lista[2][2]) > 0:
+                    MessageBox.showerror("ERROR", "Hay colas ocupadas actualmente.")
+                    return
+                if len(lista[2][3]) > 0:
+                    MessageBox.showerror("ERROR", "Hay colas ocupadas actualmente.")
+                    return
+                if len(lista[2][4]) > 0:
+                    MessageBox.showerror("ERROR", "Hay colas ocupadas actualmente.")
+                    return
+
+        datos_originales[0] = int(dato)
+        MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
     
     # FUNCION QUE GUARDA LAS HORAS DE TRABAJO DE LA ESTACIÓN
     # ENTRADAS: Recibe la hora inicial y la hora final.
@@ -1191,17 +1289,9 @@ def ventana_configuracion_sistema():
         final = int(dato2[0:2])
 
         if final >= inicial:
-            archivo = open("configuración_reteve.dat", "r")
-            datos_originales = archivo.read()
-            datos_originales = eval(datos_originales)
-            archivo.close()
-
-            archivo = open("configuración_reteve.dat", "w")
+            
             datos_originales[1] = dato1
             datos_originales[2] = dato2
-            archivo.write(str(datos_originales))
-            archivo.close()
-
             MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
         else:
             MessageBox.showerror("ERROR", "No se pudo guardar \n(hora inicial mayor que la final).")
@@ -1235,16 +1325,7 @@ def ventana_configuracion_sistema():
             else:
                 pass
 
-            archivo = open("configuración_reteve.dat", "r")
-            datos_originales = archivo.read()
-            datos_originales = eval(datos_originales)
-            archivo.close()
-
-            archivo = open("configuración_reteve.dat", "w")
             datos_originales[indice] = dato
-            archivo.write(str(datos_originales))
-            archivo.close()
-
             MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
         else:
             MessageBox.showerror("ERROR", "No hay ningún dato registrado o es un dato incorrecto.")
@@ -1266,21 +1347,13 @@ def ventana_configuracion_sistema():
         if dato <= 0:
             MessageBox.showerror("ERROR", "El dato debe ser mayor a 0.")
             return
-        
-        archivo = open("configuración_reteve.dat", "r")
-        datos_originales = archivo.read()
-        datos_originales = eval(datos_originales)
-        archivo.close()
 
-        archivo = open("configuración_reteve.dat", "w")
         datos_originales[8][indice] = dato
-        print(datos_originales)
-        archivo.write(str(datos_originales))
-        archivo.close()
-
         MessageBox.showinfo("ESTADO", "Los datos se han guardado correctamente.")
         return
     
+    ventana_principal.iconify()
+
     # Crear la ventana de configuración.
     ventana_config = Toplevel()
     ventana_config.geometry("500x700")
@@ -1321,7 +1394,7 @@ def ventana_configuracion_sistema():
     combo_lineas = ttk.Combobox(segundo_frame_config, values= opciones_lineas_trabajo, state="readonly")
     combo_lineas.pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_lineas_trabajo(combo_lineas.get())).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_lineas_trabajo(combo_lineas.get())).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Horario de la estación.
@@ -1334,7 +1407,7 @@ def ventana_configuracion_sistema():
     combo_hora_final = ttk.Combobox(segundo_frame_config, values= opciones_horario, state="readonly")
     combo_hora_final.pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_horas(combo_hora_inicial.get(), combo_hora_final.get())).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_horas(combo_hora_inicial.get(), combo_hora_final.get())).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Minutos por cada cita de revisión.
@@ -1343,7 +1416,7 @@ def ventana_configuracion_sistema():
     combo_minutos_cita = ttk.Combobox(segundo_frame_config, values= opciones_minutos_cita, state="readonly")
     combo_minutos_cita.pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(combo_minutos_cita.get(), 3)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_general(combo_minutos_cita.get(), 3)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Cantidad máxima de días naturales para reinspección.
@@ -1352,7 +1425,7 @@ def ventana_configuracion_sistema():
     combo_dias_reinspeccion = ttk.Combobox(segundo_frame_config, values= opciones_dias_reinspeccion, state= "readonly")
     combo_dias_reinspeccion.pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(combo_dias_reinspeccion.get(), 4)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_general(combo_dias_reinspeccion.get(), 4)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Cantidad de fallas graves para sacar vehículo de circulación.
@@ -1362,7 +1435,7 @@ def ventana_configuracion_sistema():
     indicador_fallas_graves = Label(segundo_frame_config, text= "Actual: Ninguno")
     indicador_fallas_graves.pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(entrada_fallas_graves.get(), 5)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_general(entrada_fallas_graves.get(), 5)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Cantidad de meses.
@@ -1371,7 +1444,7 @@ def ventana_configuracion_sistema():
     combo_meses = ttk.Combobox(segundo_frame_config, values= opciones_meses, state= "readonly")
     combo_meses.pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(combo_meses.get(), 6)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_general(combo_meses.get(), 6)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Porcentaje de Impuesto al Valor Agregado (IVA) sobre la tarifa.
@@ -1381,7 +1454,7 @@ def ventana_configuracion_sistema():
     indicador_impuesto_iva = Label(segundo_frame_config, text= "Actual: Ninguno")
     indicador_impuesto_iva.pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_general(entrada_impuesto_iva.get(), 7)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_general(entrada_impuesto_iva.get(), 7)).pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
     # Tabla de Tarifas.
@@ -1395,7 +1468,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Tarifa nueva:", font=("Arial", 10)).pack()
     entrada_tarifa_1 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_1.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_1.get(), 0)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_tarifas(entrada_tarifa_1.get(), 0)).pack()
     indicador_tarifa_1 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_1.pack()
 
@@ -1405,7 +1478,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Tarifa nueva:", font=("Arial", 10)).pack()
     entrada_tarifa_2 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_2.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_2.get(), 1)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_tarifas(entrada_tarifa_2.get(), 1)).pack()
     indicador_tarifa_2 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_2.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
@@ -1415,7 +1488,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
     entrada_tarifa_3 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_3.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_3.get(), 2)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_tarifas(entrada_tarifa_3.get(), 2)).pack()
     indicador_tarifa_3 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_3.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
@@ -1425,7 +1498,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
     entrada_tarifa_4 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_4.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_4.get(), 3)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_tarifas(entrada_tarifa_4.get(), 3)).pack()
     indicador_tarifa_4 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_4.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
@@ -1435,7 +1508,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
     entrada_tarifa_5 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_5.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_5.get(), 4)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_tarifas(entrada_tarifa_5.get(), 4)).pack()
     indicador_tarifa_5 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_5.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
@@ -1445,7 +1518,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
     entrada_tarifa_6 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_6.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_6.get(), 5)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_tarifas(entrada_tarifa_6.get(), 5)).pack()
     indicador_tarifa_6 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_6.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
@@ -1455,7 +1528,7 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
     entrada_tarifa_7 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_7.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_7.get(), 6)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_tarifas(entrada_tarifa_7.get(), 6)).pack()
     indicador_tarifa_7 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_7.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
@@ -1465,12 +1538,13 @@ def ventana_configuracion_sistema():
     Label(segundo_frame_config, text="Tarifa:", font=("Arial", 10)).pack()
     entrada_tarifa_8 = Entry(segundo_frame_config, width= 8, border= 4)
     entrada_tarifa_8.pack()
-    Button(segundo_frame_config, text= "Guardar", command= lambda: guardar_tarifas(entrada_tarifa_8.get(), 7)).pack()
+    Button(segundo_frame_config, text= "Cambiar", bg= "#73B6E7", command= lambda: guardar_tarifas(entrada_tarifa_8.get(), 7)).pack()
     indicador_tarifa_8 = Label(segundo_frame_config, text="Tarifa actual: Ninguno", font=("Franklin Gothic Demi", 10))
     indicador_tarifa_8.pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
     Label(segundo_frame_config, text="").pack()
-    Button(segundo_frame_config, text= "CERRAR VENTANA", command= lambda: ventana_config.destroy()).pack()
+    Button(segundo_frame_config, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_cerrar_config()).place(x= 170, y= 2510)
+    Button(segundo_frame_config, text= "Cancelar", bg= "#f94141", fg= "White", command= lambda: cerrar_config()).place(x= 240, y= 2510)
     Label(segundo_frame_config, text="").pack()
     Label(segundo_frame_config, text="-------------------------------------------------------------------------------------------", font=("Arial", 12)).pack()
 
@@ -1613,7 +1687,7 @@ def validar_lineas():
     if len(lineas_actuales) < config[0]:
         contador = 1
         while len(lineas_actuales) < config[0]:
-            lineas_actuales.append([str(largo_inicial + contador), [], []])
+            lineas_actuales.append([str(largo_inicial + contador), [], [[], [], [], [], []]])
             contador += 1
 
         archivo = open("lista_colas.dat", "w")
