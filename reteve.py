@@ -312,8 +312,11 @@ def programar_citas():
         
         ventana_programar_citas.iconify()
         ventana_automatico = Toplevel()
-        ventana_automatico.geometry("400x120")
         ventana_automatico.resizable(False, False)
+        ancho_pantalla = ventana_automatico.winfo_screenwidth()
+        alto_pantalla = ventana_automatico.winfo_screenheight()
+        posicion_x = ancho_pantalla - 1400
+        ventana_automatico.geometry(f"400x120+{posicion_x}+100")
 
         Label(ventana_automatico, text= "Seleccione una opción de fecha y hora:", font= ("Franklin Gothic Demi", 14)).pack()
         combo_auto = ttk.Combobox(ventana_automatico, values= lista_automaticos, state= "readonly", width= 40)
@@ -373,10 +376,13 @@ def programar_citas():
 
     # Crear la ventana de programar citas.
     ventana_programar_citas = Toplevel()
-    ventana_programar_citas.geometry("600x700")
     ventana_programar_citas.resizable(False, False)
     ventana_programar_citas.title("Programar Citas")
-    
+    ancho_pantalla = ventana_programar_citas.winfo_screenwidth()
+    alto_pantalla = ventana_programar_citas.winfo_screenheight()
+    posicion_x = ancho_pantalla - 1400
+    ventana_programar_citas.geometry(f"600x700+{posicion_x}+100")
+
     # Validación de texto.
     texto = (ventana_programar_citas.register(validar_texto), "%P")
 
@@ -581,9 +587,12 @@ def cancelar_citas():
     
     ventana_principal.iconify()
     ventana_cancelar_citas = Toplevel()
-    ventana_cancelar_citas.geometry("400x300")
     ventana_cancelar_citas.resizable(False, False)
     ventana_cancelar_citas.title("Cancelar citas")
+    ancho_pantalla = ventana_cancelar_citas.winfo_screenwidth()
+    alto_pantalla = ventana_cancelar_citas.winfo_screenheight()
+    posicion_x = ancho_pantalla - 1400
+    ventana_cancelar_citas.geometry(f"400x300+{posicion_x}+100")
 
     Label(ventana_cancelar_citas, text= "Cancelar citas", width= 20, font= ("Franklin Gothic Demi", 16)).pack(pady= 10)
     Label(ventana_cancelar_citas, text= "Número de la cita:", font= ("Franklin Gothic Demi", 12)).pack(pady= 10)
@@ -735,9 +744,12 @@ def ingreso_a_estacion():
 
         global ventana_ingresar
         ventana_ingresar = Toplevel()
-        ventana_ingresar.geometry("440x260")
         ventana_ingresar.resizable(False, False)
         ventana_ingresar.title("Ingreso de vehículos")
+        ancho_pantalla = ventana_ingresar.winfo_screenwidth()
+        alto_pantalla = ventana_ingresar.winfo_screenheight()
+        posicion_x = ancho_pantalla - 1400
+        ventana_ingresar.geometry(f"440x260+{posicion_x}+100")
 
         Label(ventana_ingresar, text= "                    ").grid(row= 1, column= 2)
         Label(ventana_ingresar, text= "                    ").grid(row= 2, column= 2)
@@ -759,13 +771,17 @@ def ingreso_a_estacion():
 
         Button(ventana_ingresar, text= "Ingresar vehículo", bg= "#0277fa", fg= "White", command= lambda: verificacion_cola(datos_del_ingreso[2])).grid(row= 10, column= 1)
         Button(ventana_ingresar, text= "Cancelar ingreso", command= lambda: salir_ingresar(), bg= "#f94141", fg= "White").grid(row= 10, column= 3)
-        return
+        
+        ventana_ingresar.mainloop()
 
     ventana_principal.iconify()
     ventana_ingreso_estacion = Toplevel()
-    ventana_ingreso_estacion.geometry("400x300")
     ventana_ingreso_estacion.resizable(False, False)
     ventana_ingreso_estacion.title("Ingreso de vehículos")
+    ancho_pantalla = ventana_ingreso_estacion.winfo_screenwidth()
+    alto_pantalla = ventana_ingreso_estacion.winfo_screenheight()
+    posicion_x = ancho_pantalla - 1400
+    ventana_ingreso_estacion.geometry(f"400x300+{posicion_x}+100")
 
     Label(ventana_ingreso_estacion, text= "Ingreso de vehículos a la estación", width= 30, font= ("Franklin Gothic Demi", 16)).pack(pady= 10)
     Label(ventana_ingreso_estacion, text= "Número de la cita:", font= ("Franklin Gothic Demi", 12)).pack(pady= 10)
@@ -779,7 +795,6 @@ def ingreso_a_estacion():
     Button(ventana_ingreso_estacion, text= "Cerrar ventana", command= lambda: salir_ingreso(), bg= "#f94141", fg= "White").place(x= 200, y= 240)
 
     ventana_ingreso_estacion.mainloop()
-    return
 
 
 
@@ -807,15 +822,77 @@ def ingreso_a_estacion():
 
 def tablero():
 
-    def comando_t():
-        return
-    def comando_u():
-        return
-    def comando_e():
-        return
-    def comando_f():
-        return
     def cerrar_tablero():
+        res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea cerrar la ventana?")
+        if res:
+            ventana_tablero_revision.destroy()
+            ventana_principal.deiconify()
+        return
+
+    def comando_t(dato):
+        return
+    
+    def comando_u(dato):
+        archivo = open("lista_colas.dat", "r")
+        lista_colas = archivo.read()
+        lista_colas = eval(lista_colas)
+        archivo.close()
+
+        for lista in lista_colas:
+            if len(lista[1]) == 0:
+                pass
+            else:
+                if dato == lista[1][0]:
+                    if lista[2][0] == []:
+                        lista[1].remove(dato)
+                        lista[2][0].append(dato)
+
+                        archivo = open("lista_colas.dat", "w")
+                        archivo.write(str(lista_colas))
+                        archivo.close()
+
+                        ventana_tablero_revision.destroy()
+                        tablero()
+                        return
+                    else:
+                        MessageBox.showerror("ERROR", "Hay un vehículo en el puesto 1.")
+                        return
+            
+            for indice, elemento in enumerate(lista[2]):
+                print(indice, elemento)
+                print(lista[2])
+                if indice == 4:
+                    if elemento == []:
+                        pass
+                    elif dato == elemento[0]:
+                        MessageBox.showerror("ERROR", "El vehículo está en el puesto 5.")
+                        return
+                    else:
+                        pass
+                else:
+                    if len(elemento) == 0:
+                        pass
+                    elif dato == elemento[0]:
+                        if lista[2][indice + 1] == []:
+                            elemento.remove(dato)
+                            lista[2][indice + 1].append(dato)
+
+                            archivo = open("lista_colas.dat", "w")
+                            archivo.write(str(lista_colas))
+                            archivo.close()
+
+                            ventana_tablero_revision.destroy()
+                            tablero()
+                            return
+                        else:
+                            MessageBox.showerror("ERROR", "Hay un vehículo delante.")
+                            return
+    
+    def comando_e(dato):
+        
+        return
+    
+    def comando_f(dato):
         return
 
     def ejecutar_comando(comando):
@@ -832,12 +909,15 @@ def tablero():
         if comando[0] == "R":
             cerrar_tablero()
 
-
+    ventana_principal.iconify()
 
     ventana_tablero_revision = Toplevel()
     ventana_tablero_revision.title("Tablero de revision")
-    ventana_tablero_revision.geometry("760x700")
     ventana_tablero_revision.resizable(False, False)
+    ancho_pantalla = ventana_tablero_revision.winfo_screenwidth()
+    alto_pantalla = ventana_tablero_revision.winfo_screenheight()
+    posicion_x = ancho_pantalla - 1400
+    ventana_tablero_revision.geometry(f"760x700+{posicion_x}+100")
     
     frame_tablero = Frame(ventana_tablero_revision) 
     frame_tablero.pack(fill= BOTH, expand= 1, pady= 100)  
@@ -901,14 +981,13 @@ def tablero():
     num = 1
     n = 4
     for i in range(lineas):
-        print(n)
         num_linea = Label(segundo_frame_tablero,text="     " + str(num),font=("", 12))
         num_linea.grid(row = n + num   ,column= 1)
         separador = Label(segundo_frame_tablero,text="───────────────────────────────────────────────────")
         separador.grid(row = n +1 + num   ,column= 5)
         num += 1
         n += 1
-    
+
     archivo = open("lista_colas.dat","r")
     lista_de_colas = archivo.read()
     lista_de_colas = eval(lista_de_colas)
@@ -938,8 +1017,10 @@ def tablero():
     comando.place(x=100,y=8)
     comando = Entry(ventana_tablero_revision,width = 50)
     comando.place(x=200,y=10)
-    btn_ejecutar = Button(ventana_tablero_revision, text="Ejecutar", bg= "#0277fa", fg= "White",font=("", 10),width=7, height=1,command = lambda : ejecutar_comando(comando))
+    btn_ejecutar = Button(ventana_tablero_revision, text="Ejecutar", bg= "#0277fa", fg= "White", font=("", 10), width= 7, height= 1, command= lambda: ejecutar_comando(comando))
     btn_ejecutar.place(x=530, y=6)
+    btn_cerrar = Button(ventana_tablero_revision, text="Salir", bg= "#f94141", fg= "White", font=("", 10), width= 7, height= 1, command= lambda: cerrar_tablero())
+    btn_cerrar.place(x=670, y=6)
 
     # Loop de la ventana.
     ventana_tablero_revision.mainloop()
@@ -1044,9 +1125,12 @@ def lista_de_fallas():
         ventana_lista_de_fallas.iconify()    
         global ventana_crear_falla   
         ventana_crear_falla = Toplevel()
-        ventana_crear_falla.geometry("400x350")
         ventana_crear_falla.resizable(False, False)
         ventana_crear_falla.title("Crear Falla")
+        ancho_pantalla = ventana_crear_falla.winfo_screenwidth()
+        alto_pantalla = ventana_crear_falla.winfo_screenheight()
+        posicion_x = ancho_pantalla - 1400
+        ventana_crear_falla.geometry(f"400x350+{posicion_x}+100")
 
         Label(ventana_crear_falla, text= "Crear Falla", width= 20, font= ("Franklin Gothic Demi", 15)).pack()
         Label(ventana_crear_falla, text= "Número de falla:", font= ("Franklin Gothic Demi", 12)).pack()
@@ -1090,9 +1174,12 @@ def lista_de_fallas():
         ventana_lista_de_fallas.iconify()
         global ventana_modificar_falla
         ventana_modificar_falla = Toplevel()
-        ventana_modificar_falla.geometry("400x460")
         ventana_modificar_falla.resizable(False, False)
         ventana_modificar_falla.title("Modificar Falla")
+        ancho_pantalla = ventana_modificar_falla.winfo_screenwidth()
+        alto_pantalla = ventana_modificar_falla.winfo_screenheight()
+        posicion_x = ancho_pantalla - 1400
+        ventana_modificar_falla.geometry(f"400x460+{posicion_x}+100")
 
         archivo = open("lista_fallas.dat")
         datos_fallas = archivo.read()
@@ -1161,9 +1248,12 @@ def lista_de_fallas():
 
     # Crear la ventana de lista de fallas.
     ventana_lista_de_fallas = Toplevel()
-    ventana_lista_de_fallas.geometry("680x650")
     ventana_lista_de_fallas.resizable(False, False)
     ventana_lista_de_fallas.title("Lista de fallas")
+    ancho_pantalla = ventana_lista_de_fallas.winfo_screenwidth()
+    alto_pantalla = ventana_lista_de_fallas.winfo_screenheight()
+    posicion_x = ancho_pantalla - 1400
+    ventana_lista_de_fallas.geometry(f"680x650+{posicion_x}+100")
 
     Label(ventana_lista_de_fallas, text= "Lista de fallas         ", width= 20, font= ("Franklin Gothic Demi", 16)).pack()
     Label(ventana_lista_de_fallas, text= "").pack(pady= 10)
@@ -1395,9 +1485,12 @@ def ventana_configuracion_sistema():
 
     # Crear la ventana de configuración.
     ventana_config = Toplevel()
-    ventana_config.geometry("500x700")
     ventana_config.resizable(False, False)
     ventana_config.title("Configuración del sistema")
+    ancho_pantalla = ventana_config.winfo_screenwidth()
+    alto_pantalla = ventana_config.winfo_screenheight()
+    posicion_x = ancho_pantalla - 1400
+    ventana_config.geometry(f"500x700+{posicion_x}+100")
 
     # Crear un frame principal.
     frame_config = Frame(ventana_config)
@@ -1638,12 +1731,21 @@ def ayuda_de_programa():
 # ENTRADAS: No recibe ningún tipo de dato.
 # SALIDAS: Despliega una ventana con la información del programa. """
 def acerca_de():
+    def cerrar_acerca():
+        ventana_principal.deiconify()
+        ventana_de_informacion.destroy()
+        return
+    
     # Crear la ventana de información.
+    ventana_principal.iconify()
     ventana_de_informacion = Toplevel()
-    ventana_de_informacion.geometry("310x390")
     ventana_de_informacion.resizable(False, False)
     ventana_de_informacion.title("Acerca de")
     ventana_de_informacion.config(bg="White")
+    ancho_pantalla = ventana_de_informacion.winfo_screenwidth()
+    alto_pantalla = ventana_de_informacion.winfo_screenheight()
+    posicion_x = ancho_pantalla - 1400
+    ventana_de_informacion.geometry(f"310x390+{posicion_x}+100")
 
     # Mostrar la información del programa.
     Label(ventana_de_informacion, text= "\nAcerca del programa\n", fg="black", bg="white", font=("Franklin Gothic Demi", 16)).pack()
@@ -1652,7 +1754,7 @@ def acerca_de():
           \nJose Mario Jiménez Vargas\n \nJohn Sebastián Ceciliano Piedra", fg="black", bg="white", font=("Arial", 10)).pack()
 
     # Botón para cerrar la ventana.
-    boton_aceptar = Button(ventana_de_informacion, text="Aceptar", command= ventana_de_informacion.destroy)
+    boton_aceptar = Button(ventana_de_informacion, text="Aceptar", command= lambda: cerrar_acerca())
     boton_aceptar.place(x=125, y=320)
 
     # Loop de la ventana.
@@ -1745,6 +1847,10 @@ ventana_principal = Tk()
 ventana_principal.geometry("600x700")
 ventana_principal.resizable(False, False)
 ventana_principal.title("ReTeVe")
+ancho_pantalla = ventana_principal.winfo_screenwidth()
+alto_pantalla = ventana_principal.winfo_screenheight()
+posicion_x = ancho_pantalla - 1400
+ventana_principal.geometry(f"600x700+{posicion_x}+100")
 
 # Indicador de fecha y hora en la ventana.
 label_fecha_hora = Label(ventana_principal, font=("Arial", 14))
