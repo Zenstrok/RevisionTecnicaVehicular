@@ -315,7 +315,7 @@ def programar_citas():
         ventana_automatico.resizable(False, False)
         ancho_pantalla = ventana_automatico.winfo_screenwidth()
         alto_pantalla = ventana_automatico.winfo_screenheight()
-        posicion_x = ancho_pantalla - 1400
+        posicion_x = ancho_pantalla - 1000
         ventana_automatico.geometry(f"400x120+{posicion_x}+100")
 
         Label(ventana_automatico, text= "Seleccione una opción de fecha y hora:", font= ("Franklin Gothic Demi", 14)).pack()
@@ -380,7 +380,7 @@ def programar_citas():
     ventana_programar_citas.title("Programar Citas")
     ancho_pantalla = ventana_programar_citas.winfo_screenwidth()
     alto_pantalla = ventana_programar_citas.winfo_screenheight()
-    posicion_x = ancho_pantalla - 1400
+    posicion_x = ancho_pantalla - 1000
     ventana_programar_citas.geometry(f"600x700+{posicion_x}+100")
 
     # Validación de texto.
@@ -591,7 +591,7 @@ def cancelar_citas():
     ventana_cancelar_citas.title("Cancelar citas")
     ancho_pantalla = ventana_cancelar_citas.winfo_screenwidth()
     alto_pantalla = ventana_cancelar_citas.winfo_screenheight()
-    posicion_x = ancho_pantalla - 1400
+    posicion_x = ancho_pantalla - 1000
     ventana_cancelar_citas.geometry(f"400x300+{posicion_x}+100")
 
     Label(ventana_cancelar_citas, text= "Cancelar citas", width= 20, font= ("Franklin Gothic Demi", 16)).pack(pady= 10)
@@ -748,7 +748,7 @@ def ingreso_a_estacion():
         ventana_ingresar.title("Ingreso de vehículos")
         ancho_pantalla = ventana_ingresar.winfo_screenwidth()
         alto_pantalla = ventana_ingresar.winfo_screenheight()
-        posicion_x = ancho_pantalla - 1400
+        posicion_x = ancho_pantalla - 1000
         ventana_ingresar.geometry(f"440x260+{posicion_x}+100")
 
         Label(ventana_ingresar, text= "                    ").grid(row= 1, column= 2)
@@ -780,7 +780,7 @@ def ingreso_a_estacion():
     ventana_ingreso_estacion.title("Ingreso de vehículos")
     ancho_pantalla = ventana_ingreso_estacion.winfo_screenwidth()
     alto_pantalla = ventana_ingreso_estacion.winfo_screenheight()
-    posicion_x = ancho_pantalla - 1400
+    posicion_x = ancho_pantalla - 1000
     ventana_ingreso_estacion.geometry(f"400x300+{posicion_x}+100")
 
     Label(ventana_ingreso_estacion, text= "Ingreso de vehículos a la estación", width= 30, font= ("Franklin Gothic Demi", 16)).pack(pady= 10)
@@ -900,14 +900,16 @@ def tablero():
         placa = comando[1:]
         if comando[0] == "T":
             comando_t(placa)
-        if comando[0] == "U":
+        elif comando[0] == "U":
             comando_u(placa)
-        if comando[0] == "E":
+        elif comando[0] == "E":
             comando_e(placa)
-        if comando[0] == "F":
+        elif comando[0] == "F":
             comando_f(placa)
-        if comando[0] == "R":
+        elif comando[0] == "R":
             cerrar_tablero()
+        else:
+            MessageBox.showerror("ERROR", "Comando Invalido")
 
     ventana_principal.iconify()
 
@@ -916,7 +918,7 @@ def tablero():
     ventana_tablero_revision.resizable(False, False)
     ancho_pantalla = ventana_tablero_revision.winfo_screenwidth()
     alto_pantalla = ventana_tablero_revision.winfo_screenheight()
-    posicion_x = ancho_pantalla - 1400
+    posicion_x = ancho_pantalla - 1000
     ventana_tablero_revision.geometry(f"760x700+{posicion_x}+100")
     
     frame_tablero = Frame(ventana_tablero_revision) 
@@ -1134,7 +1136,7 @@ def lista_de_fallas():
         ventana_crear_falla.title("Crear Falla")
         ancho_pantalla = ventana_crear_falla.winfo_screenwidth()
         alto_pantalla = ventana_crear_falla.winfo_screenheight()
-        posicion_x = ancho_pantalla - 1400
+        posicion_x = ancho_pantalla - 1000
         ventana_crear_falla.geometry(f"400x350+{posicion_x}+100")
 
         Label(ventana_crear_falla, text= "Crear Falla", width= 20, font= ("Franklin Gothic Demi", 15)).pack()
@@ -1183,7 +1185,7 @@ def lista_de_fallas():
         ventana_modificar_falla.title("Modificar Falla")
         ancho_pantalla = ventana_modificar_falla.winfo_screenwidth()
         alto_pantalla = ventana_modificar_falla.winfo_screenheight()
-        posicion_x = ancho_pantalla - 1400
+        posicion_x = ancho_pantalla - 1000
         ventana_modificar_falla.geometry(f"400x460+{posicion_x}+100")
 
         archivo = open("lista_fallas.dat")
@@ -1257,7 +1259,7 @@ def lista_de_fallas():
     ventana_lista_de_fallas.title("Lista de fallas")
     ancho_pantalla = ventana_lista_de_fallas.winfo_screenwidth()
     alto_pantalla = ventana_lista_de_fallas.winfo_screenheight()
-    posicion_x = ancho_pantalla - 1400
+    posicion_x = ancho_pantalla - 1000
     ventana_lista_de_fallas.geometry(f"680x650+{posicion_x}+100")
 
     Label(ventana_lista_de_fallas, text= "Lista de fallas         ", width= 20, font= ("Franklin Gothic Demi", 16)).pack()
@@ -1494,7 +1496,7 @@ def ventana_configuracion_sistema():
     ventana_config.title("Configuración del sistema")
     ancho_pantalla = ventana_config.winfo_screenwidth()
     alto_pantalla = ventana_config.winfo_screenheight()
-    posicion_x = ancho_pantalla - 1400
+    posicion_x = ancho_pantalla - 1000
     ventana_config.geometry(f"500x700+{posicion_x}+100")
 
     # Crear un frame principal.
@@ -1749,7 +1751,7 @@ def acerca_de():
     ventana_de_informacion.config(bg="White")
     ancho_pantalla = ventana_de_informacion.winfo_screenwidth()
     alto_pantalla = ventana_de_informacion.winfo_screenheight()
-    posicion_x = ancho_pantalla - 1400
+    posicion_x = ancho_pantalla - 1000
     ventana_de_informacion.geometry(f"310x390+{posicion_x}+100")
 
     # Mostrar la información del programa.
@@ -1854,7 +1856,7 @@ ventana_principal.resizable(False, False)
 ventana_principal.title("ReTeVe")
 ancho_pantalla = ventana_principal.winfo_screenwidth()
 alto_pantalla = ventana_principal.winfo_screenheight()
-posicion_x = ancho_pantalla - 1400
+posicion_x = ancho_pantalla -1000
 ventana_principal.geometry(f"600x700+{posicion_x}+100")
 
 # Indicador de fecha y hora en la ventana.
