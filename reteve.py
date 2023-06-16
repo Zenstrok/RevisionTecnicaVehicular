@@ -887,10 +887,59 @@ def tablero():
                         else:
                             MessageBox.showerror("ERROR", "Hay un vehículo delante.")
                             return
+                        
+    def comprobar_falla(num_falla):
+        archivo = open("lista_fallas.dat", "r")
+        lista_fallas = archivo.read()
+        lista_fallas = eval(lista_fallas)
+        archivo.close()
+
+        for elemento in lista_fallas:
+            if elemento == num_falla:
+                return True, elemento
+        return False, None
+    
+    def comprobar_placa(dato_placa):
+        archivo = open("lista_colas.dat", "r")
+        lista_colas = archivo.read()
+        lista_colas = eval(lista_colas)
+        archivo.close()
+
+        for lista in lista_colas:
+            for elemento in lista[2]:
+                if elemento == []:
+                    pass
+                else:
+                    if elemento[0] == dato_placa:
+                        return True
+        return False
     
     def comando_e(dato):
-
-        return
+        largo = len(dato)
+        contador = 1
+        while contador < largo:
+            print(contador)
+            valor, falla = comprobar_falla(dato[contador:])
+            if valor == True:
+                placa = dato[:contador]
+                break
+            contador += 1
+        if valor != True:
+            MessageBox.showerror("ERROR", "Placa o falla inválida.")
+            return
+        else:
+            valor = comprobar_placa(placa)
+            if valor != True:
+                MessageBox.showerror("ERROR", "Placa o falla inválida.")
+                return
+            else:
+                print(falla, ":", placa)
+                print("YEA")
+                
+                res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea agregar la falla " + falla + " a la placa " + placa + "?")
+                if res:
+                    return
+        
     
     def comando_f(dato):
         return
