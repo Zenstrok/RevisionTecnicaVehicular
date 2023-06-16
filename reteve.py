@@ -32,7 +32,7 @@ def validar_existencia_correo(correo):
 # FUNCION VALIDAR FECHAS
 # ENTRADAS: Recibe la fecha a validar.
 # SALIDAS: True si es valido, False si no es valido.
-def validar_fecha(fecha):
+"""def validar_fecha(fecha):
     global fecha_v
     try:
         # Intentamos crear un objeto de fecha a partir de la cadena proporcionada
@@ -40,7 +40,7 @@ def validar_fecha(fecha):
         fecha_v = True
     except ValueError:
         fecha_v = False
-        MessageBox.showerror("Fecha","Fecha Invalida")
+        MessageBox.showerror("Fecha","Fecha Invalida")"""
     
 # FUNCION QUE GENERA LAS CITAS POSIBLES
 # ENTRADAS: datos de la configuracion y del sistema.
@@ -450,7 +450,7 @@ def programar_citas():
     minutos.place(x= 535, y= 542)
     Label(ventana_programar_citas, text= "MINUTOS:", font= ("Arial", 12)).place(x= 450, y= 540)
 
-    Button(ventana_programar_citas, text= "Guardar", command= lambda:  validar_fecha(fecha = (año.get() + "-" + mes.get() + "-" + dia.get())))
+    #Button(ventana_programar_citas, text= "Guardar", command= lambda:  validar_fecha(fecha = (año.get() + "-" + mes.get() + "-" + dia.get())))
 
     tipo_programacion = StringVar()
     Label(ventana_programar_citas, text= "Fecha y hora de la cita: ", font= ("Franklin Gothic Demi", 12)).place(x= 10, y= 500)
@@ -807,21 +807,33 @@ def ingreso_a_estacion():
 
 def tablero():
 
-    def ejecutar_comando(lineas):
-        global com
-        com = comando.get()
-            
-        if com != "":
-            comando.configure(state="readonly")
-            btn_ejecutar.configure(state="disabled")
-            print(com)
-            if com[0] == "T":
-                for linea in lineas:
-                    if com[1:] in linea[1]:
-                         linea[1].pop()
-                            
-                            
-        
+    def comando_t():
+        return
+    def comando_u():
+        return
+    def comando_e():
+        return
+    def comando_f():
+        return
+    def cerrar_tablero():
+        return
+
+    def ejecutar_comando(comando):
+        comando = comando.get()
+        placa = comando[1:]
+        if comando[0] == "T":
+            comando_t(placa)
+        if comando[0] == "U":
+            comando_u(placa)
+        if comando[0] == "E":
+            comando_e(placa)
+        if comando[0] == "F":
+            comando_f(placa)
+        if comando[0] == "R":
+            cerrar_tablero()
+
+
+
     ventana_tablero_revision = Toplevel()
     ventana_tablero_revision.title("Tablero de revision")
     ventana_tablero_revision.geometry("760x700")
@@ -859,12 +871,13 @@ def tablero():
     # Dibujar línea vertical   # Ajusta la posición inicial de las líneas según tus necesidades
 
     n = 0
-    lineas = 25
     puestos = 7
-    while puestos > 0:
+    crear_lineas = puestos
+    #lineas = 25
+    while crear_lineas > 0:
         print("hola")
         canvas.create_line( 60 + n, 0, 60 + n, lineas *70, fill="black")  # Ajusta el ancho y color de las líneas según tus necesidades
-        puestos -= 1
+        crear_lineas -= 1
         n += 100
 
     linea = Label(ventana_tablero_revision,text="Linea",font=("", 12))
@@ -887,7 +900,6 @@ def tablero():
  
     num = 1
     n = 4
-    lista_lineas = []
     for i in range(lineas):
         print(n)
         num_linea = Label(segundo_frame_tablero,text="     " + str(num),font=("", 12))
@@ -896,11 +908,38 @@ def tablero():
         separador.grid(row = n +1 + num   ,column= 5)
         num += 1
         n += 1
+    
+    archivo = open("lista_colas.dat","r")
+    lista_de_colas = archivo.read()
+    lista_de_colas = eval(lista_de_colas)
+    archivo.close()
 
+    print(lista_de_colas)
+    #print(lineas,puestos)
+    columna_largo = 20
+    for i in range(1,lineas + 1):
+        for j in range(1,puestos):
+            print(i,j)
+            print(lista_de_colas)
+            if j-1 == 0:
+                placa_casilla = lista_de_colas[i-1][1]
+            else:
+                placa_casilla = lista_de_colas[i-1][2][j-2]
+            nombre_etiqueta = str(i) + str(j)
+            num_linea = Label(segundo_frame_tablero, text=placa_casilla,fg = None, name=nombre_etiqueta, font=("", 10))
+            num_linea.place(x = 95*j ,y = columna_largo) 
+        columna_largo += 45
+    
+    
+        
+
+
+    comando = Label(ventana_tablero_revision,text="COMANDO:",font=("", 12))
+    comando.place(x=100,y=8)
     comando = Entry(ventana_tablero_revision,width = 50)
-    comando.place(x=150,y=10)
-    btn_ejecutar = Button(ventana_tablero_revision, text="Ejecutar",bg ="black",fg = "white",font=("", 10),width=7, height=1,command = lambda : ejecutar_comando(lista_lineas))
-    btn_ejecutar.place(x=500, y=10)
+    comando.place(x=200,y=10)
+    btn_ejecutar = Button(ventana_tablero_revision, text="Ejecutar", bg= "#0277fa", fg= "White",font=("", 10),width=7, height=1,command = lambda : ejecutar_comando(comando))
+    btn_ejecutar.place(x=530, y=6)
 
     # Loop de la ventana.
     ventana_tablero_revision.mainloop()
