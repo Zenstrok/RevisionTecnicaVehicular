@@ -889,7 +889,7 @@ def tablero():
                             return
     
     def comando_e(dato):
-        
+
         return
     
     def comando_f(dato):
@@ -1053,10 +1053,15 @@ def lista_de_fallas():
     # FUNCION GUARDAR FALLA
     # ENTRADAS: 
     # SALIDAS: 
-    def guardar_falla(lista, opcion):
-        if len(lista[1]) < 5:
-            MessageBox.showerror("Error","Texto Invalido")
-            return
+    def guardar_falla(lista, opcion, texto):
+        if opcion == 1:
+            if len(lista[1]) < 5:
+                MessageBox.showerror("Error","Texto Invalido")
+                return
+        else:
+            if lista[1] == "":
+                lista[1] = texto
+
         if lista[0].isdigit() == False:
             MessageBox.showerror("Error","Falla debe ser un numero")
             return
@@ -1146,7 +1151,7 @@ def lista_de_fallas():
         grave = Radiobutton(ventana_crear_falla, text="Grave", variable=tipo_de_falla, value="Grave").place(x= 205, y= 235)
         tipo_de_falla.set("Leve")
         Label(ventana_crear_falla, text= "Tipo de falla:", font= ("Franklin Gothic Demi", 12)).pack(pady= 6)
-        Button(ventana_crear_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([n_falla.get("1.0", "end-1c"),d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 1)).place(x= 145, y= 290)
+        Button(ventana_crear_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([n_falla.get("1.0", "end-1c"),d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 1, None)).place(x= 145, y= 290)
         Button(ventana_crear_falla, text= "Cancelar", bg= "#f94141", fg= "White", command= lambda: salir_crear_falla()).place(x= 205, y= 290)
 
         # Loop de la ventana.
@@ -1200,7 +1205,7 @@ def lista_de_fallas():
         leve = Radiobutton(ventana_modificar_falla, text="Leve", variable=tipo_de_falla, value="Leve").pack()
         grave = Radiobutton(ventana_modificar_falla, text="Grave", variable=tipo_de_falla, value="Grave").pack()
         tipo_de_falla.set("Leve")
-        Button(ventana_modificar_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([dato[0], d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 2)).place(x= 145, y= 400)
+        Button(ventana_modificar_falla, text= "Guardar", bg= "#0277fa", fg= "White", command= lambda: guardar_falla([dato[0], d_falla.get("1.0", "end-1c"),tipo_de_falla.get()], 2, dato[2])).place(x= 145, y= 400)
         Button(ventana_modificar_falla, text= "Cancelar", bg= "#f94141", fg= "White", command= lambda: salir_modificar_falla()).place(x= 205, y= 400)
         
         ventana_modificar_falla.mainloop()
