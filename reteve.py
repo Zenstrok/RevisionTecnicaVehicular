@@ -1047,7 +1047,19 @@ def tablero():
         
     ventana_tablero_revision = Toplevel()
     ventana_tablero_revision.title("Tablero de revision")
-    ventana_tablero_revision.geometry("700x700")
+    ventana_tablero_revision.geometry("800x800")
+    ventana_tablero_revision.resizable(False, False)
+    
+    frame_tablero = Frame(ventana_tablero_revision) 
+    frame_tablero.pack(fill= BOTH, expand= 1, pady= 65)  # Crear un canvas.
+    canvas_tablero = Canvas(frame_tablero) 
+    canvas_tablero.pack(side= LEFT, fill= BOTH, expand= 1)  # Crear el scrollbar en el canvas.
+    scrollbar_tablero = Scrollbar(frame_tablero, orient= VERTICAL, command= canvas_tablero.yview) 
+    scrollbar_tablero.pack(side= RIGHT, fill= Y)  # Configurar el canvas.
+    canvas_tablero.configure(yscrollcommand= scrollbar_tablero.set) 
+    canvas_tablero.bind("<Configure>", lambda e: canvas_tablero.configure(scrollregion= canvas_tablero.bbox("all")))  # Crear otro frame dentro del canvas.
+    segundo_frame_tablero = Frame(canvas_tablero)  # Agregar el nuevo frame a una ventana en el canvas.
+    canvas_tablero.create_window((0, 0), window = segundo_frame_tablero, anchor= "nw")
 
     archivo = open("lista_colas.dat", "r")
     colas = archivo.read()
@@ -1055,61 +1067,56 @@ def tablero():
     archivo.close()
 
     lineas = len(colas)
-    lineas = 25
-    contador = lineas + 1
-    canvas = Canvas(ventana_tablero_revision, width=500, height=500)
-    canvas.place(x=0, y=70) # Ajusta la posición del canvas según tus necesidades
+    canvas = Canvas(segundo_frame_tablero, width=1200, height=1200)
+    canvas.place(x=0, y=20) # Ajusta la posición del canvas según tus necesidades
     # Dibujar línea vertical   # Ajusta la posición inicial de las líneas según tus necesidades
+
     n = 0
-    while contador != 0:
-        canvas.create_line(140 + n, 0, 140 + n, lineas *45, fill="black")  # Ajusta el ancho y color de las líneas según tus necesidades
-        contador -= 1
+    lineas = 6
+    puestos = 7
+    while puestos > 0:
+        print("hola")
+        canvas.create_line( 60 + n, 0, 60 + n, lineas *70, fill="black")  # Ajusta el ancho y color de las líneas según tus necesidades
+        puestos -= 1
         n += 100
 
     linea = Label(ventana_tablero_revision,text="Linea",font=("", 12))
-    linea.place(x=50,y=40)
+    linea.place(x=10,y=40)
+    siguiente = Label(ventana_tablero_revision,text="Siguiente",font=("", 12))
+    siguiente.place(x=77,y=40)
     puesto1 = Label(ventana_tablero_revision,text="Puesto 1",font=("", 12))
-    puesto1.place(x=150,y=40)
+    puesto1.place(x=180,y=40)
     puesto2 = Label(ventana_tablero_revision,text="Puesto 2",font=("", 12))
-    puesto2.place(x=250,y=40)
+    puesto2.place(x=280,y=40)
     puesto3 = Label(ventana_tablero_revision,text="Puesto 3",font=("", 12))
-    puesto3.place(x=350,y=40)
+    puesto3.place(x=380,y=40)
     puesto4 = Label(ventana_tablero_revision,text="Puesto 4",font=("", 12))
-    puesto4.place(x=450,y=40)
+    puesto4.place(x=480,y=40)
     puesto5 = Label(ventana_tablero_revision,text="Puesto 5",font=("", 12))
-    puesto5.place(x=550,y=40)
-    espacio = Label(ventana_tablero_revision,text="",font=("", 12))
-    espacio.grid(row = 1,column= 1)
-    espacio2 = Label(ventana_tablero_revision,text="",font=("", 12))
-    espacio2.grid(row = 2,column= 2)
-    espacio3 = Label(ventana_tablero_revision,text="",font=("", 12))
-    espacio3.grid(row = 3,column= 3)
+    puesto5.place(x=580,y=40)
+    espacio = Label(segundo_frame_tablero,text="  ",font=("", 12))
+    espacio.grid(row = 0,column= 2)
 
  
     num = 1
-    n = 3
+    n = 4
     lista_lineas = []
     for i in range(lineas):
         print(n)
-        num_linea = Label(ventana_tablero_revision,text="           " + str(num),font=("", 12))
-        num_linea.grid(row = n + num   ,column= 3)
-        separador = Label(ventana_tablero_revision,text="─────────────────────────────────────────────")
-        separador.grid(row = n +1 + num   ,column= 4)
+        num_linea = Label(segundo_frame_tablero,text="     " + str(num),font=("", 12))
+        num_linea.grid(row = n + num   ,column= 1)
+        separador = Label(segundo_frame_tablero,text="───────────────────────────────────────────────────")
+        separador.grid(row = n +1 + num   ,column= 5)
         num += 1
         n += 1
-
-    
-
-    
-
-
-        
 
     comando = Entry(ventana_tablero_revision,width = 50)
     comando.place(x=150,y=10)
     btn_ejecutar = Button(ventana_tablero_revision, text="Ejecutar",bg ="black",fg = "white",font=("", 10),width=7, height=1,command = lambda : ejecutar_comando(lista_lineas))
     btn_ejecutar.place(x=500, y=10)
 
+    # Loop de la ventana.
+    ventana_tablero_revision.mainloop()
 
 
 
