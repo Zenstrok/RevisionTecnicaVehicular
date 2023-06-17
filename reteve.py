@@ -149,7 +149,7 @@ def enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,
 
  
 
-print(enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,cita))
+"""print(enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,cita))"""
     
 # FUNCION QUE GENERA LAS CITAS POSIBLES
 # ENTRADAS: datos de la configuracion y del sistema.
@@ -939,6 +939,46 @@ def tablero():
         return
 
     def comando_t(dato):
+        archivo = open("lista_colas.dat", "r")
+        lista_colas = archivo.read()
+        lista_colas = eval(lista_colas)
+        archivo.close()
+        
+        for indice, lista in enumerate(lista_colas):
+            if lista[1] == []:
+                pass
+            else:
+                if lista[1][0] == dato:
+                    linea_dato = indice
+                else:
+                    for elemento in lista[2]:
+                        if elemento == []:
+                            pass
+                        else:
+                            if elemento[0] == dato:
+                                linea_dato = indice
+                            else:
+                                pass
+        
+        pasar = None
+        """for lista in lista_colas:
+            if len(lista[1]) != 0:
+                if lista[1][0] == dato:
+                    for indice, elemento in enumerate(lista):
+                        if indice == 4:
+                            if elemento == []:
+                                pasar = True
+                                break
+                            else:
+                                pasar = False
+                                break
+            else:
+                contador = 1
+                for elemento in lista[2]:
+                    if elemento == []:
+                        pass
+                    else:"""
+
         return
     
     def comando_u(dato):
@@ -1109,9 +1149,10 @@ def tablero():
                                     pass
                                 else:
                                     if elemento[0] == placa:
-                                        elemento[0] = placa
-                                        elemento.append("!")
-                                        break
+                                        if len(elemento) == 1:
+                                            elemento[0] = placa
+                                            elemento.append("!")
+                                            break
                     
                         archivo = open("lista_colas.dat", "w")
                         archivo.write(str(lista_colas))
