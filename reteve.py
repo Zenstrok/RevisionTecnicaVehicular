@@ -939,18 +939,17 @@ def tablero():
         return
 
     def comando_t(dato):
-        archivo = open("lista_colas.dat", "r")
-        lista_colas = archivo.read()
-        lista_colas = eval(lista_colas)
-        archivo.close()
+        res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea ejecutar el comando?")
+        if res:
+            archivo = open("lista_colas.dat", "r")
+            lista_colas = archivo.read()
+            lista_colas = eval(lista_colas)
+            archivo.close()
         
-        for indice, lista in enumerate(lista_colas):
-            if lista[1] == []:
-                pass
-            else:
-                if lista[1][0] == dato:
-                    linea_dato = indice
-                else:
+            linea_dato = None
+            for indice, lista in enumerate(lista_colas):
+                print(indice, lista)
+                if lista[1] == []:
                     for elemento in lista[2]:
                         if elemento == []:
                             pass
@@ -959,105 +958,155 @@ def tablero():
                                 linea_dato = indice
                             else:
                                 pass
-        
-        pasar = None
-        """for lista in lista_colas:
-            if len(lista[1]) != 0:
-                if lista[1][0] == dato:
-                    for indice, elemento in enumerate(lista):
-                        if indice == 4:
-                            if elemento == []:
-                                pasar = True
-                                break
-                            else:
-                                pasar = False
-                                break
-            else:
-                contador = 1
-                for elemento in lista[2]:
-                    if elemento == []:
-                        pass
-                    else:"""
-
-        return
-    
-    def comando_u(dato):
-        archivo = open("lista_colas.dat", "r")
-        lista_colas = archivo.read()
-        lista_colas = eval(lista_colas)
-        archivo.close()
-
-        for lista in lista_colas:
-            if len(lista[1]) == 0:
-                pass
-            else:
-                if dato == lista[1][0]:
-                    if lista[2][0] == []:
-                        lista[1].remove(dato)
-                        lista[2][0].append(dato)
-
-                        archivo = open("lista_colas.dat", "w")
-                        archivo.write(str(lista_colas))
-                        archivo.close()
-
-                        ventana_tablero_revision.destroy()
-                        tablero()
-                        return
-                    else:
-                        MessageBox.showerror("ERROR", "Hay un vehículo en el puesto 1.")
-                        return
-            
-            for indice, elemento in enumerate(lista[2]):
-                print(indice, elemento)
-                print(lista[2])
-                if indice == 4:
-                    if elemento == []:
-                        pass
-                    elif dato == elemento[0]:
-                        MessageBox.showerror("ERROR", "El vehículo está en el puesto 5.")
-                        return
-                    else:
-                        pass
                 else:
-                    if len(elemento) == 0:
-                        pass
-                    elif len(elemento) == 1:
-                        if dato == elemento[0]:
-                            if lista[2][indice + 1] == []:
-                                elemento.remove(dato)
-                                lista[2][indice + 1].append(dato)
-
-                                archivo = open("lista_colas.dat", "w")
-                                archivo.write(str(lista_colas))
-                                archivo.close()
-
-                                ventana_tablero_revision.destroy()
-                                tablero()
-                                return
-                            else:
-                                MessageBox.showerror("ERROR", "Hay un vehículo delante.")
-                                return
+                    if lista[1][0] == dato:
+                        linea_dato = indice
                     else:
-                        if dato == elemento[0]:
-                            if lista[2][indice + 1] == []:
-                                elemento.remove(dato)
-                                elemento.remove("!")
-                                lista[2][indice + 1].append(dato)
-                                lista[2][indice + 1].append("!")
-
-                                archivo = open("lista_colas.dat", "w")
-                                archivo.write(str(lista_colas))
-                                archivo.close()
-
-                                ventana_tablero_revision.destroy()
-                                tablero()
-                                return
+                        for elemento in lista[2]:
+                            if elemento == []:
+                                pass
                             else:
-                                MessageBox.showerror("ERROR", "Hay un vehículo delante.")
-                                return
+                                if elemento[0] == dato:
+                                    linea_dato = indice
+                                else:
+                                    pass
+            if linea_dato == None:
+                MessageBox.showerror("ERROR", "No se encontró el vehículo.")
+                return
+        
+            for indice, lista in enumerate(lista_colas):
+                if indice != linea_dato:
+                    pass
+                else:
+                    if lista[2][4] != []:
+                        MessageBox.showerror("ERROR", "La quinta posición de la linea está ocupada.")
+                        return
+                
+                    if lista[2][3] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[2][3]
+                        lista[2][4] = variable_agregar
+                        lista[2][3] = []
+
+                    if lista[2][2] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[2][2]
+                        lista[2][3] = variable_agregar
+                        lista[2][2] = []
+
+                    if lista[2][1] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[2][1]
+                        lista[2][2] = variable_agregar
+                        lista[2][1] = []
+
+                    if lista[2][0] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[2][0]
+                        lista[2][1] = variable_agregar
+                        lista[2][0] = []
+
+                    if lista[1] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[1][0]
+                        variable_borrar = lista[1][0]
+                        lista[2][0] = [variable_agregar]
+                        lista[1].remove(variable_borrar)
+
+            archivo = open("lista_colas.dat", "w")
+            archivo.write(str(lista_colas))
+            archivo.close()
+
+            ventana_tablero_revision.destroy()
+            tablero()
+
+    def comando_u(dato):
+        res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea ejecutar el comando?")
+        if res:
+            archivo = open("lista_colas.dat", "r")
+            lista_colas = archivo.read()
+            lista_colas = eval(lista_colas)
+            archivo.close()
+
+            for lista in lista_colas:
+                if len(lista[1]) == 0:
+                    pass
+                else:
+                    if dato == lista[1][0]:
+                        if lista[2][0] == []:
+                            lista[1].remove(dato)
+                            lista[2][0].append(dato)
+
+                            archivo = open("lista_colas.dat", "w")
+                            archivo.write(str(lista_colas))
+                            archivo.close()
+
+                            ventana_tablero_revision.destroy()
+                            tablero()
+                            return
+                        else:
+                            MessageBox.showerror("ERROR", "Hay un vehículo en el puesto 1.")
+                            return
+                    
+                for indice, elemento in enumerate(lista[2]):
+                    if indice == 4:
+                        if elemento == []:
+                            pass
+                        elif dato == elemento[0]:
+                            MessageBox.showerror("ERROR", "El vehículo está en el puesto 5.")
+                            return
+                        else:
+                            pass
+                    else:
+                        if len(elemento) == 0:
+                            pass
+                        elif len(elemento) == 1:
+                            if dato == elemento[0]:
+                                if lista[2][indice + 1] == []:
+                                    elemento.remove(dato)
+                                    lista[2][indice + 1].append(dato)
+
+                                    archivo = open("lista_colas.dat", "w")
+                                    archivo.write(str(lista_colas))
+                                    archivo.close()
+
+                                    ventana_tablero_revision.destroy()
+                                    tablero()
+                                    return
+                                else:
+                                    MessageBox.showerror("ERROR", "Hay un vehículo delante.")
+                                    return
+                        else:
+                            if dato == elemento[0]:
+                                if lista[2][indice + 1] == []:
+                                    elemento.remove(dato)
+                                    elemento.remove("!")
+                                    lista[2][indice + 1].append(dato)
+                                    lista[2][indice + 1].append("!")
+
+                                    archivo = open("lista_colas.dat", "w")
+                                    archivo.write(str(lista_colas))
+                                    archivo.close()
+
+                                    ventana_tablero_revision.destroy()
+                                    tablero()
+                                    return
+                                else:
+                                    MessageBox.showerror("ERROR", "Hay un vehículo delante.")
+                                    return
+                            
+            MessageBox.showerror("ERROR", "No se encontró el vehículo.")
+            return
     
     def buscar_nodo_falla(arbol, num, placa, fecha_hora, falla):
+        global comprobar
         if arbol[0][0] == num:
+            comprobar = arbol[0][11:]
             arbol[0].append(falla)
             return arbol
         else:
@@ -1124,20 +1173,21 @@ def tablero():
                             fecha_hora = registro_arbol[elemento][1]
                             break
 
-                    # Agregar falla al árbol.
+                    # Leer el árbol.
                     archivo = open("arbol_citas.dat", "r")
                     arbol = archivo.read()
                     arbol = eval(arbol)
                     archivo.close()
 
                     arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, falla)
-                    archivo = open("arbol_citas.dat", "w")
-                    archivo.write(str(arbol))
-                    archivo.close()
+                    global comprobar
+                    for elemento in comprobar:
+                        if elemento == falla:
+                            MessageBox.showerror("ERROR", "Falla ya se agregó a este vehículo.")
+                            return
 
                     # Agregar falla al nombre de la placa si es grave.
                     if gravedad == "Grave":
-                        print("Yes")
                         archivo = open("lista_colas.dat", "r")
                         lista_colas = archivo.read()
                         lista_colas = eval(lista_colas)
@@ -1152,23 +1202,54 @@ def tablero():
                                         if len(elemento) == 1:
                                             elemento[0] = placa
                                             elemento.append("!")
-                                            break
+
+                                            archivo = open("registro_fallas.dat", "r")
+                                            lista_fallas = archivo.read()
+                                            lista_fallas = eval(lista_fallas)
+                                            archivo.close()
+                                            lista_fallas.append(falla)
+
+                                            archivo = open("registro_fallas.dat", "w")
+                                            archivo.write(str(lista_fallas))
+                                            archivo.close()
+
+                                            archivo = open("arbol_citas.dat", "w")
+                                            archivo.write(str(arbol))
+                                            archivo.close()
                     
-                        archivo = open("lista_colas.dat", "w")
-                        archivo.write(str(lista_colas))
+                                            archivo = open("lista_colas.dat", "w")
+                                            archivo.write(str(lista_colas))
+                                            archivo.close()
+
+                                            MessageBox.showinfo("ESTADO", "Se ha asignado la falla al vehículo.")
+
+                                            ventana_tablero_revision.destroy()
+                                            tablero()
+                                            return
+                    else:
+                        archivo = open("registro_fallas.dat", "r")
+                        lista_fallas = archivo.read()
+                        lista_fallas = eval(lista_fallas)
                         archivo.close()
+                        lista_fallas.append(falla)
+
+                        archivo = open("registro_fallas.dat", "w")
+                        archivo.write(str(lista_fallas))
+                        archivo.close()
+
+                        archivo = open("arbol_citas.dat", "w")
+                        archivo.write(str(arbol))
+                        archivo.close()
+                        
+                        MessageBox.showinfo("ESTADO", "Se ha asignado la falla al vehículo.")
 
                         ventana_tablero_revision.destroy()
                         tablero()
-                    else:
-                        pass
-
-                    ventana_tablero_revision.destroy()
-                    tablero()
-                    return
+                        return
         
     
     def comando_f(dato):
+
         return
 
     def ejecutar_comando(comando):
@@ -1187,6 +1268,7 @@ def tablero():
             cerrar_tablero()
         else:
             MessageBox.showerror("ERROR", "Comando Invalido")
+            return
 
     ventana_principal.iconify()
 
@@ -1449,6 +1531,16 @@ def lista_de_fallas():
     # SALIDAS:
     def modificar_falla(dato):
 
+        archivo = open("registro_fallas.dat")
+        registro_fallas = archivo.read()
+        registro_fallas = eval(registro_fallas)
+        archivo.close()
+
+        for elemento in registro_fallas:
+            if dato[0] == elemento:
+                MessageBox.showerror("ERROR", "No se puede modificar porque está asignado a un vehículo del tablero.")
+                return
+
         def salir_modificar_falla():
             res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea salir?")
             if res:
@@ -1496,13 +1588,23 @@ def lista_de_fallas():
         Button(ventana_modificar_falla, text= "Cancelar", bg= "#f94141", fg= "White", command= lambda: salir_modificar_falla()).place(x= 205, y= 400)
         
         ventana_modificar_falla.mainloop()
-        print("¡Hola! Has presionado el botón del label:", dato)
         return
     
     # FUNCION ELIMINAR FALLA
     # ENTRADAS: 
     # SALIDAS:
     def eliminar_falla(dato):
+
+        archivo = open("registro_fallas.dat")
+        registro_fallas = archivo.read()
+        registro_fallas = eval(registro_fallas)
+        archivo.close()
+
+        for elemento in registro_fallas:
+            if dato[0] == elemento:
+                MessageBox.showerror("ERROR", "No se puede eliminar porque está asignado a un vehículo del tablero.")
+                return
+
         respuesta = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea borrar la falla?")
         if respuesta:
             validar = 0
