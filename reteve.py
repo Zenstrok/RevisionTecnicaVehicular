@@ -15,6 +15,12 @@ from email.mime.image import MIMEImage
 import base64 # libreria para codificar objetos
 from datetime import datetime, timedelta
 import time
+from docx import Document
+from docx.enum.style import WD_STYLE_TYPE
+from docx.shared import Pt
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_UNDERLINE
+from docx.shared import RGBColor
+import win32com.client as win32
 
 
 """ FUNCIONES """
@@ -44,20 +50,148 @@ def validar_existencia_correo(correo):
 
 
 
+def word_to_pdf():
+    ruta_pdf_h = os.path.join(os.getcwd(),"WORD","hoja_revision.docx")
+    ruta_pdf_c = os.path.join(os.getcwd(),"WORD","certificado_reteve.docx")
+    ruta_carpeta = os.path.join(os.getcwd(),"WORD","PDF")
+    try:
+        # Crear una instancia de Word
+        word = win32.Dispatch('Word.Application')
+
+        # Abrir el archivo de Word
+        doc_h = word.Documents.Open(ruta_pdf_h)
+        doc_c = word.Documents.Open(ruta_pdf_c)
+
+        # Guardar el archivo como PDF
+        doc_h.SaveAs(os.path.join(ruta_carpeta, "hoja_revision.pdf"), FileFormat=17)
+        doc_c.SaveAs(os.path.join(ruta_carpeta, "certificado_reteve.pdf"), FileFormat=17)
+
+        # Cerrar el archivo y salir de Word
+        doc_h.Close()
+        doc_c.Close()
+        word.Quit()
+
+    except Exception as e:
+        MessageBox.showerror("ERROR","Ha ocurrido un error")
+        return 
+
+#print(word_to_pdf())
+
+#Generar archivos
+
+"""Entradas: informacion que va en el machote hoja
+Salidas: genera los archivos.
+"""
+def reemplazar_resultados_hoja_revision(cita, placa, propietario, teléfono, marca, modelo, clasificacion, fecha_actual, tipo_cita, fecha_vencimiento, lista_fallas, correo, direccion, resultado):
+    machote = Document(os.path.join(os.getcwd(),"Plantilla","hoja_revision.docx"))
+
+
+    nuevo_estilo = machote.styles.add_style('NuevoEstilo', WD_STYLE_TYPE.PARAGRAPH)
+    nuevo_estilo.font.name = "Monotype Corsiva"
+    nuevo_estilo.font.size = Pt(28)
+    nuevo_estilo.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+    nuevo_estilo.font.italic = True
+
+    etiqueta = {"<cita>": cita,
+                "<placa   >": placa,
+                "<propietario                             >": propietario,
+                "<teléfono            >": teléfono,
+                "<marca          >": marca,
+                "<modelo         >": modelo,
+                "<clasificación                                                          >": clasificacion,
+                "<fechac             >": fecha_actual,
+                "<tipocita    >": tipo_cita,
+                "<fechaf    >": fecha_vencimiento,
+                "<codi>": "\n".join("• " + curso for curso in lista_fallas),
+                "<correo>": correo,
+                "<direccion                               >": direccion,
+                "<resultado           >": resultado}
+    
+    for p in machote.paragraphs:
+        for key, value in etiqueta.items():
+            if key in p.text:
+                p.text = p.text.replace(key, value)
+
+    ruta_guardado = os.path.join("WORD", "hoja_revision.docx")
+
+    machote.save(ruta_guardado)
+    
+    return
+
+"""Entradas: informacion que va en el machote sticker
+Salidas: genera los archivos.
+"""
+def reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fecha_recortada):
+    machote = Document(os.path.join(os.getcwd(),"Plantilla","certificado_reteve.docx"))
+
+    nuevo_estilo1 = machote.styles.add_style('NuevoEstilo', WD_STYLE_TYPE.PARAGRAPH)
+    nuevo_estilo1.font.name = "Calibri (Cuerpo)"
+    nuevo_estilo1.font.size = Pt(48)
+    nuevo_estilo1.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+    nuevo_estilo1.font.bold = True
+
+    nuevo_estilo2 = machote.styles.add_style('EstiloPequeno', WD_STYLE_TYPE.PARAGRAPH)
+    nuevo_estilo2.font.name = "Calibri (Cuerpo)"
+    nuevo_estilo2.font.size = Pt(6)
+    nuevo_estilo2.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+
+    etiqueta = {"<placa>": placa,
+                "<propietario>": propietario,
+                "<marca>": marca,
+                "<clasificación>": clasificacion,
+                "<fecha>": fecha_recortada}
+    
+    for p in machote.paragraphs:
+        for key, value in etiqueta.items():
+            if key in p.text:
+                if key == "<fecha>":
+                    p.text = p.text.replace(key, value)
+                    p.style = "NuevoEstilo"
+                else:
+                    p.text = p.text.replace(key, value)
+                    p.style = "EstiloPequeno"
+                    
+    ruta_guardado = os.path.join("WORD", "certificado_reteve.docx")
+    machote.save(ruta_guardado)
+    return
+
+fecha_recortada = "FEB. 24"
+cita = "2"
+placa = "ABC123"
+propietario = "Fernando de los sicsos meo"
+telefono = "64316611"
+marca = "Honda"
+modelo = "Superwow"
+clasificacion = "Automovil particular y vehiculo de carga liviana (3500 kg > 8000 kg)"
+fecha_actual = "12/02/2023 13:01:00"
+fecha_vencimiento = "12/02/2023"
+tipo_cita = "Virgen"
+correo = "jose.mario.jv27@gmail.com"
+direccion = "Allá por allá a la par"
+resultado = "Aprobado"
+lista_fallas = ['1                                                           asgfasgasgasgfasgasgasgfasgasgasgfasgasg                                                                       Grave',
+        '2                                                           asgasgasgasga                                                                       Leve',
+        '3                                                           ahashashashas                                                                       Grave']
+
+#reemplazar_resultados_hoja_revision(cita, placa, propietario, telefono, marca, modelo, clasificacion, fecha_actual, tipo_cita, fecha_vencimiento, lista_fallas, correo, direccion, resultado)
+#reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fecha_recortada)
+
+
+
 #Enviar correos
 """Entradas: correo a enviar ,archivo pdf a enviar, nombre del enunciado,imagen a enviar adjunta
-Salidas: Si el envio fue correcto dice correcto sino paso un error
-"""
-tipo_de_envio = "1"
+Salidas: Si el envio fue correcto dice correcto sino paso un error"""
+
+tipo_de_envio = "3"
 cita = "27"
 fecha_envio = "12/02/2023"
 hora_envio = "13:01:00"
 hoja = ""
 certificado = ""
-correo = "jsebascp04@gmail.com"
+correo = "jose.mario.jv27@gmail.com"
 
 
-def enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,cita):
+def enviar_correos(correo,tipo_de_envio,fecha_envio,hora_envio,cita):
      try:
         # Datos del remitente
         email = "atletismoeventosjscp@gmail.com"
@@ -95,10 +229,10 @@ def enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,
              mensaje['Subject'] = "Resultado Revision Vehicular"
 
              # Añadir el archivo PDF adjunto
-             ruta_pdf = os.path.join(os.getcwd(),"Hojas_revisiones", hoja)
+             ruta_pdf = os.path.join(os.getcwd(),"WORD","PDF", "hoja_revision.pdf")
              with open(ruta_pdf, "rb") as f:
                 adjunto = MIMEApplication(f.read(), _subtype="pdf")
-                adjunto.add_header('Content-Disposition', 'attachment', filename = hoja)
+                adjunto.add_header('Content-Disposition', 'attachment', filename = "hoja_revision.pdf")
                 mensaje.attach(adjunto)
             
 
@@ -119,16 +253,16 @@ def enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,
              mensaje['Subject'] = "Resultado Revision Vehicular"
    
              # Añadir el archivo PDF adjunto
-             ruta_pdf_h = os.path.join(os.getcwd(),"Hojas_revisiones", hoja)
+             ruta_pdf_h = os.path.join(os.getcwd(),"WORD","PDF", "hoja_revision.pdf")
              with open(ruta_pdf_h, "rb") as f:
                 adjunto_h = MIMEApplication(f.read(), _subtype="pdf")
-                adjunto_h.add_header('Content-Disposition', 'attachment', filename = hoja)
+                adjunto_h.add_header('Content-Disposition', 'attachment', filename = "hoja_revision.pdf")
                 mensaje.attach(adjunto_h)
             
-             ruta_pdf_c = os.path.join(os.getcwd(),"Hojas_revisiones", certificado)
+             ruta_pdf_c = os.path.join(os.getcwd(),"WORD","PDF", "certificado_reteve.pdf")
              with open(ruta_pdf_c, "rb") as f:
                 adjunto_c = MIMEApplication(f.read(), _subtype="pdf")
-                adjunto_c.add_header('Content-Disposition', 'attachment', filename = certificado)
+                adjunto_c.add_header('Content-Disposition', 'attachment', filename = "certificado_reteve.pdf")
                 mensaje.attach(adjunto_c)
             
 
@@ -144,12 +278,10 @@ def enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,
      except:
          MessageBox.showerror("ERROR","Fallo al enviar")
          return
-         
+    
+#print(enviar_correos(correo,tipo_de_envio,fecha_envio,hora_envio,cita))
 
 
- 
-
-"""print(enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,cita))"""
     
 # FUNCION QUE GENERA LAS CITAS POSIBLES
 # ENTRADAS: datos de la configuracion y del sistema.
