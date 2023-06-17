@@ -41,6 +41,115 @@ def validar_existencia_correo(correo):
     except ValueError:
         fecha_v = False
         MessageBox.showerror("Fecha","Fecha Invalida")"""
+
+
+
+#Enviar correos
+"""Entradas: correo a enviar ,archivo pdf a enviar, nombre del enunciado,imagen a enviar adjunta
+Salidas: Si el envio fue correcto dice correcto sino paso un error
+"""
+tipo_de_envio = "1"
+cita = "27"
+fecha_envio = "12/02/2023"
+hora_envio = "13:01:00"
+hoja = ""
+certificado = ""
+correo = "jsebascp04@gmail.com"
+
+
+def enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,cita):
+     try:
+        # Datos del remitente
+        email = "atletismoeventosjscp@gmail.com"
+        password = "nfjlzogntinfwebo"
+
+        # Datos del destinatario
+        to_email = correo
+
+        # Crear instancia del objeto MIMEMultipart
+        mensaje = MIMEMultipart()
+    
+        # Añadir el cuerpo del mensaje
+        if tipo_de_envio == "1":
+            # Agregar remitente, destinatario, asunto y cuerpo del mensaje
+             mensaje['From'] = email
+             mensaje['To'] = to_email
+             mensaje['Subject'] = "Cita Revision Vehicular ReTeVe"
+
+             cuerpo = "Fecha y hora de su cita: " + fecha_envio + " " + hora_envio + " Número de cita: " + cita
+             mensaje.attach(MIMEText(cuerpo, 'plain'))
+        
+             # Conectar al servidor SMTP y enviar el correo
+             servidor_smtp = smtplib.SMTP('smtp.gmail.com', 587)
+             servidor_smtp.starttls()
+             servidor_smtp.login(email, password)
+             servidor_smtp.sendmail(email, to_email, mensaje.as_string())
+             servidor_smtp.quit()
+             MessageBox.showinfo("ESTADO","Correo enviado exitosamente")
+             return
+             
+        if tipo_de_envio == "2":
+            # Agregar remitente, destinatario, asunto y cuerpo del mensaje
+             mensaje['From'] = email
+             mensaje['To'] = to_email
+             mensaje['Subject'] = "Resultado Revision Vehicular"
+
+             # Añadir el archivo PDF adjunto
+             ruta_pdf = os.path.join(os.getcwd(),"Hojas_revisiones", hoja)
+             with open(ruta_pdf, "rb") as f:
+                adjunto = MIMEApplication(f.read(), _subtype="pdf")
+                adjunto.add_header('Content-Disposition', 'attachment', filename = hoja)
+                mensaje.attach(adjunto)
+            
+
+            # Conectar al servidor SMTP y enviar el correo
+                servidor_smtp = smtplib.SMTP('smtp.gmail.com', 587)
+                servidor_smtp.starttls()
+                servidor_smtp.login(email, password)
+                servidor_smtp.sendmail(email, to_email, mensaje.as_string())
+                servidor_smtp.quit()
+                MessageBox.showinfo("ESTADO","Correo enviado exitosamente")
+                return
+
+            
+        if tipo_de_envio == "3":
+            # Agregar remitente, destinatario, asunto y cuerpo del mensaje
+             mensaje['From'] = email
+             mensaje['To'] = to_email
+             mensaje['Subject'] = "Resultado Revision Vehicular"
+   
+             # Añadir el archivo PDF adjunto
+             ruta_pdf_h = os.path.join(os.getcwd(),"Hojas_revisiones", hoja)
+             with open(ruta_pdf_h, "rb") as f:
+                adjunto_h = MIMEApplication(f.read(), _subtype="pdf")
+                adjunto_h.add_header('Content-Disposition', 'attachment', filename = hoja)
+                mensaje.attach(adjunto_h)
+            
+             ruta_pdf_c = os.path.join(os.getcwd(),"Hojas_revisiones", certificado)
+             with open(ruta_pdf_c, "rb") as f:
+                adjunto_c = MIMEApplication(f.read(), _subtype="pdf")
+                adjunto_c.add_header('Content-Disposition', 'attachment', filename = certificado)
+                mensaje.attach(adjunto_c)
+            
+
+            # Conectar al servidor SMTP y enviar el correo
+                servidor_smtp = smtplib.SMTP('smtp.gmail.com', 587)
+                servidor_smtp.starttls()
+                servidor_smtp.login(email, password)
+                servidor_smtp.sendmail(email, to_email, mensaje.as_string())
+                servidor_smtp.quit()
+                MessageBox.showinfo("ESTADO","Correo enviado exitosamente")
+                return
+                
+     except:
+         MessageBox.showerror("ERROR","Fallo al enviar")
+         return
+         
+
+
+ 
+
+print(enviar_correos(correo,hoja,certificado,tipo_de_envio,fecha_envio,hora_envio,cita))
     
 # FUNCION QUE GENERA LAS CITAS POSIBLES
 # ENTRADAS: datos de la configuracion y del sistema.
