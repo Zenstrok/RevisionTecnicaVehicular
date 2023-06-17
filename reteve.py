@@ -1381,7 +1381,7 @@ def tablero():
         
     
     def comando_f(dato):
-
+        
         return
 
     def ejecutar_comando(comando):
