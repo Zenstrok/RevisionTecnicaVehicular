@@ -1508,10 +1508,10 @@ def tablero():
             telefono_cert = datos_de_la_cita[7]
             correo_cert = datos_de_la_cita[8]
             direccion_cert = datos_de_la_cita[9]
-            fecha_actual_cert = 
-            fecha_vencimiento_cert = 
+            fecha_actual_cert = None
+            fecha_vencimiento_cert = None
             resultado_cert = datos_de_la_cita[11]
-            lista_fallas_cert = 
+            lista_fallas_cert = None
 
 
             """[4, 'Primera Vez', '12345678', 'Automovil particular y vehiculo de carga liviana (<= 3500 kg)', 'agsasgasg', 'asgasgasgasg', 'asgasgasgas', 'gasgasgasg', 'asgasgasgas', 'gasgasgasgasgs', ['2023', '06', '15', '30000'], 'REINSPECCION', '1', '2', '3']"""
