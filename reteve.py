@@ -853,6 +853,30 @@ def buscar_nodo_info(arbol, num, placa, fecha_hora):
             arbol[2] = buscar_nodo_info(arbol[2], num, placa, fecha_hora)
         return arbol
 
+def costo_revision(dato):
+    tipos_de_vehículos = ["Automovil particular y vehiculo de carga liviana (<= 3500 kg)", \
+                          "Automovil particular y vehiculo de carga liviana (3500 kg > 8000 kg)", \
+                            "Vehiculo de carga pesada y cabezales (>= 8000 kg)", "Taxis", \
+                                "Autobuses, buses y microbuses", "Motocicletas", "Equipo especial de obras", \
+                                    "Equipo especial agricola (maquinaria agricola)"]
+    indice_a_pagar = 0
+    for indice,elemento in enumerate(tipos_de_vehículos):
+        if elemento == dato:
+            indice_a_pagar = indice
+        
+    
+    
+    archivo = open("configuración_reteve.dat", "r")
+    config = archivo.read()
+    config = eval(config)
+    archivo.close()
+
+    tarifa_a_pagar = config[8][indice_a_pagar]
+    iva = int(tarifa_a_pagar) * (config[7] / 100)
+    tarifa_a_pagar_iva = tarifa_a_pagar + iva
+
+    return tarifa_a_pagar_iva
+
 def ingreso_a_estacion():
 
     def salir_ingreso():
@@ -974,6 +998,8 @@ def ingreso_a_estacion():
         posicion_x = ancho_pantalla - 1000
         ventana_ingresar.geometry(f"440x260+{posicion_x}+100")
 
+        costo_revi = costo_revision(datos_del_ingreso[3])
+
         Label(ventana_ingresar, text= "                    ").grid(row= 1, column= 2)
         Label(ventana_ingresar, text= "                    ").grid(row= 2, column= 2)
         Label(ventana_ingresar, text= "Ingresar un vehículo a la estación", width= 30, font= ("Franklin Gothic Demi", 16)).place(x= 50, y= 5)
@@ -988,7 +1014,7 @@ def ingreso_a_estacion():
         Label(ventana_ingresar, text= "Propietario del vehículo:", font= ("Franklin Gothic Demi", 12)).grid(row= 7, column= 1)
         Label(ventana_ingresar, text= datos_del_ingreso[6], font= ("Arial", 10), wraplength= 130).grid(row= 8, column= 1)
         Label(ventana_ingresar, text= "Costo de revisión:", font= ("Franklin Gothic Demi", 12)).grid(row= 7, column= 3)
-        Label(ventana_ingresar, text= datos_del_ingreso[7], font= ("Arial", 10)).grid(row= 8, column= 3)
+        Label(ventana_ingresar, text= costo_revi, font= ("Arial", 10)).grid(row= 8, column= 3)
 
         Label(ventana_ingresar, text= "                    ", font= ("Arial", 10)).grid(row= 9, column= 2)
 
