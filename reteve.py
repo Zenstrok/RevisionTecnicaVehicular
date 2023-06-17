@@ -887,6 +887,17 @@ def tablero():
                         else:
                             MessageBox.showerror("ERROR", "Hay un vehículo delante.")
                             return
+    
+    def buscar_nodo_falla(arbol, num, placa, fecha_hora, falla):
+        if arbol[0][0] == num:
+            arbol[0].append(falla)
+            return arbol
+        else:
+            if comparar_nodos(arbol[0][10], fecha_hora) == True:
+                arbol[1] = buscar_nodo_cancelar(arbol[1], num, placa, fecha_hora, falla)
+            else:
+                arbol[2] = buscar_nodo_cancelar(arbol[2], num, placa, fecha_hora, falla)
+            return arbol
                         
     def comprobar_falla(num_falla):
         archivo = open("lista_fallas.dat", "r")
@@ -896,8 +907,8 @@ def tablero():
 
         for elemento in lista_fallas:
             if elemento == num_falla:
-                return True, elemento
-        return False, None
+                return True, elemento, lista_fallas[elemento][1]
+        return False, None, None
     
     def comprobar_placa(dato_placa):
         archivo = open("lista_colas.dat", "r")
@@ -915,11 +926,64 @@ def tablero():
         return False
     
     def comando_e(dato):
-        largo = len(dato)
-        contador = 1
+        if " " not in dato:
+            MessageBox.showerror("ERROR", "Comando mal ejecutado, falta un espacio entre la placa y la falla")
+            return
+        dato = dato.split(" ")
+        valor, falla, gravedad = comprobar_falla(dato[1])
+        if valor != True:
+            MessageBox.showerror("ERROR", "Falla inválida.")
+            return
+        else:
+            placa = dato[0]
+            valor = comprobar_placa(placa)
+            if valor != True:
+                MessageBox.showerror("ERROR", "Placa no está en ningún puesto.")
+                return
+            else: # Seguir
+                print(falla, ":", placa, ":", gravedad)
+                print("YEA")
+                res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea agregar la falla " + falla + " a la placa " + placa + "?")
+                """if res:
+                    # Buscar número de cita y fecha y hora de la cita.
+                    archivo = open("registro_arbol.dat", "r")
+                    registro_arbol = archivo.read()
+                    registro_arbol = eval(registro_arbol)
+                    archivo.close()
+
+                    for elemento in registro_arbol:
+                        if registro_arbol[elemento][0] == placa:
+                            print(elemento)
+                            num_cita = elemento
+                            fecha_hora = registro_arbol[elemento][1]
+                            break
+
+                    # Agregar falla al árbol.
+                    archivo = open("arbol_citas.dat", "r")
+                    arbol = archivo.read()
+                    arbol = eval(arbol)
+                    archivo.close()
+
+                    print(arbol)
+                    print(num_cita, placa, fecha_hora, falla)
+
+                    arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, falla)
+
+                    archivo = open("lista_colas.dat", "r")
+                    lista_colas = archivo.read()
+                    lista_colas = eval(lista_colas)
+                    archivo.close()
+
+                    for lista in lista_colas:
+                        for elemento in lista[2]:
+                            if elemento == []:
+                                pass
+                            else:
+                                if elemento[0] == placa:"""
+
+        """contador = 1
         while contador < largo:
-            print(contador)
-            valor, falla = comprobar_falla(dato[contador:])
+            valor, falla, gravedad = comprobar_falla(dato[contador:])
             if valor == True:
                 placa = dato[:contador]
                 break
@@ -933,12 +997,49 @@ def tablero():
                 MessageBox.showerror("ERROR", "Placa o falla inválida.")
                 return
             else:
-                print(falla, ":", placa)
+                print(falla, ":", placa, ":", gravedad)
                 print("YEA")
-                
                 res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea agregar la falla " + falla + " a la placa " + placa + "?")
                 if res:
-                    return
+                    # Buscar número de cita y fecha y hora de la cita.
+                    archivo = open("registro_arbol.dat", "r")
+                    registro_arbol = archivo.read()
+                    registro_arbol = eval(registro_arbol)
+                    archivo.close()
+
+                    for elemento in registro_arbol:
+                        if registro_arbol[elemento][0] == placa:
+                            print(elemento)
+                            num_cita = elemento
+                            fecha_hora = registro_arbol[elemento][1]
+                            break
+
+                    # Agregar falla al árbol.
+                    archivo = open("arbol_citas.dat", "r")
+                    arbol = archivo.read()
+                    arbol = eval(arbol)
+                    archivo.close()
+
+                    print(arbol)
+                    print(num_cita, placa, fecha_hora, falla)
+
+                    arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, falla)
+
+
+
+                    archivo = open("lista_colas.dat", "r")
+                    lista_colas = archivo.read()
+                    lista_colas = eval(lista_colas)
+                    archivo.close()
+
+                    for lista in lista_colas:
+                        for elemento in lista[2]:
+                            if elemento == []:
+                                pass
+                            else:
+                                if elemento[0] == placa:"""
+
+        return
         
     
     def comando_f(dato):
