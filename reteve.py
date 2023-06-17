@@ -872,21 +872,40 @@ def tablero():
                 else:
                     if len(elemento) == 0:
                         pass
-                    elif dato == elemento[0]:
-                        if lista[2][indice + 1] == []:
-                            elemento.remove(dato)
-                            lista[2][indice + 1].append(dato)
+                    elif len(elemento) == 1:
+                        if dato == elemento[0]:
+                            if lista[2][indice + 1] == []:
+                                elemento.remove(dato)
+                                lista[2][indice + 1].append(dato)
 
-                            archivo = open("lista_colas.dat", "w")
-                            archivo.write(str(lista_colas))
-                            archivo.close()
+                                archivo = open("lista_colas.dat", "w")
+                                archivo.write(str(lista_colas))
+                                archivo.close()
 
-                            ventana_tablero_revision.destroy()
-                            tablero()
-                            return
-                        else:
-                            MessageBox.showerror("ERROR", "Hay un vehículo delante.")
-                            return
+                                ventana_tablero_revision.destroy()
+                                tablero()
+                                return
+                            else:
+                                MessageBox.showerror("ERROR", "Hay un vehículo delante.")
+                                return
+                    else:
+                        if dato == elemento[0]:
+                            if lista[2][indice + 1] == []:
+                                elemento.remove(dato)
+                                elemento.remove("!")
+                                lista[2][indice + 1].append(dato)
+                                lista[2][indice + 1].append("!")
+
+                                archivo = open("lista_colas.dat", "w")
+                                archivo.write(str(lista_colas))
+                                archivo.close()
+
+                                ventana_tablero_revision.destroy()
+                                tablero()
+                                return
+                            else:
+                                MessageBox.showerror("ERROR", "Hay un vehículo delante.")
+                                return
     
     def buscar_nodo_falla(arbol, num, placa, fecha_hora, falla):
         if arbol[0][0] == num:
@@ -894,9 +913,9 @@ def tablero():
             return arbol
         else:
             if comparar_nodos(arbol[0][10], fecha_hora) == True:
-                arbol[1] = buscar_nodo_cancelar(arbol[1], num, placa, fecha_hora, falla)
+                arbol[1] = buscar_nodo_falla(arbol[1], num, placa, fecha_hora, falla)
             else:
-                arbol[2] = buscar_nodo_cancelar(arbol[2], num, placa, fecha_hora, falla)
+                arbol[2] = buscar_nodo_falla(arbol[2], num, placa, fecha_hora, falla)
             return arbol
                         
     def comprobar_falla(num_falla):
@@ -940,65 +959,7 @@ def tablero():
             if valor != True:
                 MessageBox.showerror("ERROR", "Placa no está en ningún puesto.")
                 return
-            else: # Seguir
-                print(falla, ":", placa, ":", gravedad)
-                print("YEA")
-                res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea agregar la falla " + falla + " a la placa " + placa + "?")
-                """if res:
-                    # Buscar número de cita y fecha y hora de la cita.
-                    archivo = open("registro_arbol.dat", "r")
-                    registro_arbol = archivo.read()
-                    registro_arbol = eval(registro_arbol)
-                    archivo.close()
-
-                    for elemento in registro_arbol:
-                        if registro_arbol[elemento][0] == placa:
-                            print(elemento)
-                            num_cita = elemento
-                            fecha_hora = registro_arbol[elemento][1]
-                            break
-
-                    # Agregar falla al árbol.
-                    archivo = open("arbol_citas.dat", "r")
-                    arbol = archivo.read()
-                    arbol = eval(arbol)
-                    archivo.close()
-
-                    print(arbol)
-                    print(num_cita, placa, fecha_hora, falla)
-
-                    arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, falla)
-
-                    archivo = open("lista_colas.dat", "r")
-                    lista_colas = archivo.read()
-                    lista_colas = eval(lista_colas)
-                    archivo.close()
-
-                    for lista in lista_colas:
-                        for elemento in lista[2]:
-                            if elemento == []:
-                                pass
-                            else:
-                                if elemento[0] == placa:"""
-
-        """contador = 1
-        while contador < largo:
-            valor, falla, gravedad = comprobar_falla(dato[contador:])
-            if valor == True:
-                placa = dato[:contador]
-                break
-            contador += 1
-        if valor != True:
-            MessageBox.showerror("ERROR", "Placa o falla inválida.")
-            return
-        else:
-            valor = comprobar_placa(placa)
-            if valor != True:
-                MessageBox.showerror("ERROR", "Placa o falla inválida.")
-                return
             else:
-                print(falla, ":", placa, ":", gravedad)
-                print("YEA")
                 res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea agregar la falla " + falla + " a la placa " + placa + "?")
                 if res:
                     # Buscar número de cita y fecha y hora de la cita.
@@ -1020,26 +981,41 @@ def tablero():
                     arbol = eval(arbol)
                     archivo.close()
 
-                    print(arbol)
-                    print(num_cita, placa, fecha_hora, falla)
-
                     arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, falla)
-
-
-
-                    archivo = open("lista_colas.dat", "r")
-                    lista_colas = archivo.read()
-                    lista_colas = eval(lista_colas)
+                    archivo = open("arbol_citas.dat", "w")
+                    archivo.write(str(arbol))
                     archivo.close()
 
-                    for lista in lista_colas:
-                        for elemento in lista[2]:
-                            if elemento == []:
-                                pass
-                            else:
-                                if elemento[0] == placa:"""
+                    # Agregar falla al nombre de la placa si es grave.
+                    if gravedad == "Grave":
+                        print("Yes")
+                        archivo = open("lista_colas.dat", "r")
+                        lista_colas = archivo.read()
+                        lista_colas = eval(lista_colas)
+                        archivo.close()
 
-        return
+                        for lista in lista_colas:
+                            for elemento in lista[2]:
+                                if elemento == []:
+                                    pass
+                                else:
+                                    if elemento[0] == placa:
+                                        elemento[0] = placa
+                                        elemento.append("!")
+                                        break
+                    
+                        archivo = open("lista_colas.dat", "w")
+                        archivo.write(str(lista_colas))
+                        archivo.close()
+
+                        ventana_tablero_revision.destroy()
+                        tablero()
+                    else:
+                        pass
+
+                    ventana_tablero_revision.destroy()
+                    tablero()
+                    return
         
     
     def comando_f(dato):
@@ -1048,6 +1024,7 @@ def tablero():
     def ejecutar_comando(comando):
         comando = comando.get()
         placa = comando[1:]
+
         if comando[0] == "T":
             comando_t(placa)
         elif comando[0] == "U":
@@ -1157,7 +1134,15 @@ def tablero():
             else:
                 placa_casilla = lista_de_colas[i-1][2][j-2]
             nombre_etiqueta = str(i) + str(j)
-            num_linea = Label(segundo_frame_tablero, text=placa_casilla,fg = None, name=nombre_etiqueta, font=("", 10))
+
+            if placa_casilla != []:
+                if len(placa_casilla) == 2:
+                    num_linea = Label(segundo_frame_tablero, text=placa_casilla[0], fg = "Red", name=nombre_etiqueta, font=("", 10))
+                else:
+                    num_linea = Label(segundo_frame_tablero, text=placa_casilla[0], fg = None, name=nombre_etiqueta, font=("", 10))
+            else:
+                num_linea = Label(segundo_frame_tablero, text=placa_casilla,fg = None, name=nombre_etiqueta, font=("", 10))
+
             num_linea.place(x = 95*j ,y = columna_largo) 
         columna_largo += 45
     
