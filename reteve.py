@@ -155,24 +155,6 @@ def reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fech
     machote.save(ruta_guardado)
     return
 
-fecha_recortada = "FEB. 24"
-cita = "2"
-placa = "ABC123"
-propietario = "Fernando de los sicsos meo"
-telefono = "64316611"
-marca = "Honda"
-modelo = "Superwow"
-clasificacion = "Automovil particular y vehiculo de carga liviana (3500 kg > 8000 kg)"
-fecha_actual = "12/02/2023 13:01:00"
-fecha_vencimiento = "12/02/2023"
-tipo_cita = "Virgen"
-correo = "jose.mario.jv27@gmail.com"
-direccion = "Allá por allá a la par"
-resultado = "Aprobado"
-lista_fallas = ['1                                                           asgfasgasgasgfasgasgasgfasgasgasgfasgasg                                                                       Grave',
-        '2                                                           asgasgasgasga                                                                       Leve',
-        '3                                                           ahashashashas                                                                       Grave']
-
 #reemplazar_resultados_hoja_revision(cita, placa, propietario, telefono, marca, modelo, clasificacion, fecha_actual, tipo_cita, fecha_vencimiento, lista_fallas, correo, direccion, resultado)
 #reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fecha_recortada)
 
@@ -1071,7 +1053,7 @@ def tablero():
         return
 
     def comando_t(dato):
-        res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea ejecutar el comando?")
+        res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea ejecutar el comando T?")
         if res:
             archivo = open("lista_colas.dat", "r")
             lista_colas = archivo.read()
@@ -1158,7 +1140,7 @@ def tablero():
             tablero()
 
     def comando_u(dato):
-        res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea ejecutar el comando?")
+        res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea ejecutar el comando U?")
         if res:
             archivo = open("lista_colas.dat", "r")
             lista_colas = archivo.read()
@@ -1235,17 +1217,22 @@ def tablero():
             MessageBox.showerror("ERROR", "No se encontró el vehículo.")
             return
     
-    def buscar_nodo_falla(arbol, num, placa, fecha_hora, falla):
+    def buscar_nodo_falla(arbol, num, placa, fecha_hora, falla, opcion):
         global comprobar
+        global datos_de_la_cita
         if arbol[0][0] == num:
             comprobar = arbol[0][11:]
-            arbol[0].append(falla)
+            if opcion == 1:
+                arbol[0].append(falla)
+            if opcion == 3:
+                arbol[0][11] = falla
+                datos_de_la_cita = arbol[0]
             return arbol
         else:
             if comparar_nodos(arbol[0][10], fecha_hora) == True:
-                arbol[1] = buscar_nodo_falla(arbol[1], num, placa, fecha_hora, falla)
+                arbol[1] = buscar_nodo_falla(arbol[1], num, placa, fecha_hora, falla, opcion)
             else:
-                arbol[2] = buscar_nodo_falla(arbol[2], num, placa, fecha_hora, falla)
+                arbol[2] = buscar_nodo_falla(arbol[2], num, placa, fecha_hora, falla, opcion)
             return arbol
                         
     def comprobar_falla(num_falla):
@@ -1311,7 +1298,7 @@ def tablero():
                     arbol = eval(arbol)
                     archivo.close()
 
-                    arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, falla)
+                    arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, falla, 1)
                     global comprobar
                     for elemento in comprobar:
                         if elemento == falla:
@@ -1379,10 +1366,186 @@ def tablero():
                         tablero()
                         return
         
+    def calcular_fallas(lista):
+        archivo = open("lista_fallas.dat")
+        lista_fallas_archivo = archivo.read()
+        lista_fallas_archivo = eval(lista_fallas_archivo)
+        archivo.close()
+
+        fallas_totales = {"Grave": 0, "Leve": 0}
+        if lista == []:
+            pass
+        else:
+            for elemento in lista:
+                if lista_fallas_archivo[elemento][1] == "Grave":
+                    fallas_totales["Grave"] = fallas_totales["Grave"] + 1
+                elif lista_fallas_archivo[elemento][1] == "Leve":
+                    fallas_totales["Leve"] = fallas_totales["Leve"] + 1
+
+        return fallas_totales
     
     def comando_f(dato):
-        
-        return
+
+        res = MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea ejecutar el comando F?")
+        if res:
+
+            archivo = open("lista_colas.dat", "r")
+            lista_colas = archivo.read()
+            lista_colas = eval(lista_colas)
+            archivo.close()
+
+            encontrado = None
+            for indice, lista in enumerate(lista_colas):
+                if lista[2][4] == []:
+                    pass
+                else:
+                    if lista[2][4][0] == dato:
+                        encontrado = True
+                        break
+
+            if encontrado != True:
+                MessageBox.showerror("ERROR", "No se encontró el vehículo.")
+                return
+
+            placa_saliente = lista_colas[indice][2][4][0]
+            lista_colas[indice][2][4] = []
+            for indice2, lista in enumerate(lista_colas):
+                if indice != indice2:
+                    pass
+                else:
+                    if lista[2][3] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[2][3]
+                        lista[2][4] = variable_agregar
+                        lista[2][3] = []
+
+                    if lista[2][2] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[2][2]
+                        lista[2][3] = variable_agregar
+                        lista[2][2] = []
+
+                    if lista[2][1] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[2][1]
+                        lista[2][2] = variable_agregar
+                        lista[2][1] = []
+
+                    if lista[2][0] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[2][0]
+                        lista[2][1] = variable_agregar
+                        lista[2][0] = []
+
+                    if lista[1] == []:
+                        pass
+                    else:
+                        variable_agregar = lista[1][0]
+                        variable_borrar = lista[1][0]
+                        lista[2][0] = [variable_agregar]
+                        lista[1].remove(variable_borrar)
+
+            archivo = open("registro_arbol.dat", "r")
+            registro_arbol = archivo.read()
+            registro_arbol = eval(registro_arbol)
+            archivo.close()
+
+            datos_placa = []
+            for elemento in registro_arbol:
+                if registro_arbol[elemento][0] == placa_saliente:
+                    datos_placa = registro_arbol[elemento]
+                    datos_placa.append(elemento)
+                    break
+
+            num_cita = datos_placa[2]
+            fecha_hora = datos_placa[1]
+            placa = datos_placa[0]
+            falla = None
+
+            archivo = open("arbol_citas.dat", "r")
+            arbol = archivo.read()
+            arbol = eval(arbol)
+            archivo.close()
+
+            arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, falla, 2)
+            global comprobar
+            fallas_placa = comprobar[1:]
+            cantidad_fallas = calcular_fallas(fallas_placa)
+            estado_revision = None
+            print(cantidad_fallas, fallas_placa)
+
+            archivo = open("configuración_reteve.dat", "r")
+            config = archivo.read()
+            config = eval(config)
+            archivo.close()
+
+            if cantidad_fallas["Grave"] == 0:
+                estado_revision = "APROBADA"
+            elif cantidad_fallas["Grave"] > 0 and cantidad_fallas["Grave"] < config[5]:
+                estado_revision = "REINSPECCION"
+            else:
+                estado_revision = "SACAR DE CIRCULACIÓN"
+            
+            arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, estado_revision, 3)
+            global datos_de_la_cita
+
+            """archivo = open("arbol_citas.dat", "w")
+            archivo.write(str(arbol))
+            archivo.close()"""
+            print(datos_de_la_cita)
+
+            cita_cert = str(datos_de_la_cita[0])
+            tipo_cita_cert = datos_de_la_cita[1]
+            placa_cert = datos_de_la_cita[2]
+            clasificacion_cert = datos_de_la_cita[3]
+            marca_cert = datos_de_la_cita[4]
+            modelo_cert = datos_de_la_cita[5]
+            propietario_cert = datos_de_la_cita[6]
+            telefono_cert = datos_de_la_cita[7]
+            correo_cert = datos_de_la_cita[8]
+            direccion_cert = datos_de_la_cita[9]
+            fecha_actual_cert = 
+            fecha_vencimiento_cert = 
+            resultado_cert = datos_de_la_cita[11]
+            lista_fallas_cert = 
+
+
+            """[4, 'Primera Vez', '12345678', 'Automovil particular y vehiculo de carga liviana (<= 3500 kg)', 'agsasgasg', 'asgasgasgasg', 'asgasgasgas', 'gasgasgasg', 'asgasgasgas', 'gasgasgasgasgs', ['2023', '06', '15', '30000'], 'REINSPECCION', '1', '2', '3']"""
+            """fecha_recortada = "FEB. 24"
+            cita_cert = "2"
+            placa_cert = "ABC123"
+            propietario_cert = "Fernando de los sicsos meo"
+            telefono_cert = "64316611"
+            marca_cert = "Honda"
+            modelo_cert = "Superwow"
+            clasificacion_cert = "Automovil particular y vehiculo de carga liviana (3500 kg > 8000 kg)"
+            fecha_actual_cert = "12/02/2023 13:01:00"
+            fecha_vencimiento_cert = "12/02/2023"
+            tipo_cita_cert = "Virgen"
+            correo_cert = "jose.mario.jv27@gmail.com"
+            direccion_cert = "Allá por allá a la par"
+            resultado_cert = "Aprobado"
+            lista_fallas_cert = ['1                                                           asgfasgasgasgfasgasgasgfasgasgasgfasgasg                                                                       Grave',
+            '2                                                           asgasgasgasga                                                                       Leve',
+            '3                                                           ahashashashas                                                                       Grave']"""
+
+            """if estado_revision == "APROBADA":
+                reemplazar_resultados_hoja_revision(cita_cert, placa_cert, propietario_cert, teléfono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert)
+                reemplazar_resultados_sticker(placa_cert, propietario_cert, marca_cert, clasificacion_cert, fecha_recortada)
+            elif estado_revision == "REINSPECCION":
+                reemplazar_resultados_hoja_revision(cita_cert, placa_cert, propietario_cert, teléfono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert)
+            else:
+                reemplazar_resultados_hoja_revision(cita_cert, placa_cert, propietario_cert, teléfono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert)"""
+
+
+
+
+
+
 
     def ejecutar_comando(comando):
         comando = comando.get()
