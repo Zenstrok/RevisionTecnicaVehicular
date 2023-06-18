@@ -6,7 +6,6 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as MessageBox
 from validate_email_address import validate_email #libreria para validar email
-from fpdf import FPDF #libreria para crear pdf
 import smtplib # librerias para el envio de archivos por correo
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -34,6 +33,13 @@ def validar_existencia_correo(correo):
          existe = validate_email(correo,verify = True) # valida existencia gracias a verify
          return existe
      return False
+
+def segundos_a_hora(numero):
+    horas = numero // 3600
+    minutos = (numero % 3600) // 60
+    segundos =(numero % 3600) % 60
+    hora_formato = f"{horas:02d}:{minutos:02d}:{segundos:02d}"
+    return hora_formato
 
 # FUNCION VALIDAR FECHAS
 # ENTRADAS: Recibe la fecha a validar.
@@ -180,7 +186,7 @@ def enviar_correos(correo,tipo_de_envio,fecha_envio,hora_envio,cita):
              mensaje['To'] = to_email
              mensaje['Subject'] = "Cita Revision Vehicular ReTeVe"
 
-             cuerpo = "Fecha y hora de su cita: " + fecha_envio + " " + hora_envio + " Número de cita: " + cita
+             cuerpo = "Fecha y hora de su cita: " + fecha_envio + " " + hora_envio + " Número de cita: " + str(cita)
              mensaje.attach(MIMEText(cuerpo, 'plain'))
         
              # Conectar al servidor SMTP y enviar el correo
@@ -361,7 +367,16 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
     archivo.close()
 
     # ENVÍO DE CORREO AQUÍ
+    #correo,tipo_de_envio,fecha_envio,hora_envio,cita
+    hora_cita_final = segundos_a_hora(int(dato_nodo[10][3]))
 
+    if int(hora_cita_final[:2]) > 12:
+        hora_cita_final += " PM"
+    else:
+        hora_cita_final += " AM"
+
+    fecha_envio_cita = str(dato_nodo[10][0]) +"/"+ str(dato_nodo[10][1]) +"/"+ str(dato_nodo[10][2]) 
+    enviar_correos(dato_nodo[8],"1",fecha_envio_cita,hora_cita_final,dato_nodo[0])
     MessageBox.showinfo("ESTADO", "Se ha programado la nueva cita.")
     return
 
@@ -1595,6 +1610,9 @@ def tablero():
                 reemplazar_resultados_hoja_revision(cita_cert, placa_cert, propietario_cert, telefono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert)
                 word_to_pdf()
                 enviar_correos(correo_cert, "2", None, None, str(cita_cert))
+            
+            ventana_tablero_revision.destroy()
+            tablero()
 
     def ejecutar_comando(comando):
         comando = comando.get()
