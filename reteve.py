@@ -49,7 +49,6 @@ def validar_existencia_correo(correo):
         MessageBox.showerror("Fecha","Fecha Invalida")"""
 
 
-
 def word_to_pdf():
     ruta_pdf_h = os.path.join(os.getcwd(),"WORD","hoja_revision.docx")
     ruta_pdf_c = os.path.join(os.getcwd(),"WORD","certificado_reteve.docx")
@@ -158,8 +157,6 @@ def reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fech
 #reemplazar_resultados_hoja_revision(cita, placa, propietario, telefono, marca, modelo, clasificacion, fecha_actual, tipo_cita, fecha_vencimiento, lista_fallas, correo, direccion, resultado)
 #reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fecha_recortada)
 
-
-
 #Enviar correos
 """Entradas: correo a enviar ,archivo pdf a enviar, nombre del enunciado,imagen a enviar adjunta
 Salidas: Si el envio fue correcto dice correcto sino paso un error"""
@@ -254,8 +251,6 @@ def enviar_correos(correo,tipo_de_envio,fecha_envio,hora_envio,cita):
     
 #print(enviar_correos(correo,tipo_de_envio,fecha_envio,hora_envio,cita))
 
-
-    
 # FUNCION QUE GENERA LAS CITAS POSIBLES
 # ENTRADAS: datos de la configuracion y del sistema.
 # SALIDAS: lista de fechas.   
@@ -368,6 +363,7 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
     # ENVÍO DE CORREO AQUÍ
 
     MessageBox.showinfo("ESTADO", "Se ha programado la nueva cita.")
+    return
 
 def aprobar_fecha_hora(fechahora, lista_intervalos):
     if len(fechahora[1]) == 1:
@@ -417,6 +413,15 @@ def programar_citas():
         if len(dato2) > 8 or len(dato2) < 1:
             MessageBox.showerror("ERROR", "Dato de placa inválido.")
             return
+        archivo2 = open("registro_arbol.dat", "r")
+        registros_citas = archivo2.read()
+        registros_citas = eval(registros_citas)
+        archivo2.close()
+
+        for elemento in registros_citas:
+            if registros_citas[elemento][0] == dato2:
+                MessageBox.showerror("ERROR", "Vehículo ya tiene una cita en curso.")
+                return
         
         # Validar la marca del vehículo.
         dato4 = entry4.get()
@@ -1036,7 +1041,6 @@ def ingreso_a_estacion():
 
     ventana_ingreso_estacion.mainloop()
 
-
 def tablero():
 
     def cerrar_tablero():
@@ -1443,9 +1447,9 @@ def tablero():
                         lista[2][0] = [variable_agregar]
                         lista[1].remove(variable_borrar)
             
-            """archivo = open("lista_colas.dat", "w")
+            archivo = open("lista_colas.dat", "w")
             archivo.write(str(lista_colas))
-            archivo.close()"""
+            archivo.close()
 
             archivo = open("registro_arbol.dat", "r")
             registro_arbol = archivo.read()
@@ -1461,9 +1465,9 @@ def tablero():
                     del registro_arbol[elemento]
                     break
 
-            """archivo = open("registro_arbol.dat", "w")
+            archivo = open("registro_arbol.dat", "w")
             archivo.write(str(registro_arbol))
-            archivo.close()"""
+            archivo.close()
 
             num_cita = datos_placa[2]
             fecha_hora = datos_placa[1]
@@ -1496,9 +1500,9 @@ def tablero():
             arbol = buscar_nodo_falla(arbol, num_cita, placa, fecha_hora, estado_revision, 3)
             global datos_de_la_cita
 
-            """archivo = open("arbol_citas.dat", "w")
+            archivo = open("arbol_citas.dat", "w")
             archivo.write(str(arbol))
-            archivo.close()"""
+            archivo.close()
 
             cita_cert = str(datos_de_la_cita[0])
             tipo_cita_cert = datos_de_la_cita[1]
@@ -1544,12 +1548,22 @@ def tablero():
             lista_fallas = eval(lista_fallas)
             archivo.close()
 
+            archivo = open("registro_fallas.dat", "r")
+            registro_fallas = archivo.read()
+            registro_fallas = eval(registro_fallas)
+            archivo.close()
+
             lista_fallas_cert = []
             for elemento in datos_de_la_cita[12:]:
+                registro_fallas.remove(elemento)
                 for falla_registrada in lista_fallas:
                     if falla_registrada == elemento:
                         agregar = falla_registrada + "                                                           " + lista_fallas[falla_registrada][0] + "                                                                       " + lista_fallas[falla_registrada][1]
                         lista_fallas_cert.append(agregar)
+
+            archivo = open("registro_fallas.dat", "w")
+            archivo.write(str(registro_fallas))
+            archivo.close()
 
             # print((cita_cert, placa_cert, propietario_cert, telefono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert))
 
@@ -1723,19 +1737,6 @@ def tablero():
 
     # Loop de la ventana.
     ventana_tablero_revision.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 """ FUNCION PARA ABRIR LA VENTANA DE LISTA DE FALLAS
 # ENTRADAS: Lee las acciones del usuario.
@@ -2045,26 +2046,6 @@ def lista_de_fallas():
 
     # Loop de la ventana.
     ventana_lista_de_fallas.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 """ FUNCION PARA ABRIR LA VENTANA DE CONFIGURACION DEL SISTEMA
@@ -2558,6 +2539,14 @@ def validar_lineas():
         archivo = open("lista_colas.dat", "w")
         lineas_actuales = archivo.write(str(lineas_actuales))
         archivo.close()
+    elif len(lineas_actuales) > config[0]:
+        while len(lineas_actuales) > config[0]:
+            lineas_actuales.remove(lineas_actuales[-1])
+        
+        archivo = open("lista_colas.dat", "w")
+        lineas_actuales = archivo.write(str(lineas_actuales))
+        archivo.close()
+
     return
 
 """ FUNCION PRINCIPAL """
