@@ -164,15 +164,6 @@ def reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fech
 """Entradas: correo a enviar ,archivo pdf a enviar, nombre del enunciado,imagen a enviar adjunta
 Salidas: Si el envio fue correcto dice correcto sino paso un error"""
 
-tipo_de_envio = "3"
-cita = "27"
-fecha_envio = "12/02/2023"
-hora_envio = "13:01:00"
-hoja = ""
-certificado = ""
-correo = "jose.mario.jv27@gmail.com"
-
-
 def enviar_correos(correo,tipo_de_envio,fecha_envio,hora_envio,cita):
      try:
         # Datos del remitente
@@ -1046,29 +1037,6 @@ def ingreso_a_estacion():
     ventana_ingreso_estacion.mainloop()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def tablero():
 
     def cerrar_tablero():
@@ -1474,6 +1442,10 @@ def tablero():
                         variable_borrar = lista[1][0]
                         lista[2][0] = [variable_agregar]
                         lista[1].remove(variable_borrar)
+            
+            """archivo = open("lista_colas.dat", "w")
+            archivo.write(str(lista_colas))
+            archivo.close()"""
 
             archivo = open("registro_arbol.dat", "r")
             registro_arbol = archivo.read()
@@ -1485,7 +1457,13 @@ def tablero():
                 if registro_arbol[elemento][0] == placa_saliente:
                     datos_placa = registro_arbol[elemento]
                     datos_placa.append(elemento)
+
+                    del registro_arbol[elemento]
                     break
+
+            """archivo = open("registro_arbol.dat", "w")
+            archivo.write(str(registro_arbol))
+            archivo.close()"""
 
             num_cita = datos_placa[2]
             fecha_hora = datos_placa[1]
@@ -1502,7 +1480,6 @@ def tablero():
             fallas_placa = comprobar[1:]
             cantidad_fallas = calcular_fallas(fallas_placa)
             estado_revision = None
-            print(cantidad_fallas, fallas_placa)
 
             archivo = open("configuración_reteve.dat", "r")
             config = archivo.read()
@@ -1522,7 +1499,6 @@ def tablero():
             """archivo = open("arbol_citas.dat", "w")
             archivo.write(str(arbol))
             archivo.close()"""
-            print(datos_de_la_cita)
 
             cita_cert = str(datos_de_la_cita[0])
             tipo_cita_cert = datos_de_la_cita[1]
@@ -1534,11 +1510,48 @@ def tablero():
             telefono_cert = datos_de_la_cita[7]
             correo_cert = datos_de_la_cita[8]
             direccion_cert = datos_de_la_cita[9]
-            fecha_actual_cert = None
-            fecha_vencimiento_cert = None
+            fecha_actual_cert = datos_de_la_cita[10][2] + "/" + datos_de_la_cita[10][1] + "/" + datos_de_la_cita[10][0]
+            fecha_vencimiento_cert = datos_de_la_cita[10][2] + "/" + datos_de_la_cita[10][1] + "/" + str(int(datos_de_la_cita[10][0]) + 1)
             resultado_cert = datos_de_la_cita[11]
-            lista_fallas_cert = None
+            fecha_recortada = datos_de_la_cita[10][1] + ". " + str(int(datos_de_la_cita[10][0]) + 1)[2:]
+            if int(fecha_recortada[:2]) == 1:
+                fecha_recortada = "ENE" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 2:
+                fecha_recortada = "FEB" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 3:
+                fecha_recortada = "MAR" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 4:
+                fecha_recortada = "ABR" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 5:
+                fecha_recortada = "MAY" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 6:
+                fecha_recortada = "JUN" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 7:
+                fecha_recortada = "JUL" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 8:
+                fecha_recortada = "AGO" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 9:
+                fecha_recortada = "SEP" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 10:
+                fecha_recortada = "OCT" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 11:
+                fecha_recortada = "NOV" + fecha_recortada[2:]
+            elif int(fecha_recortada[:2]) == 12:
+                fecha_recortada = "DIC" + fecha_recortada[2:]
 
+            archivo = open("lista_fallas.dat", "r")
+            lista_fallas = archivo.read()
+            lista_fallas = eval(lista_fallas)
+            archivo.close()
+
+            lista_fallas_cert = []
+            for elemento in datos_de_la_cita[12:]:
+                for falla_registrada in lista_fallas:
+                    if falla_registrada == elemento:
+                        agregar = falla_registrada + "                                                           " + lista_fallas[falla_registrada][0] + "                                                                       " + lista_fallas[falla_registrada][1]
+                        lista_fallas_cert.append(agregar)
+
+            # print((cita_cert, placa_cert, propietario_cert, telefono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert))
 
             """[4, 'Primera Vez', '12345678', 'Automovil particular y vehiculo de carga liviana (<= 3500 kg)', 'agsasgasg', 'asgasgasgasg', 'asgasgasgas', 'gasgasgasg', 'asgasgasgas', 'gasgasgasgasgs', ['2023', '06', '15', '30000'], 'REINSPECCION', '1', '2', '3']"""
             """fecha_recortada = "FEB. 24"
@@ -1559,19 +1572,15 @@ def tablero():
             '2                                                           asgasgasgasga                                                                       Leve',
             '3                                                           ahashashashas                                                                       Grave']"""
 
-            """if estado_revision == "APROBADA":
-                reemplazar_resultados_hoja_revision(cita_cert, placa_cert, propietario_cert, teléfono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert)
+            if estado_revision == "APROBADA":
+                reemplazar_resultados_hoja_revision(cita_cert, placa_cert, propietario_cert, telefono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert)
                 reemplazar_resultados_sticker(placa_cert, propietario_cert, marca_cert, clasificacion_cert, fecha_recortada)
-            elif estado_revision == "REINSPECCION":
-                reemplazar_resultados_hoja_revision(cita_cert, placa_cert, propietario_cert, teléfono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert)
+                word_to_pdf()
+                enviar_correos(correo_cert, "3", None, None, str(cita_cert))
             else:
-                reemplazar_resultados_hoja_revision(cita_cert, placa_cert, propietario_cert, teléfono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert)"""
-
-
-
-
-
-
+                reemplazar_resultados_hoja_revision(cita_cert, placa_cert, propietario_cert, telefono_cert, marca_cert, modelo_cert, clasificacion_cert, fecha_actual_cert, tipo_cita_cert, fecha_vencimiento_cert, lista_fallas_cert, correo_cert, direccion_cert, resultado_cert)
+                word_to_pdf()
+                enviar_correos(correo_cert, "2", None, None, str(cita_cert))
 
     def ejecutar_comando(comando):
         comando = comando.get()
