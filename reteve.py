@@ -2557,13 +2557,12 @@ datos_del_ingreso = list()
 
 # Ventana principal.
 ventana_principal = Tk()
-ventana_principal.geometry("600x700")
 ventana_principal.resizable(False, False)
 ventana_principal.title("ReTeVe")
 ancho_pantalla = ventana_principal.winfo_screenwidth()
 alto_pantalla = ventana_principal.winfo_screenheight()
 posicion_x = ancho_pantalla -1000
-ventana_principal.geometry(f"600x700+{posicion_x}+100")
+ventana_principal.geometry(f"600x400+{posicion_x}+100")
 
 # Indicador de fecha y hora en la ventana.
 label_fecha_hora = Label(ventana_principal, font=("Arial", 14))
