@@ -465,15 +465,15 @@ def programar_citas():
             MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
             return
         else:
-            """resultado = validar_existencia_correo(dato8)
+            resultado = validar_existencia_correo(dato8)
             if resultado == None:
                 MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
                 return
             if resultado == False:
                 MessageBox.showerror("ERROR", "Correo electrónico inválido o inexistente.")
                 return
-            if resultado == True:"""
-            pass    
+            if resultado == True:
+                pass    
             
         # Validar dirección física.
         dato9 = entry9.get()
