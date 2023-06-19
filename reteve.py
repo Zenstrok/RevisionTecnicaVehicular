@@ -1,4 +1,6 @@
-# Autores: Jose Mario / John Sebastián
+# Autores: 
+# Jose Mario Jiménez Vargas 2023102334
+# John Sebastián Ceciliano Piedra 2023267790
 
 """ MODULOS """
 import os
@@ -34,6 +36,9 @@ def validar_existencia_correo(correo):
          return existe
      return False
 
+# FUNCION SEGUNDOS A HORA QUE CONVIERTE UN TIEMPO EN SEGUNDOS A HORAS Y MINUTOS
+# ENTRADAS: Recibe un número entero.
+# SALIDAS: Retorna la hora reconstruída.
 def segundos_a_hora(numero):
     horas = numero // 3600
     minutos = (numero % 3600) // 60
@@ -41,20 +46,9 @@ def segundos_a_hora(numero):
     hora_formato = f"{horas:02d}:{minutos:02d}:{segundos:02d}"
     return hora_formato
 
-# FUNCION VALIDAR FECHAS
-# ENTRADAS: Recibe la fecha a validar.
-# SALIDAS: True si es valido, False si no es valido.
-"""def validar_fecha(fecha):
-    global fecha_v
-    try:
-        # Intentamos crear un objeto de fecha a partir de la cadena proporcionada
-        datetime.datetime.strptime(fecha, '%Y-%m-%d')
-        fecha_v = True
-    except ValueError:
-        fecha_v = False
-        MessageBox.showerror("Fecha","Fecha Invalida")"""
-
-
+# FUNCION QUE TRANSFORMA LOS CERTIFICADOS A PDF
+# ENTRADAS: Lee los archivos creados en word.
+# SALIDAS: Transforma los certificados a PDF.
 def word_to_pdf():
     ruta_pdf_h = os.path.join(os.getcwd(),"WORD","hoja_revision.docx")
     ruta_pdf_c = os.path.join(os.getcwd(),"WORD","certificado_reteve.docx")
@@ -80,13 +74,11 @@ def word_to_pdf():
         MessageBox.showerror("ERROR","Ha ocurrido un error")
         return 
 
-#print(word_to_pdf())
-
 #Generar archivos
 
-"""Entradas: informacion que va en el machote hoja
-Salidas: genera los archivos.
-"""
+# FUNCION QUE REEMPLAZA LOS DATOS DE LA HOJA DE REVISIÓN CON LOS DATOS DE LA CITA
+# Entradas: Recibe la informacion que va en el machote hoja
+# Salidas: genera los archivos.
 def reemplazar_resultados_hoja_revision(cita, placa, propietario, teléfono, marca, modelo, clasificacion, fecha_actual, tipo_cita, fecha_vencimiento, lista_fallas, correo, direccion, resultado):
     machote = Document(os.path.join(os.getcwd(),"Plantilla","hoja_revision.docx"))
 
@@ -123,9 +115,9 @@ def reemplazar_resultados_hoja_revision(cita, placa, propietario, teléfono, mar
     
     return
 
-"""Entradas: informacion que va en el machote sticker
-Salidas: genera los archivos.
-"""
+# FUNCION QUE REEMPLAZA LOS DATOS DEL STICKER DE APROBADO CON LOS DATOS DE LA CITA
+# Entradas: Recibe la informacion que va en el machote sticker
+# Salidas: genera los archivos.
 def reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fecha_recortada):
     machote = Document(os.path.join(os.getcwd(),"Plantilla","certificado_reteve.docx"))
 
@@ -160,12 +152,9 @@ def reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fech
     machote.save(ruta_guardado)
     return
 
-#reemplazar_resultados_hoja_revision(cita, placa, propietario, telefono, marca, modelo, clasificacion, fecha_actual, tipo_cita, fecha_vencimiento, lista_fallas, correo, direccion, resultado)
-#reemplazar_resultados_sticker(placa, propietario, marca, clasificacion, fecha_recortada)
-
-#Enviar correos
-"""Entradas: correo a enviar ,archivo pdf a enviar, nombre del enunciado,imagen a enviar adjunta
-Salidas: Si el envio fue correcto dice correcto sino paso un error"""
+# FUNCION ENVIAR CORREOS
+# Entradas: Recibe el correo a enviar ,archivo pdf a enviar, nombre del enunciado,imagen a enviar adjunta
+# Salidas: Si el envio fue correcto dice correcto sino paso un error
 
 def enviar_correos(correo,tipo_de_envio,fecha_envio,hora_envio,cita):
      try:
@@ -255,8 +244,6 @@ def enviar_correos(correo,tipo_de_envio,fecha_envio,hora_envio,cita):
          MessageBox.showerror("ERROR","Fallo al enviar")
          return
     
-#print(enviar_correos(correo,tipo_de_envio,fecha_envio,hora_envio,cita))
-
 # FUNCION QUE GENERA LAS CITAS POSIBLES
 # ENTRADAS: datos de la configuracion y del sistema.
 # SALIDAS: lista de fechas.   
@@ -380,6 +367,9 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
     MessageBox.showinfo("ESTADO", "Se ha programado la nueva cita.")
     return
 
+# FUNCION QUE APRUEBA QUE UNA FECHA MANUAL SE PUEDA AGENDAR
+# ENTRADAS: Recibe la fecha y hora de la cita.
+# SALIDAS: Aprueba o rechaza la petición de hora manual.
 def aprobar_fecha_hora(fechahora, lista_intervalos):
     if len(fechahora[1]) == 1:
         fechahora[1] = "0" + fechahora[1]
@@ -720,8 +710,8 @@ def programar_citas():
     return
     
 # FUNCIAN BUSCAR NODO Y CANCELAR
-# ENTRADAS:
-# SALIDAS: 
+# ENTRADAS: Recibe el ABB y los datos de la cita para buscar el nodo.
+# SALIDAS: Si encuentra el nodo, lo marca como cancelado.
 def buscar_nodo_cancelar(arbol, num, placa, fecha_hora):
     if arbol[0][0] == num:
         if arbol[0][11] == "PENDIENTE":
@@ -737,6 +727,9 @@ def buscar_nodo_cancelar(arbol, num, placa, fecha_hora):
             arbol[2] = buscar_nodo_cancelar(arbol[2], num, placa, fecha_hora)
         return arbol
 
+""" BOTON CANCELAR CITAS
+# ENTRADAS: Lee las instrucciones que recibe del usuario.
+# SALIDAS: Ejecuta esas instrucciones."""
 def cancelar_citas():
 
     def verificar_en_colas(dato):
@@ -855,14 +848,17 @@ def cancelar_citas():
 
     ventana_cancelar_citas.mainloop()
 
+# FUNCION QUE GUARDA LA INFORMACIÓN DE UN NODO EN UNA VARIABLE
+# ENTRADAS: Recibe el dato a guardar.
+# SALIDAS: Guarda el dato en una variable global.
 def guardar_dato_ingreso(dato):
     global datos_del_ingreso
     datos_del_ingreso = dato
     return
 
 # FUNCIAN BUSCAR NODO Y CANCELAR
-# ENTRADAS:
-# SALIDAS: 
+# ENTRADAS: Recibe el ABB y los datos de la cita para buscar el nodo.
+# SALIDAS: Si encuentra el nodo, guarda la información del mismo.
 def buscar_nodo_info(arbol, num, placa, fecha_hora):
     if arbol[0][0] == num:
         if arbol[0][11] == "PENDIENTE":
@@ -878,6 +874,9 @@ def buscar_nodo_info(arbol, num, placa, fecha_hora):
             arbol[2] = buscar_nodo_info(arbol[2], num, placa, fecha_hora)
         return arbol
 
+# FUNCION QUE CALCULA EL COSTO DE REVISION DE UN VEHICULO
+# ENTRADAS: Recibe el tipo de automóvil.
+# SALIDAS: Retorna la tarifa del vehículo.
 def costo_revision(dato):
     tipos_de_vehículos = ["Automovil particular y vehiculo de carga liviana (<= 3500 kg)", \
                           "Automovil particular y vehiculo de carga liviana (3500 kg > 8000 kg)", \
@@ -902,6 +901,9 @@ def costo_revision(dato):
 
     return tarifa_a_pagar_iva
 
+""" BOTÓN INGRESO A LA ESTACION
+# ENTRADAS: Lee las instrucciones que recibe del usuario.
+# SALIDAS: Ejecuta esas instrucciones. """
 def ingreso_a_estacion():
 
     def salir_ingreso():
@@ -1072,6 +1074,9 @@ def ingreso_a_estacion():
 
     ventana_ingreso_estacion.mainloop()
 
+""" BOTÓN TABLERO
+# ENTRADAS: Lee las instrucciones que recibe del usuario.
+# SALIDAS: Ejecuta esas instrucciones. """
 def tablero():
 
     def cerrar_tablero():
@@ -1897,17 +1902,7 @@ def lista_de_fallas():
     # ENTRADAS: 
     # SALIDAS:
     def modificar_falla(dato):
-
-        archivo = open("registro_fallas.dat")
-        registro_fallas = archivo.read()
-        registro_fallas = eval(registro_fallas)
-        archivo.close()
-
-        for elemento in registro_fallas:
-            if dato[0] == elemento:
-                MessageBox.showerror("ERROR", "No se puede modificar porque está asignado a un vehículo del tablero.")
-                return
-
+        
         def salir_modificar_falla():
             res = MessageBox.askyesno("CONFIRMACIÓN", "¿Seguro de que desea salir?")
             if res:
@@ -2084,7 +2079,6 @@ def lista_de_fallas():
 
     # Loop de la ventana.
     ventana_lista_de_fallas.mainloop()
-
 
 """ FUNCION PARA ABRIR LA VENTANA DE CONFIGURACION DEL SISTEMA
 # ENTRADAS: Lee las opciones seleccionadas por el usuario.
