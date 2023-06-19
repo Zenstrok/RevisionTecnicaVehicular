@@ -2457,7 +2457,7 @@ def ventana_configuracion_sistema():
 # SALIDAS: Si el usuario responde 'sí', abre el manual de usuario. """
 def ayuda_de_programa():
     if MessageBox.askyesno("CONFIRMAR", "¿Seguro de que desea abrir el manual?"):
-        os.startfile("manual_de_usuario_reteve.pdf") # Abrir el manual.
+        os.startfile("Manual_de_usuario_ReTeVe.pdf") # Abrir el manual.
     return
 
 """ FUNCION PARA MOSTRAR LA INFORMACION DEL PROGRAMA EN UNA VENTANA
