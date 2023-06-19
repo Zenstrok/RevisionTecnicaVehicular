@@ -2495,7 +2495,7 @@ def acerca_de():
     # Mostrar la información del programa.
     Label(ventana_de_informacion, text= "\nAcerca del programa\n", fg="black", bg="white", font=("Franklin Gothic Demi", 16)).pack()
     Label(ventana_de_informacion, text="Nombre del programa: ReTeVe\n \nVersión del programa: 1.0.0\n \
-          \nFecha de creación: 01 de Junio del 2023\n \nÚltima modificación: 01 de Junio del 2023\n \nAutores:\n \
+          \nFecha de creación: 01 de Junio del 2023\n \nÚltima modificación: 18 de Junio del 2023\n \nAutores:\n \
           \nJose Mario Jiménez Vargas\n \nJohn Sebastián Ceciliano Piedra", fg="black", bg="white", font=("Arial", 10)).pack()
 
     # Botón para cerrar la ventana.
