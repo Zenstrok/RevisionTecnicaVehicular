@@ -815,7 +815,18 @@ def cancelar_citas():
             print(arbol)
 
             archivo1 = open("arbol_citas.dat", "w")
-            arbol = archivo1.write(str(arbol))
+            archivo1.write(str(arbol))
+            archivo1.close()
+
+            archivo = open("registro_arbol.dat", "r")
+            registro = archivo.read()
+            registro = eval(registro)
+            archivo.close()
+
+            del registro[cita]
+
+            archivo = open("registro_arbol.dat", "w")
+            archivo.write(str(registro))
             archivo1.close()
 
             MessageBox.showinfo("ESTADO", "Se ha cancelado la cita número " + str(cita))
@@ -1736,18 +1747,18 @@ def tablero():
             nombre_etiqueta = str(i) + str(j)
 
             if placa_casilla != []:
-                if len(placa_casilla) == 2:
-                    num_linea = Label(segundo_frame_tablero, text=placa_casilla[0], fg = "Red", name=nombre_etiqueta, font=("", 10))
-                else:
+                if j == 1:
                     num_linea = Label(segundo_frame_tablero, text=placa_casilla[0], fg = None, name=nombre_etiqueta, font=("", 10))
+                else:
+                    if len(placa_casilla) == 2:
+                        num_linea = Label(segundo_frame_tablero, text=placa_casilla[0], fg = "Red", name=nombre_etiqueta, font=("", 10))
+                    else:
+                        num_linea = Label(segundo_frame_tablero, text=placa_casilla[0], fg = None, name=nombre_etiqueta, font=("", 10))
             else:
                 num_linea = Label(segundo_frame_tablero, text=placa_casilla,fg = None, name=nombre_etiqueta, font=("", 10))
 
             num_linea.place(x = 95*j ,y = columna_largo) 
         columna_largo += 45
-    
-    
-        
 
 
     comando = Label(ventana_tablero_revision,text="COMANDO:",font=("", 12))
