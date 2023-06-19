@@ -547,6 +547,7 @@ def programar_citas():
         ventana_programar_citas.iconify()
         ventana_automatico = Toplevel()
         ventana_automatico.resizable(False, False)
+        ventana_automatico.iconbitmap("reteve_l.ico")
         ancho_pantalla = ventana_automatico.winfo_screenwidth()
         alto_pantalla = ventana_automatico.winfo_screenheight()
         posicion_x = ancho_pantalla - 1000
@@ -612,6 +613,7 @@ def programar_citas():
     ventana_programar_citas = Toplevel()
     ventana_programar_citas.resizable(False, False)
     ventana_programar_citas.title("Programar Citas")
+    ventana_programar_citas.iconbitmap("reteve_l.ico")
     ancho_pantalla = ventana_programar_citas.winfo_screenwidth()
     alto_pantalla = ventana_programar_citas.winfo_screenheight()
     posicion_x = ancho_pantalla - 1000
@@ -823,6 +825,7 @@ def cancelar_citas():
     ventana_cancelar_citas = Toplevel()
     ventana_cancelar_citas.resizable(False, False)
     ventana_cancelar_citas.title("Cancelar citas")
+    ventana_cancelar_citas.iconbitmap("reteve_l.ico")
     ancho_pantalla = ventana_cancelar_citas.winfo_screenwidth()
     alto_pantalla = ventana_cancelar_citas.winfo_screenheight()
     posicion_x = ancho_pantalla - 1000
@@ -1004,6 +1007,7 @@ def ingreso_a_estacion():
         ventana_ingresar = Toplevel()
         ventana_ingresar.resizable(False, False)
         ventana_ingresar.title("Ingreso de vehículos")
+        ventana_ingresar.iconbitmap("reteve_l.ico")
         ancho_pantalla = ventana_ingresar.winfo_screenwidth()
         alto_pantalla = ventana_ingresar.winfo_screenheight()
         posicion_x = ancho_pantalla - 1000
@@ -1038,6 +1042,7 @@ def ingreso_a_estacion():
     ventana_ingreso_estacion = Toplevel()
     ventana_ingreso_estacion.resizable(False, False)
     ventana_ingreso_estacion.title("Ingreso de vehículos")
+    ventana_ingreso_estacion.iconbitmap("reteve_l.ico")
     ancho_pantalla = ventana_ingreso_estacion.winfo_screenwidth()
     alto_pantalla = ventana_ingreso_estacion.winfo_screenheight()
     posicion_x = ancho_pantalla - 1000
@@ -1637,6 +1642,7 @@ def tablero():
     ventana_tablero_revision = Toplevel()
     ventana_tablero_revision.title("Tablero de revision")
     ventana_tablero_revision.resizable(False, False)
+    ventana_tablero_revision.iconbitmap("reteve_l.ico")
     ancho_pantalla = ventana_tablero_revision.winfo_screenwidth()
     alto_pantalla = ventana_tablero_revision.winfo_screenheight()
     posicion_x = ancho_pantalla - 1000
@@ -1850,6 +1856,7 @@ def lista_de_fallas():
         ventana_crear_falla = Toplevel()
         ventana_crear_falla.resizable(False, False)
         ventana_crear_falla.title("Crear Falla")
+        ventana_crear_falla.iconbitmap("reteve_l.ico")
         ancho_pantalla = ventana_crear_falla.winfo_screenwidth()
         alto_pantalla = ventana_crear_falla.winfo_screenheight()
         posicion_x = ancho_pantalla - 1000
@@ -1909,6 +1916,7 @@ def lista_de_fallas():
         ventana_modificar_falla = Toplevel()
         ventana_modificar_falla.resizable(False, False)
         ventana_modificar_falla.title("Modificar Falla")
+        ventana_modificar_falla.iconbitmap("reteve_l.ico")
         ancho_pantalla = ventana_modificar_falla.winfo_screenwidth()
         alto_pantalla = ventana_modificar_falla.winfo_screenheight()
         posicion_x = ancho_pantalla - 1000
@@ -1993,6 +2001,7 @@ def lista_de_fallas():
     ventana_lista_de_fallas = Toplevel()
     ventana_lista_de_fallas.resizable(False, False)
     ventana_lista_de_fallas.title("Lista de fallas")
+    ventana_lista_de_fallas.iconbitmap("reteve_l.ico")
     ancho_pantalla = ventana_lista_de_fallas.winfo_screenwidth()
     alto_pantalla = ventana_lista_de_fallas.winfo_screenheight()
     posicion_x = ancho_pantalla - 1000
@@ -2210,6 +2219,7 @@ def ventana_configuracion_sistema():
     ventana_config = Toplevel()
     ventana_config.resizable(False, False)
     ventana_config.title("Configuración del sistema")
+    ventana_config.iconbitmap("reteve_l.ico")
     ancho_pantalla = ventana_config.winfo_screenwidth()
     alto_pantalla = ventana_config.winfo_screenheight()
     posicion_x = ancho_pantalla - 1000
@@ -2465,6 +2475,7 @@ def acerca_de():
     ventana_de_informacion.resizable(False, False)
     ventana_de_informacion.title("Acerca de")
     ventana_de_informacion.config(bg="White")
+    ventana_de_informacion.iconbitmap("reteve_l.ico")
     ancho_pantalla = ventana_de_informacion.winfo_screenwidth()
     alto_pantalla = ventana_de_informacion.winfo_screenheight()
     posicion_x = ancho_pantalla - 1000
@@ -2581,7 +2592,7 @@ ancho_pantalla = ventana_principal.winfo_screenwidth()
 alto_pantalla = ventana_principal.winfo_screenheight()
 posicion_x = ancho_pantalla -1000
 ventana_principal.geometry(f"600x400+{posicion_x}+100")
-
+ventana_principal.iconbitmap("reteve_l.ico")
 # Indicador de fecha y hora en la ventana.
 label_fecha_hora = Label(ventana_principal, font=("Arial", 14))
 label_fecha_hora.place(x=400,y=10)
