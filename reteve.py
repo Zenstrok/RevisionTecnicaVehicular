@@ -344,6 +344,34 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
 
     indices_nodo[dato_nodo[0]] = [dato_nodo[2], dato_nodo[10]]
 
+    hora_cita_final = segundos_a_hora(int(dato_nodo[10][3]))
+    fecha_envio_cita = str(dato_nodo[10][0]) +"-"+ str(dato_nodo[10][1]) +"-"+ str(dato_nodo[10][2])
+
+    archivo3 = open("registros.dat", "r")
+    fechas_repetidas = archivo3.read()
+    fechas_repetidas = eval(fechas_repetidas)
+    archivo2.close()
+
+    archivo4 = open("configuración_reteve.dat", "r")
+    config = archivo4.read()
+    config = eval(config)
+    archivo2.close()
+
+    lineas_de_trabajo = config[0]
+
+    if fecha_envio_cita + " " + hora_cita_final in fechas_repetidas:
+        if fechas_repetidas[fecha_envio_cita + " " + hora_cita_final] == lineas_de_trabajo:
+            MessageBox.showerror("Error","Limite de citas alcanzada")
+            return
+        else:
+            fechas_repetidas[fecha_envio_cita + " " + hora_cita_final] += 1
+    else:
+        fechas_repetidas[fecha_envio_cita + " " + hora_cita_final] = 1
+
+
+
+
+
     # Escribir archivos.
     archivo = open("arbol_citas.dat", "w")
     archivo.write(str(arbol))
@@ -353,16 +381,20 @@ def programar_cita_nueva(dato1, dato2, dato3, dato4, dato5, dato6, dato7, dato8,
     archivo.write(str(indices_nodo))
     archivo.close()
 
+    archivo = open("registros.dat", "w")
+    archivo.write(str(fechas_repetidas))
+    archivo.close()
+
+
     # ENVÍO DE CORREO AQUÍ
     #correo,tipo_de_envio,fecha_envio,hora_envio,cita
-    hora_cita_final = segundos_a_hora(int(dato_nodo[10][3]))
 
     if int(hora_cita_final[:2]) > 12:
         hora_cita_final += " PM"
     else:
         hora_cita_final += " AM"
 
-    fecha_envio_cita = str(dato_nodo[10][0]) +"/"+ str(dato_nodo[10][1]) +"/"+ str(dato_nodo[10][2]) 
+    
     enviar_correos(dato_nodo[8],"1",fecha_envio_cita,hora_cita_final,dato_nodo[0])
     MessageBox.showinfo("ESTADO", "Se ha programado la nueva cita.")
     return
@@ -499,8 +531,11 @@ def programar_citas():
             if aprobar_fecha_hora([año.get(), mes.get(), dia.get(), hora.get(), minutos.get()], valores_lista):
                 descompuesto = descomponer_h_m([año.get(), mes.get(), dia.get(), hora.get(), minutos.get()])
                 programar_cita_nueva(tipo_cita.get(), dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, descompuesto)
+                ventana_programar_citas.destroy()
+                programar_citas()
             else:
                 MessageBox.showerror("ERROR", "Cita no disponible para programar.")
+                return
         else:
             fecha_hora_automatico(tipo_cita.get(), dato2, entry3.get(), dato4, dato5, dato6, dato7, dato8, dato9, valores_lista)
     
