@@ -260,7 +260,6 @@ def generar_lista_fechas_intervalo(inicio, fin, hora_inicio, hora_fin, intervalo
         if hora_actual.time() > datetime.strptime(hora_fin, "%H:%M").time():
             fecha_actual += timedelta(days=1)
             hora_actual = datetime.strptime(hora_inicio, "%H:%M")
-
     return lista_fechas
 
 # FUNCION QUE AGREGA UN AÑO SI EL MES ES MAYOR A 12
@@ -1018,7 +1017,7 @@ def ingreso_a_estacion():
         ventana_ingreso_estacion.deiconify()
 
     def ingresar(num_cita, placa):
-
+        global fecha_hoy, hora_hoy
         if not num_cita.isdigit():
             MessageBox.showerror("ERROR", "Valor de cita debe ser numérico.")
             return
@@ -1042,6 +1041,25 @@ def ingreso_a_estacion():
         if datos_cita[0] != placa:
             MessageBox.showerror("ERROR", "Cita no registrada")
             return
+        
+        fecha_cita = datos_cita[1][:-1]
+        hora_cita = datos_cita[1][-1]
+        fecha_hoy_descompuesta = [fecha_hoy[:4], fecha_hoy[5:7], fecha_hoy[8:]]
+        hora_hoy_descompuesta = descomponer_h_m([hora_hoy[:2], hora_hoy[3:5]])[0]
+
+        if fecha_cita[0] != fecha_hoy_descompuesta[0]:
+            MessageBox.showerror("ERROR", "Todavía no llega el día de la cita.")
+            return
+        if fecha_cita[1] != fecha_hoy_descompuesta[1]:
+            MessageBox.showerror("ERROR", "Todavía no llega el día de la cita.")
+            return
+        if fecha_cita[2] != fecha_hoy_descompuesta[2]:
+            MessageBox.showerror("ERROR", "Todavía no llega el día de la cita.")
+            return
+        if int(hora_cita) - int(hora_hoy_descompuesta) > 3600:
+            MessageBox.showerror("ERROR", "Todavía no llega la hora de la cita.")
+            return
+
         datos = registros[num_cita]
 
         buscar_nodo_info(arbol, num_cita, placa, datos[1])
@@ -2546,7 +2564,8 @@ def salir_del_programa():
 # ENTRADAS: Lee la fecha actual y la configuración.
 # SALIDAS: Lleva a crear la lista de citas.
 def generar_lista_intervalo():
-    global fecha_hoy, valores_lista
+    global fecha_hoy, valores_lista, hora_hoy
+
     fecha = fecha_hoy.split("/")
     año_hoy = int(fecha[0])
     mes_hoy = int(fecha[1])
@@ -2556,8 +2575,9 @@ def generar_lista_intervalo():
     datos_originales = archivo.read()
     datos_originales = eval(datos_originales)
     archivo.close()
-    inicio = datetime(año_hoy, mes_hoy, dia_hoy + 1)  # Fecha de inicio
-    fecha_final = validar_fecha_fin(año_hoy, mes_hoy + datos_originales[6], dia_hoy + 1)
+
+    inicio = datetime(año_hoy, mes_hoy, dia_hoy)  # Fecha de inicio
+    fecha_final = validar_fecha_fin(año_hoy, mes_hoy + datos_originales[6], dia_hoy)
     num1 = fecha_final[0]
     num2 = fecha_final[1]
     num3 = fecha_final[2]
@@ -2568,20 +2588,33 @@ def generar_lista_intervalo():
     intervalo_minutos = minutos  # Intervalo de tiempo en minutos
     lista_fechas_intervalo = generar_lista_fechas_intervalo(inicio.date(), fin.date(), hora_inicio, hora_fin, intervalo_minutos)
 
+    comparar_hora = datos_originales[2]
+    hora_actual_descompuesta = descomponer_h_m([hora_hoy[:2], hora_hoy[3:5]])
     valores_lista = list()
     for fecha_hora in lista_fechas_intervalo:
-        valores_lista.append(str(fecha_hora))
+        if str(fecha_hora)[11:16] == comparar_hora:
+            pass
+        else:
+            if str(fecha_hora)[:10] == fecha_hoy.replace("/", "-"):
+                hora_fechahora_descompuesta = descomponer_h_m([str(fecha_hora)[11:13], str(fecha_hora)[14:16]])
+                if int(hora_fechahora_descompuesta[0]) < int(hora_actual_descompuesta[0]) + 600:
+                    pass
+                else:
+                    valores_lista.append(str(fecha_hora))
+            else:
+                valores_lista.append(str(fecha_hora))
 
 # FUNCION QUE ACTUALIZA LA FECHA Y HORA ACTUAL
 # ENTRADAS: Recibe la fecha y hora en tiempo real del sistema.
 # SALIDAS: Actualiza el label de fecha y hora por tics y guarda una variable con la fecha y hora actual.
 def actualizar_fecha_hora():
-    global fecha_hoy
+    global fecha_hoy, hora_hoy
     fecha_actual = datetime.now()
     fecha_formateada = fecha_actual.strftime("%Y/%m/%d %H:%M:%S")
     label_fecha_hora.config(text=fecha_formateada)
     ventana_principal.after(1000, actualizar_fecha_hora)
     fecha_hoy = fecha_formateada[:10]
+    hora_hoy = fecha_formateada[11:]
 
 # FUNCION QUE VALIDA QUE LAS LINEAS DE TRABAJO ACTUALES SEAN IGUALES A LA CONFIGURACION
 # ENTRADAS: Lee los archivos de config y de colas.
